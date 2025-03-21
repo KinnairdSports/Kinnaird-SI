@@ -4,15 +4,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Premier League Club Financials</title>
+  <title>Wages Graph</title>
+  <!-- Load Aglet Sans from Typekit -->
+  <link href="https://use.typekit.net/xxs6huv.css" rel="stylesheet">
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
   <style>
-    body {
+    /* Apply Aglet Sans to body and Plotly elements */
+    body, .plotly, .plotly text {
+      font-family: 'aglet-sans', sans-serif !important;
       background-color: #11242B;
-      color: white;
-      font-family: 'aglet-sans, sans-serif';
-      padding: 20px;
       margin: 0;
+      padding: 0;
+      color: white;
+    }
+    /* Ensure headers are white */
+    h1, h2, h3, h4, h5, h6 {
+      color: white;
     }
     h1 {
       text-align: center;
@@ -30,7 +37,7 @@
   </style>
 </head>
 <body>
-  <h1>Premier League Club Financials</h1>
+  <h1>Wages Graph</h1>
   <div class="controls">
     <label for="yearSelect">Select Year:</label>
     <select id="yearSelect"></select>
@@ -100,7 +107,6 @@
         type: 'bar',
         marker: { color: '#05D4BE' },
         customdata: finishInfo,
-        // Hover shows: "League Position - <b>14th</b>" on the top line and then "£351.7m" on the next line.
         hovertemplate: "League Position - <b>%{customdata}</b><br>£%{y:.1f}m<extra></extra>"
       };
 
@@ -147,6 +153,7 @@
 
     updateChart();
 
+    // Ensure Plotly text elements use Aglet Sans after rendering
     document.addEventListener("DOMContentLoaded", function(){
         setTimeout(function(){
             var texts = document.querySelectorAll('svg text');
