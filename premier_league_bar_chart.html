@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Premier League</title>
+  <title></title>
   <!-- Load Aglet Sans from Typekit -->
   <link href="https://use.typekit.net/xxs6huv.css" rel="stylesheet">
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
@@ -12,7 +12,7 @@
     /* Apply Aglet Sans to body and Plotly elements */
     body, .plotly, .plotly text {
       font-family: 'aglet-sans', sans-serif !important;
-      background-color: #11242B;
+      background-color: #000000;
       margin: 0;
       padding: 0;
       color: white;
@@ -37,7 +37,6 @@
   </style>
 </head>
 <body>
-  <h1>Wages Graph</h1>
   <div class="controls">
     <label for="yearSelect">Select Year:</label>
     <select id="yearSelect"></select>
@@ -131,8 +130,8 @@
           linewidth: 2,
           range: [0, yMax]
         },
-        plot_bgcolor: '#11242B',
-        paper_bgcolor: '#11242B',
+        plot_bgcolor: '#000000',
+        paper_bgcolor: '#000000',
         font: {
           family: 'aglet-sans, sans-serif',
           size: 12,
