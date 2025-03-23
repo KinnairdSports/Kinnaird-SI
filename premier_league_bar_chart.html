@@ -187,7 +187,7 @@
     <div id="debugInfo"></div>
     
     <div class="footer">
-      Data last updated: 2025-03-23 13:14:36 | Source: Premier League Financial Records 2015-2023
+      Data last updated: 2025-03-23 13:20:26 | Source: Premier League Financial Records 2015-2023
       <div><small>Double-click on chart area to show data info</small></div>
     </div>
   </div>
@@ -607,18 +607,10 @@
       svg.append("text")
         .attr("class", "chart-title")
         .attr("x", width / 2)
-        .attr("y", 30)
-        .text(selectedMetric.charAt(0).toUpperCase() + selectedMetric.slice(1) + " Trends (2015-2023)");
+        .attr("y", 20)
+        .text(selectedMetric.charAt(0).toUpperCase() + selectedMetric.slice(1) + " Trends");
       
       // Draw total line
-      g.append("path")
-        .datum(yearlyData)
-        .attr("fill", "none")
-        .attr("stroke", "#05D4BE")
-        .attr("stroke-width", 3)
-        .attr("d", totalLine);
-      
-      // Draw max line
       g.append("path")
         .datum(yearlyData)
         .attr("fill", "none")
