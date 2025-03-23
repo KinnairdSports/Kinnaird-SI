@@ -4,163 +4,763 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title></title>
-  <!-- Load Aglet Sans from Typekit -->
-  <link href="https://use.typekit.net/xxs6huv.css" rel="stylesheet">
-  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <title>Premier League Club Financials - Bar Chart</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <link rel="stylesheet" href="https://use.typekit.net/xxs6huv.css">
   <style>
-    /* Apply Aglet Sans to body and Plotly elements */
-    body, .plotly, .plotly text {
-      font-family: 'aglet-sans', sans-serif !important;
-      background-color: #000000;
+    body {
+      background-color: #0A1824;
+      color: white;
+      font-family: 'aglet-sans', sans-serif;
+      padding: 20px;
       margin: 0;
-      padding: 0;
-      color: white;
+      min-height: 100vh;
     }
-    /* Ensure headers are white */
-    h1, h2, h3, h4, h5, h6 {
-      color: white;
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      border-radius: 10px;
+      padding: 20px;
+      background-color: #11242B;
     }
     h1 {
       text-align: center;
       margin-bottom: 20px;
+      font-size: 2.2rem;
+      background: linear-gradient(90deg, #05D4BE, #5F84FB);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 10px rgba(5, 212, 190, 0.4);
+      font-family: 'aglet-sans', sans-serif;
     }
-    .controls {
-      text-align: center;
-      margin-bottom: 20px;
+    .subtitle { text-align: center; margin-bottom: 30px; color: #cccccc; font-weight: 300; }
+    .controls-container { display: flex; flex-wrap: wrap; justify-content: center; margin-bottom: 30px; gap: 20px; }
+    .control-group {
+      background-color: rgba(0, 0, 0, 0.2);
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid rgba(5, 212, 190, 0.3);
     }
+    label { font-size: 1rem; margin-right: 10px; color: #05D4BE; }
     select {
-      font-size: 1.1rem;
-      padding: 5px;
-      margin-right: 20px;
+      font-size: 1rem;
+      padding: 8px 15px;
+      background-color: #1D3B48;
+      color: white;
+      border: 1px solid #05D4BE;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'aglet-sans', sans-serif;
+    }
+    select:hover { background-color: #275562; }
+    .charts-container { display: flex; flex-direction: column; gap: 20px; }
+    .chart-wrapper {
+      background-color: rgba(0, 0, 0, 0.15);
+      border-radius: 8px;
+      padding: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    .metrics-cards {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    .metric-card {
+      background: linear-gradient(135deg, rgba(5, 212, 190, 0.2), rgba(95, 132, 251, 0.2));
+      border-radius: 8px;
+      padding: 15px;
+      flex: 1;
+      min-width: 200px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(5, 212, 190, 0.3);
+      text-align: center;
+    }
+    .metric-value { font-size: 2rem; font-weight: bold; margin: 10px 0; color: #05D4BE; }
+    .metric-title { font-size: 1rem; color: #cccccc; }
+    .metric-change { font-size: 0.9rem; }
+    .positive-change { color: #4CD964; }
+    .negative-change { color: #FF3B30; }
+    .footer { text-align: center; margin-top: 30px; font-size: 0.8rem; color: #666; }
+    
+    /* D3 Chart Styles */
+    .bar { transition: all 0.3s ease; }
+    .bar:hover { filter: brightness(1.2); }
+    .axis-x path, .axis-y path { stroke: rgba(255, 255, 255, 0.3); }
+    .axis-x .tick line, .axis-y .tick line { stroke: rgba(128, 128, 128, 0.2); }
+    .axis-x text, .axis-y text { fill: white; font-size: 12px; font-family: 'aglet-sans', sans-serif; }
+    .chart-title { fill: white; font-size: 18px; font-weight: bold; font-family: 'aglet-sans', sans-serif; text-anchor: middle; }
+    .average-line { stroke: rgba(255, 255, 255, 0.7); stroke-width: 2; stroke-dasharray: 5,5; }
+    .average-label { fill: white; font-size: 12px; font-family: 'aglet-sans', sans-serif; }
+    .bar-value { fill: white; font-size: 10px; font-family: 'aglet-sans', sans-serif; text-anchor: middle; }
+    .tooltip { 
+      position: absolute; 
+      padding: 10px; 
+      background: #1D3B48; 
+      color: white; 
+      border: 1px solid #05D4BE; 
+      border-radius: 5px; 
+      pointer-events: none;
+      font-family: 'aglet-sans', sans-serif;
+      font-size: 14px;
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: 10;
+    }
+    
+    #debugInfo { 
+      background-color: rgba(0, 0, 0, 0.3); 
+      padding: 10px; 
+      margin-top: 20px; 
+      border-radius: 5px; 
+      white-space: pre; 
+      font-family: 'aglet-sans', monospace; 
+      font-size: 0.8rem; 
+      max-height: 150px; 
+      overflow: auto; 
+      display: none; 
+    }
+    @media (max-width: 768px) {
+      .controls-container { flex-direction: column; align-items: center; }
+      .metric-card { min-width: 100%; }
     }
   </style>
 </head>
 <body>
-  <div class="controls">
-    <label for="yearSelect">Select Year:</label>
-    <select id="yearSelect"></select>
-    <label for="metricSelect">Select Metric:</label>
-    <select id="metricSelect">
-      <option value="revenue">Revenue</option>
-      <option value="wages">Wages</option>
-      <option value="amortisation">Amortisation</option>
-    </select>
+  <div class="container">
+    <h1>Premier League Financial Dashboard</h1>
+    <p class="subtitle">Club financial performance comparison</p>
+    
+    <div class="controls-container">
+      <div class="control-group">
+        <label for="yearSelect">Financial Year:</label>
+        <select id="yearSelect"></select>
+      </div>
+      
+      <div class="control-group">
+        <label for="metricSelect">Financial Metric:</label>
+        <select id="metricSelect">
+          <option value="revenue">Revenue</option>
+          <option value="wages">Wages</option>
+          <option value="amortisation">Player Amortisation</option>
+        </select>
+      </div>
+      
+      <div class="control-group">
+        <label for="sortSelect">Sort By:</label>
+        <select id="sortSelect">
+          <option value="value">Value (Descending)</option>
+          <option value="name">Club Name</option>
+          <option value="change">Year-over-year Change</option>
+        </select>
+      </div>
+    </div>
+    
+    <div class="metrics-cards">
+      <div class="metric-card">
+        <div class="metric-title">Highest Value</div>
+        <div id="highestValue" class="metric-value">£0M</div>
+        <div id="highestClub" class="metric-subtitle">-</div>
+      </div>
+      
+      <div class="metric-card">
+        <div class="metric-title">League Total</div>
+        <div id="leagueTotal" class="metric-value">£0M</div>
+        <div id="totalChange" class="metric-change">-</div>
+      </div>
+      
+      <div class="metric-card">
+        <div class="metric-title">Highest Year-on-Year Growth</div>
+        <div id="highestGrowth" class="metric-value">0%</div>
+        <div id="growthClub" class="metric-subtitle">-</div>
+      </div>
+    </div>
+    
+    <div class="charts-container">
+      <div class="chart-wrapper">
+        <div id="barChart" style="width: 100%; height: 500px;"></div>
+      </div>
+      
+      <div class="chart-wrapper">
+        <div id="trendChart" style="width: 100%; height: 450px;"></div>
+      </div>
+    </div>
+    
+    <div id="debugInfo"></div>
+    
+    <div class="footer">
+      Data last updated: 2025-03-23 12:54:42 | Source: Premier League Financial Records 2015-2023
+      <div><small>Double-click on chart area to show data info</small></div>
+    </div>
   </div>
-  <div id="barChart"></div>
+  
+  <div id="tooltip" class="tooltip"></div>
   
   <script>
     // Embedded data from SQL
-    var data = [{"year":2018,"team":"Chelsea","revenue":443449000.0,"wages":216009000.0,"amortisation":123692000.0,"position_finished":"5th","league":"Premier League","revenue_m":443.449,"wages_m":216.009,"amortisation_m":123.692},{"year":2022,"team":"West Ham","revenue":252720000.0,"wages":118709000.0,"amortisation":48825000.0,"position_finished":"7th","league":"Premier League","revenue_m":252.72,"wages_m":118.709,"amortisation_m":48.825},{"year":2017,"team":"Southampton","revenue":182252000.0,"wages":98859000.0,"amortisation":27394000.0,"position_finished":"8th","league":"Premier League","revenue_m":182.252,"wages_m":98.859,"amortisation_m":27.394},{"year":2019,"team":"Liverpool","revenue":533022000.0,"wages":276197000.0,"amortisation":111777000.0,"position_finished":"2nd","league":"Premier League","revenue_m":533.022,"wages_m":276.197,"amortisation_m":111.777},{"year":2018,"team":"Liverpool","revenue":455089000.0,"wages":232672000.0,"amortisation":77057000.0,"position_finished":"4th","league":"Premier League","revenue_m":455.089,"wages_m":232.672,"amortisation_m":77.057},{"year":2019,"team":"Fulham","revenue":137748000.0,"wages":81031000.0,"amortisation":42808000.0,"position_finished":"19th","league":"Premier League","revenue_m":137.748,"wages_m":81.031,"amortisation_m":42.808},{"year":2016,"team":"Southampton","revenue":124262000.0,"wages":74284000.0,"amortisation":31031000.0,"position_finished":"6th","league":"Premier League","revenue_m":124.262,"wages_m":74.284,"amortisation_m":31.031},{"year":2023,"team":"West Ham","revenue":236656000.0,"wages":118823000.0,"amortisation":65306000.0,"position_finished":"14th","league":"Premier League","revenue_m":236.656,"wages_m":118.823,"amortisation_m":65.306},{"year":2019,"team":"Chelsea","revenue":446741000.0,"wages":251135000.0,"amortisation":167637000.0,"position_finished":"3rd","league":"Premier League","revenue_m":446.741,"wages_m":251.135,"amortisation_m":167.637},{"year":2021,"team":"West Ham","revenue":192728000.0,"wages":112892000.0,"amortisation":57755000.0,"position_finished":"6th","league":"Premier League","revenue_m":192.728,"wages_m":112.892,"amortisation_m":57.755},{"year":2017,"team":"Bournemouth","revenue":136456000.0,"wages":62512000.0,"amortisation":19520000.0,"position_finished":"9th","league":"Premier League","revenue_m":136.456,"wages_m":62.512,"amortisation_m":19.52},{"year":2016,"team":"Bournemouth","revenue":87875000.0,"wages":51829000.0,"amortisation":13086000.0,"position_finished":"16th","league":"Premier League","revenue_m":87.875,"wages_m":51.829,"amortisation_m":13.086},{"year":2015,"team":"Southampton","revenue":113735437.0,"wages":70843127.0,"amortisation":29578529.0,"position_finished":"7th","league":"Premier League","revenue_m":113.735437,"wages_m":70.843127,"amortisation_m":29.578529},{"year":2020,"team":"West Ham","revenue":139500000.0,"wages":114791000.0,"amortisation":59856000.0,"position_finished":"16th","league":"Premier League","revenue_m":139.5,"wages_m":114.791,"amortisation_m":59.856},{"year":2022,"team":"Chelsea","revenue":481278000.0,"wages":297569000.0,"amortisation":160375000.0,"position_finished":"3rd","league":"Premier League","revenue_m":481.278,"wages_m":297.569,"amortisation_m":160.375},{"year":2018,"team":"West Ham","revenue":175346000.0,"wages":93768000.0,"amortisation":41021000.0,"position_finished":"13th","league":"Premier League","revenue_m":175.346,"wages_m":93.768,"amortisation_m":41.021},{"year":2022,"team":"Brentford","revenue":140913000.0,"wages":68152000.0,"amortisation":22851000.0,"position_finished":"13th","league":"Premier League","revenue_m":140.913,"wages_m":68.152,"amortisation_m":22.851},{"year":2023,"team":"Liverpool","revenue":593836000.0,"wages":329980000.0,"amortisation":107546000.0,"position_finished":"5th","league":"Premier League","revenue_m":593.836,"wages_m":329.98,"amortisation_m":107.546},{"year":2022,"team":"Liverpool","revenue":594271000.0,"wages":366092000.0,"amortisation":102714000.0,"position_finished":"2nd","league":"Premier League","revenue_m":594.271,"wages_m":366.092,"amortisation_m":102.714},{"year":2023,"team":"Brentford","revenue":166508000.0,"wages":98800000.0,"amortisation":30903000.0,"position_finished":"9th","league":"Premier League","revenue_m":166.508,"wages_m":98.8,"amortisation_m":30.903},{"year":2023,"team":"Fulham","revenue":182325000.0,"wages":121511000.0,"amortisation":45617000.0,"position_finished":"10th","league":"Premier League","revenue_m":182.325,"wages_m":121.511,"amortisation_m":45.617},{"year":2015,"team":"Manchester United","revenue":182623000.0,"wages":142299000.0,"amortisation":99534000.0,"position_finished":"4th","league":"Premier League","revenue_m":182.623,"wages_m":142.299,"amortisation_m":99.534},{"year":2019,"team":"West Ham","revenue":190695000.0,"wages":118880000.0,"amortisation":57371000.0,"position_finished":"10th","league":"Premier League","revenue_m":190.695,"wages_m":118.88,"amortisation_m":57.371},{"year":2015,"team":"Everton","revenue":125572000.0,"wages":77515000.0,"amortisation":19534000.0,"position_finished":"11th","league":"Premier League","revenue_m":125.572,"wages_m":77.515,"amortisation_m":19.534},{"year":2023,"team":"Chelsea","revenue":512467000.0,"wages":403962000.0,"amortisation":203250000.0,"position_finished":"12th","league":"Premier League","revenue_m":512.467,"wages_m":403.962,"amortisation_m":203.25},{"year":2021,"team":"Chelsea","revenue":434863000.0,"wages":332905000.0,"amortisation":163864000.0,"position_finished":"4th","league":"Premier League","revenue_m":434.863,"wages_m":332.905,"amortisation_m":163.864},{"year":2017,"team":"Everton","revenue":171330000.0,"wages":92144000.0,"amortisation":37298000.0,"position_finished":"7th","league":"Premier League","revenue_m":171.33,"wages_m":92.144,"amortisation_m":37.298},{"year":2017,"team":"Manchester United","revenue":289038000.0,"wages":187861000.0,"amortisation":123696000.0,"position_finished":"6th","league":"Premier League","revenue_m":289.038,"wages_m":187.861,"amortisation_m":123.696},{"year":2021,"team":"Fulham","revenue":116111000.0,"wages":99927000.0,"amortisation":56452000.0,"position_finished":"18th","league":"Premier League","revenue_m":116.111,"wages_m":99.927,"amortisation_m":56.452},{"year":2020,"team":"Liverpool","revenue":489860000.0,"wages":289341000.0,"amortisation":106034000.0,"position_finished":"1st","league":"Premier League","revenue_m":489.86,"wages_m":289.341,"amortisation_m":106.034},{"year":2021,"team":"Liverpool","revenue":487365000.0,"wages":277808000.0,"amortisation":107811000.0,"position_finished":"3rd","league":"Premier League","revenue_m":487.365,"wages_m":277.808,"amortisation_m":107.811},{"year":2016,"team":"Manchester United","revenue":230271000.0,"wages":164313000.0,"amortisation":87853000.0,"position_finished":"5th","league":"Premier League","revenue_m":230.271,"wages_m":164.313,"amortisation_m":87.853},{"year":2016,"team":"Everton","revenue":121541000.0,"wages":73914000.0,"amortisation":22398000.0,"position_finished":"11th","league":"Premier League","revenue_m":121.541,"wages_m":73.914,"amortisation_m":22.398},{"year":2020,"team":"Chelsea","revenue":407402000.0,"wages":249328000.0,"amortisation":127302000.0,"position_finished":"4th","league":"Premier League","revenue_m":407.402,"wages_m":249.328,"amortisation_m":127.302},{"year":2021,"team":"Arsenal","revenue":324519000.0,"wages":212416000.0,"amortisation":117413000.0,"position_finished":"8th","league":"Premier League","revenue_m":324.519,"wages_m":212.416,"amortisation_m":117.413},{"year":2021,"team":"Wolves","revenue":194096000.0,"wages":123048000.0,"amortisation":62140000.0,"position_finished":"13th","league":"Premier League","revenue_m":194.096,"wages_m":123.048,"amortisation_m":62.14},{"year":2020,"team":"Brighton","revenue":123291000.0,"wages":89314000.0,"amortisation":45616000.0,"position_finished":"15th","league":"Premier League","revenue_m":123.291,"wages_m":89.314,"amortisation_m":45.616},{"year":2021,"team":"Brighton","revenue":139731000.0,"wages":93983000.0,"amortisation":46380000.0,"position_finished":"16th","league":"Premier League","revenue_m":139.731,"wages_m":93.983,"amortisation_m":46.38},{"year":2016,"team":"Newcastle","revenue":125755000.0,"wages":66335000.0,"amortisation":28336000.0,"position_finished":"18th","league":"Premier League","revenue_m":125.755,"wages_m":66.335,"amortisation_m":28.336},{"year":2020,"team":"Wolves","revenue":132609000.0,"wages":83120000.0,"amortisation":51917000.0,"position_finished":"7th","league":"Premier League","revenue_m":132.609,"wages_m":83.12,"amortisation_m":51.917},{"year":2020,"team":"Arsenal","revenue":339968000.0,"wages":204700000.0,"amortisation":109114000.0,"position_finished":"8th","league":"Premier League","revenue_m":339.968,"wages_m":204.7,"amortisation_m":109.114},{"year":2019,"team":"Manchester City","revenue":535169000.0,"wages":276947000.0,"amortisation":126561000.0,"position_finished":"1st","league":"Premier League","revenue_m":535.169,"wages_m":276.947,"amortisation_m":126.561},{"year":2022,"team":"Arsenal","revenue":367099000.0,"wages":185581000.0,"amortisation":124567000.0,"position_finished":"5th","league":"Premier League","revenue_m":367.099,"wages_m":185.581,"amortisation_m":124.567},{"year":2022,"team":"Wolves","revenue":165659000.0,"wages":104534000.0,"amortisation":60901000.0,"position_finished":"10th","league":"Premier League","revenue_m":165.659,"wages_m":104.534,"amortisation_m":60.901},{"year":2018,"team":"Tottenham","revenue":380697000.0,"wages":147606000.0,"amortisation":67960000.0,"position_finished":"3rd","league":"Premier League","revenue_m":380.697,"wages_m":147.606,"amortisation_m":67.96},{"year":2023,"team":"Brighton","revenue":203574000.0,"wages":109446000.0,"amortisation":32763000.0,"position_finished":"6th","league":"Premier League","revenue_m":203.574,"wages_m":109.446,"amortisation_m":32.763},{"year":2022,"team":"Brighton","revenue":167429000.0,"wages":98791000.0,"amortisation":45438000.0,"position_finished":"9th","league":"Premier League","revenue_m":167.429,"wages_m":98.791,"amortisation_m":45.438},{"year":2015,"team":"Newcastle","revenue":128830000.0,"wages":65087000.0,"amortisation":20497000.0,"position_finished":"15th","league":"Premier League","revenue_m":128.83,"wages_m":65.087,"amortisation_m":20.497},{"year":2023,"team":"Wolves","revenue":168575000.0,"wages":123816000.0,"amortisation":79225000.0,"position_finished":"13th","league":"Premier League","revenue_m":168.575,"wages_m":123.816,"amortisation_m":79.225},{"year":2019,"team":"Tottenham","revenue":460695000.0,"wages":178602000.0,"amortisation":46217000.0,"position_finished":"4th","league":"Premier League","revenue_m":460.695,"wages_m":178.602,"amortisation_m":46.217},{"year":2023,"team":"Arsenal","revenue":463100000.0,"wages":204648000.0,"amortisation":139060000.0,"position_finished":"2nd","league":"Premier League","revenue_m":463.1,"wages_m":204.648,"amortisation_m":139.06},{"year":2018,"team":"Manchester City","revenue":500456000.0,"wages":225942000.0,"amortisation":134284000.0,"position_finished":"1st","league":"Premier League","revenue_m":500.456,"wages_m":225.942,"amortisation_m":134.284},{"year":2019,"team":"Leicester","revenue":178429000.0,"wages":122396000.0,"amortisation":63509000.0,"position_finished":"9th","league":"Premier League","revenue_m":178.429,"wages_m":122.396,"amortisation_m":63.509},{"year":2020,"team":"Manchester City","revenue":478359000.0,"wages":307278000.0,"amortisation":145820000.0,"position_finished":"2nd","league":"Premier League","revenue_m":478.359,"wages_m":307.278,"amortisation_m":145.82},{"year":2017,"team":"Crystal Palace","revenue":142735000.0,"wages":98724000.0,"amortisation":32653000.0,"position_finished":"14th","league":"Premier League","revenue_m":142.735,"wages_m":98.724,"amortisation_m":32.653},{"year":2016,"team":"Crystal Palace","revenue":101816000.0,"wages":71044000.0,"amortisation":18141000.0,"position_finished":"15th","league":"Premier League","revenue_m":101.816,"wages_m":71.044,"amortisation_m":18.141},{"year":2020,"team":"Tottenham","revenue":391862000.0,"wages":181280000.0,"amortisation":73675000.0,"position_finished":"6th","league":"Premier League","revenue_m":391.862,"wages_m":181.28,"amortisation_m":73.675},{"year":2021,"team":"Manchester City","revenue":569849000.0,"wages":310737000.0,"amortisation":145697000.0,"position_finished":"1st","league":"Premier League","revenue_m":569.849,"wages_m":310.737,"amortisation_m":145.697},{"year":2020,"team":"Leicester","revenue":149950000.0,"wages":128239000.0,"amortisation":77787000.0,"position_finished":"5th","league":"Premier League","revenue_m":149.95,"wages_m":128.239,"amortisation_m":77.787},{"year":2023,"team":"Manchester City","revenue":712768000.0,"wages":368213000.0,"amortisation":145448000.0,"position_finished":"1st","league":"Premier League","revenue_m":712.768,"wages_m":368.213,"amortisation_m":145.448},{"year":2018,"team":"Arsenal","revenue":385920000.0,"wages":210141000.0,"amortisation":85812000.0,"position_finished":"6th","league":"Premier League","revenue_m":385.92,"wages_m":210.141,"amortisation_m":85.812},{"year":2019,"team":"Brighton","revenue":143132000.0,"wages":88286000.0,"amortisation":33238000.0,"position_finished":"17th","league":"Premier League","revenue_m":143.132,"wages_m":88.286,"amortisation_m":33.238},{"year":2018,"team":"Brighton","revenue":139155000.0,"wages":67793000.0,"amortisation":19311000.0,"position_finished":"15th","league":"Premier League","revenue_m":139.155,"wages_m":67.793,"amortisation_m":19.311},{"year":2015,"team":"Crystal Palace","revenue":102395970.0,"wages":60154251.0,"amortisation":10715180.0,"position_finished":"10th","league":"Premier League","revenue_m":102.39597,"wages_m":60.154251,"amortisation_m":10.71518},{"year":2019,"team":"Wolves","revenue":172464000.0,"wages":80842000.0,"amortisation":37724000.0,"position_finished":"7th","league":"Premier League","revenue_m":172.464,"wages_m":80.842,"amortisation_m":37.724},{"year":2019,"team":"Arsenal","revenue":390148000.0,"wages":205210000.0,"amortisation":89678000.0,"position_finished":"5th","league":"Premier League","revenue_m":390.148,"wages_m":205.21,"amortisation_m":89.678},{"year":2022,"team":"Manchester City","revenue":613014000.0,"wages":308675000.0,"amortisation":140708000.0,"position_finished":"1st","league":"Premier League","revenue_m":613.014,"wages_m":308.675,"amortisation_m":140.708},{"year":2022,"team":"Newcastle","revenue":179986000.0,"wages":149225000.0,"amortisation":51139000.0,"position_finished":"11th","league":"Premier League","revenue_m":179.986,"wages_m":149.225,"amortisation_m":51.139},{"year":2018,"team":"Crystal Palace","revenue":150346000.0,"wages":103243000.0,"amortisation":46034000.0,"position_finished":"11th","league":"Premier League","revenue_m":150.346,"wages_m":103.243,"amortisation_m":46.034},{"year":2019,"team":"Crystal Palace","revenue":155404000.0,"wages":104878000.0,"amortisation":49852000.0,"position_finished":"12th","league":"Premier League","revenue_m":155.404,"wages_m":104.878,"amortisation_m":49.852},{"year":2023,"team":"Newcastle","revenue":250265000.0,"wages":164800000.0,"amortisation":86811000.0,"position_finished":"4th","league":"Premier League","revenue_m":250.265,"wages_m":164.8,"amortisation_m":86.811},{"year":2015,"team":"Arsenal","revenue":328532000.0,"wages":192213000.0,"amortisation":54430000.0,"position_finished":"3rd","league":"Premier League","revenue_m":328.532,"wages_m":192.213,"amortisation_m":54.43},{"year":2018,"team":"Leicester","revenue":158881000.0,"wages":97452000.0,"amortisation":48419000.0,"position_finished":"9th","league":"Premier League","revenue_m":158.881,"wages_m":97.452,"amortisation_m":48.419},{"year":2021,"team":"Leicester","revenue":226204000.0,"wages":158794000.0,"amortisation":71953000.0,"position_finished":"5th","league":"Premier League","revenue_m":226.204,"wages_m":158.794,"amortisation_m":71.953},{"year":2021,"team":"Tottenham","revenue":361872000.0,"wages":179789000.0,"amortisation":73812000.0,"position_finished":"7th","league":"Premier League","revenue_m":361.872,"wages_m":179.789,"amortisation_m":73.812},{"year":2022,"team":"Leicester","revenue":214590000.0,"wages":148403000.0,"amortisation":72325000.0,"position_finished":"8th","league":"Premier League","revenue_m":214.59,"wages_m":148.403,"amortisation_m":72.325},{"year":2022,"team":"Tottenham","revenue":444028000.0,"wages":181819000.0,"amortisation":79520000.0,"position_finished":"4th","league":"Premier League","revenue_m":444.028,"wages_m":181.819,"amortisation_m":79.52},{"year":2023,"team":"Tottenham","revenue":549633000.0,"wages":218897000.0,"amortisation":109073000.0,"position_finished":"8th","league":"Premier League","revenue_m":549.633,"wages_m":218.897,"amortisation_m":109.073},{"year":2017,"team":"Arsenal","revenue":415867000.0,"wages":199395000.0,"amortisation":77126000.0,"position_finished":"5th","league":"Premier League","revenue_m":415.867,"wages_m":199.395,"amortisation_m":77.126},{"year":2021,"team":"Newcastle","revenue":140192000.0,"wages":93951000.0,"amortisation":32277000.0,"position_finished":"12th","league":"Premier League","revenue_m":140.192,"wages_m":93.951,"amortisation_m":32.277},{"year":2020,"team":"Newcastle","revenue":152626000.0,"wages":106878000.0,"amortisation":58696000.0,"position_finished":"13th","league":"Premier League","revenue_m":152.626,"wages_m":106.878,"amortisation_m":58.696},{"year":2016,"team":"Arsenal","revenue":347393000.0,"wages":195387000.0,"amortisation":59257000.0,"position_finished":"2nd","league":"Premier League","revenue_m":347.393,"wages_m":195.387,"amortisation_m":59.257},{"year":2023,"team":"Nottingham Forest","revenue":154758000.0,"wages":129718000.0,"amortisation":40766000.0,"position_finished":"16th","league":"Premier League","revenue_m":154.758,"wages_m":129.718,"amortisation_m":40.766},{"year":2015,"team":"Manchester City","revenue":351766000.0,"wages":168718000.0,"amortisation":70291000.0,"position_finished":"2nd","league":"Premier League","revenue_m":351.766,"wages_m":168.718,"amortisation_m":70.291},{"year":2018,"team":"Newcastle","revenue":178495000.0,"wages":82557000.0,"amortisation":41336000.0,"position_finished":"10th","league":"Premier League","revenue_m":178.495,"wages_m":82.557,"amortisation_m":41.336},{"year":2022,"team":"Crystal Palace","revenue":159999000.0,"wages":101034000.0,"amortisation":34151000.0,"position_finished":"12th","league":"Premier League","revenue_m":159.999,"wages_m":101.034,"amortisation_m":34.151},{"year":2023,"team":"Crystal Palace","revenue":180066000.0,"wages":114191000.0,"amortisation":40487000.0,"position_finished":"11th","league":"Premier League","revenue_m":180.066,"wages_m":114.191,"amortisation_m":40.487},{"year":2019,"team":"Newcastle","revenue":176448000.0,"wages":96798000.0,"amortisation":38611000.0,"position_finished":"13th","league":"Premier League","revenue_m":176.448,"wages_m":96.798,"amortisation_m":38.611},{"year":2015,"team":"Tottenham","revenue":196377000.0,"wages":89752000.0,"amortisation":37202000.0,"position_finished":"5th","league":"Premier League","revenue_m":196.377,"wages_m":89.752,"amortisation_m":37.202},{"year":2015,"team":"Leicester","revenue":104437000.0,"wages":57438000.0,"amortisation":7337000.0,"position_finished":"14th","league":"Premier League","revenue_m":104.437,"wages_m":57.438,"amortisation_m":7.337},{"year":2017,"team":"Leicester","revenue":233013000.0,"wages":112555000.0,"amortisation":29701000.0,"position_finished":"12th","league":"Premier League","revenue_m":233.013,"wages_m":112.555,"amortisation_m":29.701},{"year":2016,"team":"Manchester City","revenue":391774000.0,"wages":174360000.0,"amortisation":93952000.0,"position_finished":"4th","league":"Premier League","revenue_m":391.774,"wages_m":174.36,"amortisation_m":93.952},{"year":2017,"team":"Tottenham","revenue":306321000.0,"wages":111817000.0,"amortisation":42905000.0,"position_finished":"2nd","league":"Premier League","revenue_m":306.321,"wages_m":111.817,"amortisation_m":42.905},{"year":2021,"team":"Crystal Palace","revenue":134383000.0,"wages":111375000.0,"amortisation":36454000.0,"position_finished":"14th","league":"Premier League","revenue_m":134.383,"wages_m":111.375,"amortisation_m":36.454},{"year":2020,"team":"Crystal Palace","revenue":142347000.0,"wages":115990000.0,"amortisation":43386000.0,"position_finished":"14th","league":"Premier League","revenue_m":142.347,"wages_m":115.99,"amortisation_m":43.386},{"year":2016,"team":"Tottenham","revenue":209770000.0,"wages":100042000.0,"amortisation":31785000.0,"position_finished":"3rd","league":"Premier League","revenue_m":209.77,"wages_m":100.042,"amortisation_m":31.785},{"year":2017,"team":"Manchester City","revenue":473375000.0,"wages":232840000.0,"amortisation":121742000.0,"position_finished":"3rd","league":"Premier League","revenue_m":473.375,"wages_m":232.84,"amortisation_m":121.742},{"year":2016,"team":"Leicester","revenue":128715000.0,"wages":68772000.0,"amortisation":15804000.0,"position_finished":"1st","league":"Premier League","revenue_m":128.715,"wages_m":68.772,"amortisation_m":15.804},{"year":2017,"team":"West Ham","revenue":183340000.0,"wages":83468000.0,"amortisation":45394000.0,"position_finished":"11th","league":"Premier League","revenue_m":183.34,"wages_m":83.468,"amortisation_m":45.394},{"year":2022,"team":"Southampton","revenue":150628000.0,"wages":98872000.0,"amortisation":35134000.0,"position_finished":"15th","league":"Premier League","revenue_m":150.628,"wages_m":98.872,"amortisation_m":35.134},{"year":2020,"team":"Bournemouth","revenue":95380000.0,"wages":95021000.0,"amortisation":47170000.0,"position_finished":"18th","league":"Premier League","revenue_m":95.38,"wages_m":95.021,"amortisation_m":47.17},{"year":2023,"team":"Southampton","revenue":145539000.0,"wages":89400000.0,"amortisation":52000000.0,"position_finished":"20th","league":"Premier League","revenue_m":145.539,"wages_m":89.4,"amortisation_m":52.0},{"year":2016,"team":"West Ham","revenue":142063000.0,"wages":74828000.0,"amortisation":34416000.0,"position_finished":"7th","league":"Premier League","revenue_m":142.063,"wages_m":74.828,"amortisation_m":34.416},{"year":2018,"team":"Everton","revenue":188836000.0,"wages":100707000.0,"amortisation":66929000.0,"position_finished":"8th","league":"Premier League","revenue_m":188.836,"wages_m":100.707,"amortisation_m":66.929},{"year":2018,"team":"Manchester United","revenue":571577000.0,"wages":255181000.0,"amortisation":136993000.0,"position_finished":"2nd","league":"Premier League","revenue_m":571.577,"wages_m":255.181,"amortisation_m":136.993},{"year":2021,"team":"Southampton","revenue":157245000.0,"wages":99158000.0,"amortisation":47350000.0,"position_finished":"15th","league":"Premier League","revenue_m":157.245,"wages_m":99.158,"amortisation_m":47.35},{"year":2019,"team":"Manchester United","revenue":601935000.0,"wages":324004000.0,"amortisation":125532000.0,"position_finished":"6th","league":"Premier League","revenue_m":601.935,"wages_m":324.004,"amortisation_m":125.532},{"year":2015,"team":"West Ham","revenue":120747000.0,"wages":72715000.0,"amortisation":21592000.0,"position_finished":"12th","league":"Premier League","revenue_m":120.747,"wages_m":72.715,"amortisation_m":21.592},{"year":2023,"team":"Bournemouth","revenue":140983000.0,"wages":87832000.0,"amortisation":41226000.0,"position_finished":"15th","league":"Premier League","revenue_m":140.983,"wages_m":87.832,"amortisation_m":41.226},{"year":2020,"team":"Southampton","revenue":126636000.0,"wages":100107000.0,"amortisation":56674000.0,"position_finished":"11th","league":"Premier League","revenue_m":126.636,"wages_m":100.107,"amortisation_m":56.674},{"year":2019,"team":"Everton","revenue":187664000.0,"wages":140468000.0,"amortisation":95057000.0,"position_finished":"8th","league":"Premier League","revenue_m":187.664,"wages_m":140.468,"amortisation_m":95.057},{"year":2017,"team":"Chelsea","revenue":361308000.0,"wages":195290000.0,"amortisation":89642000.0,"position_finished":"1st","league":"Premier League","revenue_m":361.308,"wages_m":195.29,"amortisation_m":89.642},{"year":2021,"team":"Everton","revenue":193143000.0,"wages":159221000.0,"amortisation":81243000.0,"position_finished":"10th","league":"Premier League","revenue_m":193.143,"wages_m":159.221,"amortisation_m":81.243},{"year":2022,"team":"Aston Villa","revenue":178399000.0,"wages":119037000.0,"amortisation":82535000.0,"position_finished":"14th","league":"Premier League","revenue_m":178.399,"wages_m":119.037,"amortisation_m":82.535},{"year":2021,"team":"Manchester United","revenue":464839000.0,"wages":276752000.0,"amortisation":120206000.0,"position_finished":"2nd","league":"Premier League","revenue_m":464.839,"wages_m":276.752,"amortisation_m":120.206},{"year":2018,"team":"Southampton","revenue":152623000.0,"wages":99557000.0,"amortisation":36706000.0,"position_finished":"17th","league":"Premier League","revenue_m":152.623,"wages_m":99.557,"amortisation_m":36.706},{"year":2016,"team":"Liverpool","revenue":301765000.0,"wages":184829000.0,"amortisation":64537000.0,"position_finished":"8th","league":"Premier League","revenue_m":301.765,"wages_m":184.829,"amortisation_m":64.537},{"year":2017,"team":"Liverpool","revenue":364246000.0,"wages":184300000.0,"amortisation":58352000.0,"position_finished":"4th","league":"Premier League","revenue_m":364.246,"wages_m":184.3,"amortisation_m":58.352},{"year":2019,"team":"Southampton","revenue":149627000.0,"wages":100474000.0,"amortisation":53304000.0,"position_finished":"16th","league":"Premier League","revenue_m":149.627,"wages_m":100.474,"amortisation_m":53.304},{"year":2020,"team":"Manchester United","revenue":487460000.0,"wages":242557000.0,"amortisation":122696000.0,"position_finished":"3rd","league":"Premier League","revenue_m":487.46,"wages_m":242.557,"amortisation_m":122.696},{"year":2023,"team":"Aston Villa","revenue":217694000.0,"wages":168892000.0,"amortisation":92519000.0,"position_finished":"7th","league":"Premier League","revenue_m":217.694,"wages_m":168.892,"amortisation_m":92.519},{"year":2020,"team":"Everton","revenue":185882000.0,"wages":144202000.0,"amortisation":99232000.0,"position_finished":"12th","league":"Premier League","revenue_m":185.882,"wages_m":144.202,"amortisation_m":99.232},{"year":2016,"team":"Chelsea","revenue":329122000.0,"wages":195846000.0,"amortisation":70877000.0,"position_finished":"10th","league":"Premier League","revenue_m":329.122,"wages_m":195.846,"amortisation_m":70.877},{"year":2022,"team":"Everton","revenue":181007000.0,"wages":141390000.0,"amortisation":68327000.0,"position_finished":"16th","league":"Premier League","revenue_m":181.007,"wages_m":141.39,"amortisation_m":68.327},{"year":2021,"team":"Aston Villa","revenue":183632000.0,"wages":121936000.0,"amortisation":56125000.0,"position_finished":"11th","league":"Premier League","revenue_m":183.632,"wages_m":121.936,"amortisation_m":56.125},{"year":2022,"team":"Manchester United","revenue":539937000.0,"wages":329694000.0,"amortisation":148838000.0,"position_finished":"6th","league":"Premier League","revenue_m":539.937,"wages_m":329.694,"amortisation_m":148.838},{"year":2018,"team":"Bournemouth","revenue":134861000.0,"wages":88608000.0,"amortisation":26750000.0,"position_finished":"12th","league":"Premier League","revenue_m":134.861,"wages_m":88.608,"amortisation_m":26.75},{"year":2015,"team":"Liverpool","revenue":297947000.0,"wages":145654000.0,"amortisation":60980000.0,"position_finished":"6th","league":"Premier League","revenue_m":297.947,"wages_m":145.654,"amortisation_m":60.98},{"year":2019,"team":"Bournemouth","revenue":131134000.0,"wages":97412000.0,"amortisation":36195000.0,"position_finished":"14th","league":"Premier League","revenue_m":131.134,"wages_m":97.412,"amortisation_m":36.195},{"year":2023,"team":"Manchester United","revenue":601313000.0,"wages":276596000.0,"amortisation":169531000.0,"position_finished":"3rd","league":"Premier League","revenue_m":601.313,"wages_m":276.596,"amortisation_m":169.531},{"year":2020,"team":"Aston Villa","revenue":112596000.0,"wages":95121000.0,"amortisation":70599000.0,"position_finished":"17th","league":"Premier League","revenue_m":112.596,"wages_m":95.121,"amortisation_m":70.599},{"year":2023,"team":"Everton","revenue":172155000.0,"wages":138394000.0,"amortisation":77621000.0,"position_finished":"17th","league":"Premier League","revenue_m":172.155,"wages_m":138.394,"amortisation_m":77.621},{"year":2015,"team":"Chelsea","revenue":314287000.0,"wages":215647000.0,"amortisation":69363000.0,"position_finished":"1st","league":"Premier League","revenue_m":314.287,"wages_m":215.647,"amortisation_m":69.363},{"year":2023,"team":"Leicester","revenue":177326000.0,"wages":171950000.0,"amortisation":76945000.0,"position_finished":"18th","league":"Premier League","revenue_m":177.326,"wages_m":171.95,"amortisation_m":76.945}];
-
-    // Populate the year dropdown with unique years in descending order (latest first)
-    var years = [...new Set(data.map(item => item.year))].sort(function(a, b) { return b - a; });
+    var rawData = [{"year":2018,"team":"Chelsea","revenue":443449000.0,"wages":216009000.0,"amortisation":123692000.0,"revenue_pct_change":22.7343429982,"wages_pct_change":10.6093501971,"amortisation_pct_change":37.9844269427,"avg_revenue":286837928.571428597,"total_revenue":4015731000.0,"avg_wages":144374000.0,"total_wages":2021236000.0,"avg_amortisation":68021714.2857142836,"total_amortisation":952304000.0},{"year":2022,"team":"West Ham","revenue":252720000.0,"wages":118709000.0,"amortisation":48825000.0,"revenue_pct_change":31.1278070649,"wages_pct_change":5.1527123268,"amortisation_pct_change":-15.4618647736,"avg_revenue":301934812.5,"total_revenue":4830957000.0,"avg_wages":176098562.5,"total_wages":2817577000.0,"avg_amortisation":79896750.0,"total_amortisation":1278348000.0},{"year":2017,"team":"Southampton","revenue":182252000.0,"wages":98859000.0,"amortisation":27394000.0,"revenue_pct_change":46.667525068,"wages_pct_change":33.0824942114,"amortisation_pct_change":-11.720537527,"avg_revenue":271606750.0,"total_revenue":3259281000.0,"avg_wages":138313750.0,"total_wages":1659765000.0,"avg_amortisation":58785250.0,"total_amortisation":705423000.0},{"year":2019,"team":"Liverpool","revenue":533022000.0,"wages":276197000.0,"amortisation":111777000.0,"revenue_pct_change":17.1247821855,"wages_pct_change":18.7065912529,"amortisation_pct_change":45.0575547971,"avg_revenue":286903437.5,"total_revenue":4590455000.0,"avg_wages":158972500.0,"total_wages":2543560000.0,"avg_amortisation":73441937.5,"total_amortisation":1175071000.0},{"year":2018,"team":"Liverpool","revenue":455089000.0,"wages":232672000.0,"amortisation":77057000.0,"revenue_pct_change":24.9400130681,"wages_pct_change":26.2463374932,"amortisation_pct_change":32.0554565396,"avg_revenue":286837928.571428597,"total_revenue":4015731000.0,"avg_wages":144374000.0,"total_wages":2021236000.0,"avg_amortisation":68021714.2857142836,"total_amortisation":952304000.0},{"year":2019,"team":"Fulham","revenue":137748000.0,"wages":81031000.0,"amortisation":42808000.0,"revenue_pct_change":null,"wages_pct_change":null,"amortisation_pct_change":null,"avg_revenue":286903437.5,"total_revenue":4590455000.0,"avg_wages":158972500.0,"total_wages":2543560000.0,"avg_amortisation":73441937.5,"total_amortisation":1175071000.0},{"year":2016,"team":"Southampton","revenue":124262000.0,"wages":74284000.0,"amortisation":31031000.0,"revenue_pct_change":9.255306242,"wages_pct_change":4.8570315085,"amortisation_pct_change":4.9105586015,"avg_revenue":203240153.8461538553,"total_revenue":2642122000.0,"avg_wages":115060230.7692307681,"total_wages":1495783000.0,"avg_amortisation":43959461.5384615362,"total_amortisation":571473000.0},{"year":2023,"team":"West Ham","revenue":236656000.0,"wages":118823000.0,"amortisation":65306000.0,"revenue_pct_change":-6.356441912,"wages_pct_change":0.0960331567,"amortisation_pct_change":33.7552483359,"avg_revenue":306817947.3684210777,"total_revenue":5829541000.0,"avg_wages":181045736.8421052694,"total_wages":3439869000.0,"avg_amortisation":86110368.4210526347,"total_amortisation":1636097000.0},{"year":2019,"team":"Chelsea","revenue":446741000.0,"wages":251135000.0,"amortisation":167637000.0,"revenue_pct_change":0.7423627069,"wages_pct_change":16.2613594804,"amortisation_pct_change":35.5277625069,"avg_revenue":286903437.5,"total_revenue":4590455000.0,"avg_wages":158972500.0,"total_wages":2543560000.0,"avg_amortisation":73441937.5,"total_amortisation":1175071000.0},{"year":2021,"team":"West Ham","revenue":192728000.0,"wages":112892000.0,"amortisation":57755000.0,"revenue_pct_change":38.1562724014,"wages_pct_change":-1.654310878,"amortisation_pct_change":-3.5100908848,"avg_revenue":270048250.0,"total_revenue":4320772000.0,"avg_wages":172793250.0,"total_wages":2764692000.0,"avg_amortisation":79808250.0,"total_amortisation":1276932000.0},{"year":2017,"team":"Bournemouth","revenue":136456000.0,"wages":62512000.0,"amortisation":19520000.0,"revenue_pct_change":55.2842105263,"wages_pct_change":20.6120125798,"amortisation_pct_change":49.1670487544,"avg_revenue":271606750.0,"total_revenue":3259281000.0,"avg_wages":138313750.0,"total_wages":1659765000.0,"avg_amortisation":58785250.0,"total_amortisation":705423000.0},{"year":2016,"team":"Bournemouth","revenue":87875000.0,"wages":51829000.0,"amortisation":13086000.0,"revenue_pct_change":null,"wages_pct_change":null,"amortisation_pct_change":null,"avg_revenue":203240153.8461538553,"total_revenue":2642122000.0,"avg_wages":115060230.7692307681,"total_wages":1495783000.0,"avg_amortisation":43959461.5384615362,"total_amortisation":571473000.0},{"year":2015,"team":"Southampton","revenue":113735437.0,"wages":70843127.0,"amortisation":29578529.0,"revenue_pct_change":null,"wages_pct_change":null,"amortisation_pct_change":null,"avg_revenue":197270783.9166666567,"total_revenue":2367249407.0,"avg_wages":113169614.8333333284,"total_wages":1358035378.0,"avg_amortisation":41754475.75,"total_amortisation":501053709.0},{"year":2020,"team":"West Ham","revenue":139500000.0,"wages":114791000.0,"amortisation":59856000.0,"revenue_pct_change":-26.8465350429,"wages_pct_change":-3.439602961,"amortisation_pct_change":4.3314566593,"avg_revenue":247233000.0,"total_revenue":3955728000.0,"avg_wages":159204187.5,"total_wages":2547267000.0,"avg_amortisation":80973375.0,"total_amortisation":1295574000.0},{"year":2022,"team":"Chelsea","revenue":481278000.0,"wages":297569000.0,"amortisation":160375000.0,"revenue_pct_change":10.6734764742,"wages_pct_change":-10.6144395548,"amortisation_pct_change":-2.1292047063,"avg_revenue":301934812.5,"total_revenue":4830957000.0,"avg_wages":176098562.5,"total_wages":2817577000.0,"avg_amortisation":79896750.0,"total_amortisation":1278348000.0},{"year":2018,"team":"West Ham","revenue":175346000.0,"wages":93768000.0,"amortisation":41021000.0,"revenue_pct_change":-4.3602050835,"wages_pct_change":12.3400584655,"amortisation_pct_change":-9.6334317311,"avg_revenue":286837928.571428597,"total_revenue":4015731000.0,"avg_wages":144374000.0,"total_wages":2021236000.0,"avg_amortisation":68021714.2857142836,"total_amortisation":952304000.0},{"year":2022,"team":"Brentford","revenue":140913000.0,"wages":68152000.0,"amortisation":22851000.0,"revenue_pct_change":null,"wages_pct_change":null,"amortisation_pct_change":null,"avg_revenue":301934812.5,"total_revenue":4830957000.0,"avg_wages":176098562.5,"total_wages":2817577000.0,"avg_amortisation":79896750.0,"total_amortisation":1278348000.0},{"year":2023,"team":"Liverpool","revenue":593836000.0,"wages":329980000.0,"amortisation":107546000.0,"revenue_pct_change":-0.0731989278,"wages_pct_change":-9.8641871442,"amortisation_pct_change":4.7043246296,"avg_revenue":306817947.3684210777,"total_revenue":5829541000.0,"avg_wages":181045736.8421052694,"total_wages":3439869000.0,"avg_amortisation":86110368.4210526347,"total_amortisation":1636097000.0},{"year":2022,"team":"Liverpool","revenue":594271000.0,"wages":366092000.0,"amortisation":102714000.0,"revenue_pct_change":21.9355103465,"wages_pct_change":31.7787824685,"amortisation_pct_change":-4.7277179509,"avg_revenue":301934812.5,"total_revenue":4830957000.0,"avg_wages":176098562.5,"total_wages":2817577000.0,"avg_amortisation":79896750.0,"total_amortisation":1278348000.0},{"year":2023,"team":"Brentford","revenue":166508000.0,"wages":98800000.0,"amortisation":30903000.0,"revenue_pct_change":18.1636896525,"wages_pct_change":44.9700669093,"amortisation_pct_change":35.2369699357,"avg_revenue":306817947.3684210777,"total_revenue":5829541000.0,"avg_wages":181045736.8421052694,"total_wages":3439869000.0,"avg_amortisation":86110368.4210526347,"total_amortisation":1636097000.0},{"year":2023,"team":"Fulham","revenue":182325000.0,"wages":121511000.0,"amortisation":45617000.0,"revenue_pct_change":57.026466054,"wages_pct_change":21.5997678305,"amortisation_pct_change":-19.1932969602,"avg_revenue":306817947.3684210777,"total_revenue":5829541000.0,"avg_wages":181045736.8421052694,"total_wages":3439869000.0,"avg_amortisation":86110368.4210526347,"total_amortisation":1636097000.0},{"year":2015,"team":"Manchester United","revenue":182623000.0,"wages":142299000.0,"amortisation":99534000.0,"revenue_pct_change":null,"wages_pct_change":null,"amortisation_pct_change":null,"avg_revenue":197270783.9166666567,"total_revenue":2367249407.0,"avg_wages":113169614.8333333284,"total_wages":1358035378.0,"avg_amortisation":41754475.75,"total_amortisation":501053709.0},{"year":2019,"team":"West Ham","revenue":190695000.0,"wages":118880000.0,"amortisation":57371000.0,"revenue_pct_change":8.7535501238,"wages_pct_change":26.780991383,"amortisation_pct_change":39.8576338948,"avg_revenue":286903437.5,"total_revenue":4590455000.0,"avg_wages":158972500.0,"total_wages":2543560000.0,"avg_amortisation":73441937.5,"total_amortisation":1175071000.0},{"year":2015,"team":"Everton","revenue":125572000.0,"wages":77515000.0,"amortisation":19534000.0,"revenue_pct_change":null,"wages_pct_change":null,"amortisation_pct_change":null,"avg_revenue":197270783.9166666567,"total_revenue":2367249407.0,"avg_wages":113169614.8333333284,"total_wages":1358035378.0,"avg_amortisation":41754475.75,"total_amortisation":501053709.0},{"year":2023,"team":"Chelsea","revenue":512467000.0,"wages":403962000.0,"amortisation":203250000.0,"revenue_pct_change":6.4804541242,"wages_pct_change":35.7540604028,"amortisation_pct_change":26.7342166797,"avg_revenue":306817947.3684210777,"total_revenue":5829541000.0,"avg_wages":181045736.8421052694,"total_wages":3439869000.0,"avg_amortisation":86110368.4210526347,"total_amortisation":1636097000.0},{"year":2021,"team":"Chelsea","revenue":434863000.0,"wages":332905000.0,"amortisation":163864000.0,"revenue_pct_change":6.7405167378,"wages_pct_change":33.5209041905,"amortisation_pct_change":28.7206799579,"avg_revenue":270048250.0,"total_revenue":4320772000.0,"avg_wages":172793250.0,"total_wages":2764692000.0,"avg_amortisation":79808250.0,"total_amortisation":1276932000.0},{"year":2017,"team":"Everton","revenue":171330000.0,"wages":92144000.0,"amortisation":37298000.0,"revenue_pct_change":40.9647773179,"wages_pct_change":24.6637984685,"amortisation_pct_change":66.5237967676,"avg_revenue":271606750.0,"total_revenue":3259281000.0,"avg_wages":138313750.0,"total_wages":1659765000.0,"avg_amortisation":58785250.0,"total_amortisation":705423000.0},{"year":2017,"team":"Manchester United","revenue":289038000.0,"wages":187861000.0,"amortisation":123696000.0,"revenue_pct_change":25.5207994059,"wages_pct_change":14.3311849945,"amortisation_pct_change":40.7988344166,"avg_revenue":271606750.0,"total_revenue":3259281000.0,"avg_wages":138313750.0,"total_wages":1659765000.0,"avg_amortisation":58785250.0,"total_amortisation":705423000.0},{"year":2021,"team":"Fulham","revenue":116111000.0,"wages":99927000.0,"amortisation":56452000.0,"revenue_pct_change":-15.7076690769,"wages_pct_change":23.3194703262,"amortisation_pct_change":31.8725471874,"avg_revenue":270048250.0,"total_revenue":4320772000.0,"avg_wages":172793250.0,"total_wages":2764692000.0,"avg_amortisation":79808250.0,"total_amortisation":1276932000.0},{"year":2020,"team":"Liverpool","revenue":489860000.0,"wages":289341000.0,"amortisation":106034000.0,"revenue_pct_change":-8.0976019752,"wages_pct_change":4.7589220737,"amortisation_pct_change":-5.1379085143,"avg_revenue":247233000.0,"total_revenue":3955728000.0,"avg_wages":159204187.5,"total_wages":2547267000.0,"avg_amortisation":80973375.0,"total_amortisation":1295574000.0},{"year":2021,"team":"Liverpool","revenue":487365000.0,"wages":277808000.0,"amortisation":107811000.0,"revenue_pct_change":-0.5093291961,"wages_pct_change":-3.9859542892,"amortisation_pct_change":1.6758775487,"avg_revenue":270048250.0,"total_revenue":4320772000.0,"avg_wages":172793250.0,"total_wages":2764692000.0,"avg_amortisation":79808250.0,"total_amortisation":1276932000.0},{"year":2016,"team":"Manchester United","revenue":230271000.0,"wages":164313000.0,"amortisation":87853000.0,"revenue_pct_change":26.0909085931,"wages_pct_change":15.4702422364,"amortisation_pct_change":-11.7356883075,"avg_revenue":203240153.8461538553,"total_revenue":2642122000.0,"avg_wages":115060230.7692307681,"total_wages":1495783000.0,"avg_amortisation":43959461.5384615362,"total_amortisation":571473000.0},{"year":2016,"team":"Everton","revenue":121541000.0,"wages":73914000.0,"amortisation":22398000.0,"revenue_pct_change":-3.2101105342,"wages_pct_change":-4.6455524737,"amortisation_pct_change":14.6616156445,"avg_revenue":203240153.8461538553,"total_revenue":2642122000.0,"avg_wages":115060230.7692307681,"total_wages":1495783000.0,"avg_amortisation":43959461.5384615362,"total_amortisation":571473000.0},{"year":2020,"team":"Chelsea","revenue":407402000.0,"wages":249328000.0,"amortisation":127302000.0,"revenue_pct_change":-8.8057733676,"wages_pct_change":-0.7195333187,"amortisation_pct_change":-24.0609173393,"avg_revenue":247233000.0,"total_revenue":3955728000.0,"avg_wages":159204187.5,"total_wages":2547267000.0,"avg_amortisation":80973375.0,"total_amortisation":1295574000.0},{"year":2021,"team":"Arsenal","revenue":324519000.0,"wages":212416000.0,"amortisation":117413000.0,"revenue_pct_change":-4.5442512236,"wages_pct_change":3.7694186615,"amortisation_pct_change":7.6058067709,"avg_revenue":270048250.0,"total_revenue":4320772000.0,"avg_wages":172793250.0,"total_wages":2764692000.0,"avg_amortisation":79808250.0,"total_amortisation":1276932000.0},{"year":2021,"team":"Wolves","revenue":194096000.0,"wages":123048000.0,"amortisation":62140000.0,"revenue_pct_change":46.3671394853,"wages_pct_change":48.0365736285,"amortisation_pct_change":19.6910453223,"avg_revenue":270048250.0,"total_revenue":4320772000.0,"avg_wages":172793250.0,"total_wages":2764692000.0,"avg_amortisation":79808250.0,"total_amortisation":1276932000.0},{"year":2020,"team":"Brighton","revenue":123291000.0,"wages":89314000.0,"amortisation":45616000.0,"revenue_pct_change":-13.8620294553,"wages_pct_change":1.1643975262,"amortisation_pct_change":37.2405078525,"avg_revenue":247233000.0,"total_revenue":3955728000.0,"avg_wages":159204187.5,"total_wages":2547267000.0,"avg_amortisation":80973375.0,"total_amortisation":1295574000.0},{"year":2021,"team":"Brighton","revenue":139731000.0,"wages":93983000.0,"amortisation":46380000.0,"revenue_pct_change":13.3343066404,"wages_pct_change":5.2276238888,"amortisation_pct_change":1.6748509295,"avg_revenue":270048250.0,"total_revenue":4320772000.0,"avg_wages":172793250.0,"total_wages":2764692000.0,"avg_amortisation":79808250.0,"total_amortisation":1276932000.0},{"year":2016,"team":"Newcastle","revenue":125755000.0,"wages":66335000.0,"amortisation":28336000.0,"revenue_pct_change":-2.3868664131,"wages_pct_change":1.9174335889,"amortisation_pct_change":38.2446211641,"avg_revenue":203240153.8461538553,"total_revenue":2642122000.0,"avg_wages":115060230.7692307681,"total_wages":1495783000.0,"avg_amortisation":43959461.5384615362,"total_amortisation":571473000.0},{"year":2020,"team":"Wolves","revenue":132609000.0,"wages":83120000.0,"amortisation":51917000.0,"revenue_pct_change":-23.1091706095,"wages_pct_change":2.8178422107,"amortisation_pct_change":37.6232637048,"avg_revenue":247233000.0,"total_revenue":3955728000.0,"avg_wages":159204187.5,"total_wages":2547267000.0,"avg_amortisation":80973375.0,"total_amortisation":1295574000.0},{"year":2020,"team":"Arsenal","revenue":339968000.0,"wages":204700000.0,"amortisation":109114000.0,"revenue_pct_change":-12.8617857839,"wages_pct_change":-0.2485259003,"amortisation_pct_change":21.6730970807,"avg_revenue":247233000.0,"total_revenue":3955728000.0,"avg_wages":159204187.5,"total_wages":2547267000.0,"avg_amortisation":80973375.0,"total_amortisation":1295574000.0},{"year":2019,"team":"Manchester City","revenue":535169000.0,"wages":276947000.0,"amortisation":126561000.0,"revenue_pct_change":6.936274118,"wages_pct_change":22.5743774951,"amortisation_pct_change":-5.7512436329,"avg_revenue":286903437.5,"total_revenue":4590455000.0,"avg_wages":158972500.0,"total_wages":2543560000.0,"avg_amortisation":73441937.5,"total_amortisation":1175071000.0},{"year":2022,"team":"Arsenal","revenue":367099000.0,"wages":185581000.0,"amortisation":124567000.0,"revenue_pct_change":13.1209574786,"wages_pct_change":-12.6332291353,"amortisation_pct_change":6.0930220674,"avg_revenue":301934812.5,"total_revenue":4830957000.0,"avg_wages":176098562.5,"total_wages":2817577000.0,"avg_amortisation":79896750.0,"total_amortisation":1278348000.0},{"year":2022,"team":"Wolves","revenue":165659000.0,"wages":104534000.0,"amortisation":60901000.0,"revenue_pct_change":-14.6509974446,"wages_pct_change":-15.0461608478,"amortisation_pct_change":-1.9938847763,"avg_revenue":301934812.5,"total_revenue":4830957000.0,"avg_wages":176098562.5,"total_wages":2817577000.0,"avg_amortisation":79896750.0,"total_amortisation":1278348000.0},{"year":2018,"team":"Tottenham","revenue":380697000.0,"wages":147606000.0,"amortisation":67960000.0,"revenue_pct_change":24.280411725,"wages_pct_change":32.0067610471,"amortisation_pct_change":58.3964572894,"avg_revenue":286837928.571428597,"total_revenue":4015731000.0,"avg_wages":144374000.0,"total_wages":2021236000.0,"avg_amortisation":68021714.2857142836,"total_amortisation":952304000.0},{"year":2023,"team":"Brighton","revenue":203574000.0,"wages":109446000.0,"amortisation":32763000.0,"revenue_pct_change":21.5882553202,"wages_pct_change":10.7853954308,"amortisation_pct_change":-27.895153836,"avg_revenue":306817947.3684210777,"total_revenue":5829541000.0,"avg_wages":181045736.8421052694,"total_wages":3439869000.0,"avg_amortisation":86110368.4210526347,"total_amortisation":1636097000.0},{"year":2022,"team":"Brighton","revenue":167429000.0,"wages":98791000.0,"amortisation":45438000.0,"revenue_pct_change":19.8223729881,"wages_pct_change":5.1158188183,"amortisation_pct_change":-2.0310478655,"avg_revenue":301934812.5,"total_revenue":4830957000.0,"avg_wages":176098562.5,"total_wages":2817577000.0,"avg_amortisation":79896750.0,"total_amortisation":1278348000.0},{"year":2015,"team":"Newcastle","revenue":128830000.0,"wages":65087000.0,"amortisation":20497000.0,"revenue_pct_change":null,"wages_pct_change":null,"amortisation_pct_change":null,"avg_revenue":197270783.9166666567,"total_revenue":2367249407.0,"avg_wages":113169614.8333333284,"total_wages":1358035378.0,"avg_amortisation":41754475.75,"total_amortisation":501053709.0},{"year":2023,"team":"Wolves","revenue":168575000.0,"wages":123816000.0,"amortisation":79225000.0,"revenue_pct_change":1.7602424257,"wages_pct_change":18.4456731781,"amortisation_pct_change":30.088175892,"avg_revenue":306817947.3684210777,"total_revenue":5829541000.0,"avg_wages":181045736.8421052694,"total_wages":3439869000.0,"avg_amortisation":86110368.4210526347,"total_amortisation":1636097000.0},{"year":2019,"team":"Tottenham","revenue":460695000.0,"wages":178602000.0,"amortisation":46217000.0,"revenue_pct_change":21.0135619666,"wages_pct_change":20.9991463762,"amortisation_pct_change":-31.9938198941,"avg_revenue":286903437.5,"total_revenue":4590455000.0,"avg_wages":158972500.0,"total_wages":2543560000.0,"avg_amortisation":73441937.5,"total_amortisation":1175071000.0},{"year":2023,"team":"Arsenal","revenue":463100000.0,"wages":204648000.0,"amortisation":139060000.0,"revenue_pct_change":26.1512562006,"wages_pct_change":10.2742198824,"amortisation_pct_change":11.6347026098,"avg_revenue":306817947.3684210777,"total_revenue":5829541000.0,"avg_wages":181045736.8421052694,"total_wages":3439869000.0,"avg_amortisation":86110368.4210526347,"total_amortisation":1636097000.0},{"year":2018,"team":"Manchester City","revenue":500456000.0,"wages":225942000.0,"amortisation":134284000.0,"revenue_pct_change":5.7208344336,"wages_pct_change":-2.9625493901,"amortisation_pct_change":10.3021143073,"avg_revenue":286837928.571428597,"total_revenue":4015731000.0,"avg_wages":144374000.0,"total_wages":2021236000.0,"avg_amortisation":68021714.2857142836,"total_amortisation":952304000.0},{"year":2019,"team":"Leicester","revenue":178429000.0,"wages":122396000.0,"amortisation":63509000.0,"revenue_pct_change":12.3035479384,"wages_pct_change":25.5961909453,"amortisation_pct_change":31.1654515789,"avg_revenue":286903437.5,"total_revenue":4590455000.0,"avg_wages":158972500.0,"total_wages":2543560000.0,"avg_amortisation":73441937.5,"total_amortisation":1175071000.0},{"year":2020,"team":"Manchester City","revenue":478359000.0,"wages":307278000.0,"amortisation":145820000.0,"revenue_pct_change":-10.6153383324,"wages_pct_change":10.9519149873,"amortisation_pct_change":15.2171680059,"avg_revenue":247233000.0,"total_revenue":3955728000.0,"avg_wages":159204187.5,"total_wages":2547267000.0,"avg_amortisation":80973375.0,"total_amortisation":1295574000.0},{"year":2017,"team":"Crystal Palace","revenue":142735000.0,"wages":98724000.0,"amortisation":32653000.0,"revenue_pct_change":40.1891647678,"wages_pct_change":38.9617701706,"amortisation_pct_change":79.9955900998,"avg_revenue":271606750.0,"total_revenue":3259281000.0,"avg_wages":138313750.0,"total_wages":1659765000.0,"avg_amortisation":58785250.0,"total_amortisation":705423000.0},{"year":2016,"team":"Crystal Palace","revenue":101816000.0,"wages":71044000.0,"amortisation":18141000.0,"revenue_pct_change":-0.566399244,"wages_pct_change":18.1030414625,"amortisation_pct_change":69.3018689373,"avg_revenue":203240153.8461538553,"total_revenue":2642122000.0,"avg_wages":115060230.7692307681,"total_wages":1495783000.0,"avg_amortisation":43959461.5384615362,"total_amortisation":571473000.0},{"year":2020,"team":"Tottenham","revenue":391862000.0,"wages":181280000.0,"amortisation":73675000.0,"revenue_pct_change":-14.9411215663,"wages_pct_change":1.4994232987,"amortisation_pct_change":59.411039228,"avg_revenue":247233000.0,"total_revenue":3955728000.0,"avg_wages":159204187.5,"total_wages":2547267000.0,"avg_amortisation":80973375.0,"total_amortisation":1295574000.0},{"year":2021,"team":"Manchester City","revenue":569849000.0,"wages":310737000.0,"amortisation":145697000.0,"revenue_pct_change":19.1258030057,"wages_pct_change":1.1256907426,"amortisation_pct_change":-0.0843505692,"avg_revenue":270048250.0,"total_revenue":4320772000.0,"avg_wages":172793250.0,"total_wages":2764692000.0,"avg_amortisation":79808250.0,"total_amortisation":1276932000.0},{"year":2020,"team":"Leicester","revenue":149950000.0,"wages":128239000.0,"amortisation":77787000.0,"revenue_pct_change":-15.96097047,"wages_pct_change":4.7738488186,"amortisation_pct_change":22.4818529657,"avg_revenue":247233000.0,"total_revenue":3955728000.0,"avg_wages":159204187.5,"total_wages":2547267000.0,"avg_amortisation":80973375.0,"total_amortisation":1295574000.0},{"year":2023,"team":"Manchester City","revenue":712768000.0,"wages":368213000.0,"amortisation":145448000.0,"revenue_pct_change":16.2727115531,"wages_pct_change":19.2882481574,"amortisation_pct_change":3.3686783978,"avg_revenue":306817947.3684210777,"total_revenue":5829541000.0,"avg_wages":181045736.8421052694,"total_wages":3439869000.0,"avg_amortisation":86110368.4210526347,"total_amortisation":1636097000.0},{"year":2018,"team":"Arsenal","revenue":385920000.0,"wages":210141000.0,"amortisation":85812000.0,"revenue_pct_change":-7.2011003518,"wages_pct_change":5.3893026405,"amortisation_pct_change":11.262090605,"avg_revenue":286837928.571428597,"total_revenue":4015731000.0,"avg_wages":144374000.0,"total_wages":2021236000.0,"avg_amortisation":68021714.2857142836,"total_amortisation":952304000.0},{"year":2019,"team":"Brighton","revenue":143132000.0,"wages":88286000.0,"amortisation":33238000.0,"revenue_pct_change":2.8579641407,"wages_pct_change":30.2287846828,"amortisation_pct_change":72.1195173735,"avg_revenue":286903437.5,"total_revenue":4590455000.0,"avg_wages":158972500.0,"total_wages":2543560000.0,"avg_amortisation":73441937.5,"total_amortisation":1175071000.0},{"year":2018,"team":"Brighton","revenue":139155000.0,"wages":67793000.0,"amortisation":19311000.0,"revenue_pct_change":null,"wages_pct_change":null,"amortisation_pct_change":null,"avg_revenue":286837928.571428597,"total_revenue":4015731000.0,"avg_wages":144374000.0,"total_wages":2021236000.0,"avg_amortisation":68021714.2857142836,"total_amortisation":952304000.0},{"year":2015,"team":"Crystal Palace","revenue":102395970.0,"wages":60154251.0,"amortisation":10715180.0,"revenue_pct_change":null,"wages_pct_change":null,"amortisation_pct_change":null,"avg_revenue":197270783.9166666567,"total_revenue":2367249407.0,"avg_wages":113169614.8333333284,"total_wages":1358035378.0,"avg_amortisation":41754475.75,"total_amortisation":501053709.0},{"year":2019,"team":"Wolves","revenue":172464000.0,"wages":80842000.0,"amortisation":37724000.0,"revenue_pct_change":null,"wages_pct_change":null,"amortisation_pct_change":null,"avg_revenue":286903437.5,"total_revenue":4590455000.0,"avg_wages":158972500.0,"total_wages":2543560000.0,"avg_amortisation":73441937.5,"total_amortisation":1175071000.0},{"year":2019,"team":"Arsenal","revenue":390148000.0,"wages":205210000.0,"amortisation":89678000.0,"revenue_pct_change":1.0955638474,"wages_pct_change":-2.3465197177,"amortisation_pct_change":4.5051974083,"avg_revenue":286903437.5,"total_revenue":4590455000.0,"avg_wages":158972500.0,"total_wages":2543560000.0,"avg_amortisation":73441937.5,"total_amortisation":1175071000.0},{"year":2022,"team":"Manchester City","revenue":613014000.0,"wages":308675000.0,"amortisation":140708000.0,"revenue_pct_change":7.5748136787,"wages_pct_change":-0.6635836737,"amortisation_pct_change":-3.4242297371,"avg_revenue":301934812.5,"total_revenue":4830957000.0,"avg_wages":176098562.5,"total_wages":2817577000.0,"avg_amortisation":79896750.0,"total_amortisation":1278348000.0},{"year":2022,"team":"Newcastle","revenue":179986000.0,"wages":149225000.0,"amortisation":51139000.0,"revenue_pct_change":28.3853572244,"wages_pct_change":58.8327958191,"amortisation_pct_change":58.4378969545,"avg_revenue":301934812.5,"total_revenue":4830957000.0,"avg_wages":176098562.5,"total_wages":2817577000.0,"avg_amortisation":79896750.0,"total_amortisation":1278348000.0},{"year":2018,"team":"Crystal Palace","revenue":150346000.0,"wages":103243000.0,"amortisation":46034000.0,"revenue_pct_change":5.3322590815,"wages_pct_change":4.5774077225,"amortisation_pct_change":40.9793893364,"avg_revenue":286837928.571428597,"total_revenue":4015731000.0,"avg_wages":144374000.0,"total_wages":2021236000.0,"avg_amortisation":68021714.2857142836,"total_amortisation":952304000.0},{"year":2019,"team":"Crystal Palace","revenue":155404000.0,"wages":104878000.0,"amortisation":49852000.0,"revenue_pct_change":3.3642398201,"wages_pct_change":1.5836424746,"amortisation_pct_change":8.2938697484,"avg_revenue":286903437.5,"total_revenue":4590455000.0,"avg_wages":158972500.0,"total_wages":2543560000.0,"avg_amortisation":73441937.5,"total_amortisation":1175071000.0},{"year":2023,"team":"Newcastle","revenue":250265000.0,"wages":164800000.0,"amortisation":86811000.0,"revenue_pct_change":39.046925872,"wages_pct_change":10.4372591724,"amortisation_pct_change":69.754981521,"avg_revenue":306817947.3684210777,"total_revenue":5829541000.0,"avg_wages":181045736.8421052694,"total_wages":3439869000.0,"avg_amortisation":86110368.4210526347,"total_amortisation":1636097000.0},{"year":2015,"team":"Arsenal","revenue":328532000.0,"wages":192213000.0,"amortisation":54430000.0,"revenue_pct_change":null,"wages_pct_change":null,"amortisation_pct_change":null,"avg_revenue":197270783.9166666567,"total_revenue":2367249407.0,"avg_wages":113169614.8333333284,"total_wages":1358035378.0,"avg_amortisation":41754475.75,"total_amortisation":501053709.0},{"year":2018,"team":"Leicester","revenue":158881000.0,"wages":97452000.0,"amortisation":48419000.0,"revenue_pct_change":-31.814533953,"wages_pct_change":-13.418328817,"amortisation_pct_change":63.0214470893,"avg_revenue":286837928.571428597,"total_revenue":4015731000.0,"avg_wages":144374000.0,"total_wages":2021236000.0,"avg_amortisation":68021714.2857142836,"total_amortisation":952304000.0},{"year":2021,"team":"Leicester","revenue":226204000.0,"wages":158794000.0,"amortisation":71953000.0,"revenue_pct_change":50.8529509837,"wages_pct_change":23.826605011,"amortisation_pct_change":-7.499967861,"avg_revenue":270048250.0,"total_revenue":4320772000.0,"avg_wages":172793250.0,"total_wages":2764692000.0,"avg_amortisation":79808250.0,"total_amortisation":1276932000.0},{"year":2021,"team":"Tottenham","revenue":361872000.0,"wages":179789000.0,"amortisation":73812000.0,"revenue_pct_change":-7.6532044444,"wages_pct_change":-0.8224845543,"amortisation_pct_change":0.1859518154,"avg_revenue":270048250.0,"total_revenue":4320772000.0,"avg_wages":172793250.0,"total_wages":2764692000.0,"avg_amortisation":79808250.0,"total_amortisation":1276932000.0},{"year":2022,"team":"Leicester","revenue":214590000.0,"wages":148403000.0,"amortisation":72325000.0,"revenue_pct_change":-5.134303549,"wages_pct_change":-6.5436981246,"amortisation_pct_change":0.5170041555,"avg_revenue":301934812.5,"total_revenue":4830957000.0,"avg_wages":176098562.5,"total_wages":2817577000.0,"avg_amortisation":79896750.0,"total_amortisation":1278348000.0},{"year":2022,"team":"Tottenham","revenue":444028000.0,"wages":181819000.0,"amortisation":79520000.0,"revenue_pct_change":22.7030552239,"wages_pct_change":1.1291013355,"amortisation_pct_change":7.7331599198,"avg_revenue":301934812.5,"total_revenue":4830957000.0,"avg_wages":176098562.5,"total_wages":2817577000.0,"avg_amortisation":79896750.0,"total_amortisation":1278348000.0},{"year":2023,"team":"Tottenham","revenue":549633000.0,"wages":218897000.0,"amortisation":109073000.0,"revenue_pct_change":23.7834100552,"wages_pct_change":20.3928082324,"amortisation_pct_change":37.1642354125,"avg_revenue":306817947.3684210777,"total_revenue":5829541000.0,"avg_wages":181045736.8421052694,"total_wages":3439869000.0,"avg_amortisation":86110368.4210526347,"total_amortisation":1636097000.0},{"year":2017,"team":"Arsenal","revenue":415867000.0,"wages":199395000.0,"amortisation":77126000.0,"revenue_pct_change":19.7108174316,"wages_pct_change":2.051313547,"amortisation_pct_change":30.1550871627,"avg_revenue":271606750.0,"total_revenue":3259281000.0,"avg_wages":138313750.0,"total_wages":1659765000.0,"avg_amortisation":58785250.0,"total_amortisation":705423000.0},{"year":2021,"team":"Newcastle","revenue":140192000.0,"wages":93951000.0,"amortisation":32277000.0,"revenue_pct_change":-8.1467115695,"wages_pct_change":-12.0950990849,"amortisation_pct_change":-45.0098814229,"avg_revenue":270048250.0,"total_revenue":4320772000.0,"avg_wages":172793250.0,"total_wages":2764692000.0,"avg_amortisation":79808250.0,"total_amortisation":1276932000.0},{"year":2020,"team":"Newcastle","revenue":152626000.0,"wages":106878000.0,"amortisation":58696000.0,"revenue_pct_change":-13.5008614436,"wages_pct_change":10.4134382942,"amortisation_pct_change":52.0188547305,"avg_revenue":247233000.0,"total_revenue":3955728000.0,"avg_wages":159204187.5,"total_wages":2547267000.0,"avg_amortisation":80973375.0,"total_amortisation":1295574000.0},{"year":2016,"team":"Arsenal","revenue":347393000.0,"wages":195387000.0,"amortisation":59257000.0,"revenue_pct_change":5.740993267,"wages_pct_change":1.6512930967,"amortisation_pct_change":8.868271174,"avg_revenue":203240153.8461538553,"total_revenue":2642122000.0,"avg_wages":115060230.7692307681,"total_wages":1495783000.0,"avg_amortisation":43959461.5384615362,"total_amortisation":571473000.0},{"year":2023,"team":"Nottingham Forest","revenue":154758000.0,"wages":129718000.0,"amortisation":40766000.0,"revenue_pct_change":null,"wages_pct_change":null,"amortisation_pct_change":null,"avg_revenue":306817947.3684210777,"total_revenue":5829541000.0,"avg_wages":181045736.8421052694,"total_wages":3439869000.0,"avg_amortisation":86110368.4210526347,"total_amortisation":1636097000.0},{"year":2015,"team":"Manchester City","revenue":351766000.0,"wages":168718000.0,"amortisation":70291000.0,"revenue_pct_change":null,"wages_pct_change":null,"amortisation_pct_change":null,"avg_revenue":197270783.9166666567,"total_revenue":2367249407.0,"avg_wages":113169614.8333333284,"total_wages":1358035378.0,"avg_amortisation":41754475.75,"total_amortisation":501053709.0},{"year":2018,"team":"Newcastle","revenue":178495000.0,"wages":82557000.0,"amortisation":41336000.0,"revenue_pct_change":41.9386903105,"wages_pct_change":24.4546619432,"amortisation_pct_change":45.8780350085,"avg_revenue":286837928.571428597,"total_revenue":4015731000.0,"avg_wages":144374000.0,"total_wages":2021236000.0,"avg_amortisation":68021714.2857142836,"total_amortisation":952304000.0},{"year":2022,"team":"Crystal Palace","revenue":159999000.0,"wages":101034000.0,"amortisation":34151000.0,"revenue_pct_change":19.0619349174,"wages_pct_change":-9.2848484848,"amortisation_pct_change":-6.317550886,"avg_revenue":301934812.5,"total_revenue":4830957000.0,"avg_wages":176098562.5,"total_wages":2817577000.0,"avg_amortisation":79896750.0,"total_amortisation":1278348000.0},{"year":2023,"team":"Crystal Palace","revenue":180066000.0,"wages":114191000.0,"amortisation":40487000.0,"revenue_pct_change":12.5419533872,"wages_pct_change":13.0223489122,"amortisation_pct_change":18.5528974261,"avg_revenue":306817947.3684210777,"total_revenue":5829541000.0,"avg_wages":181045736.8421052694,"total_wages":3439869000.0,"avg_amortisation":86110368.4210526347,"total_amortisation":1636097000.0},{"year":2019,"team":"Newcastle","revenue":176448000.0,"wages":96798000.0,"amortisation":38611000.0,"revenue_pct_change":-1.146810835,"wages_pct_change":17.249900069,"amortisation_pct_change":-6.5923166247,"avg_revenue":286903437.5,"total_revenue":4590455000.0,"avg_wages":158972500.0,"total_wages":2543560000.0,"avg_amortisation":73441937.5,"total_amortisation":1175071000.0},{"year":2015,"team":"Tottenham","revenue":196377000.0,"wages":89752000.0,"amortisation":37202000.0,"revenue_pct_change":null,"wages_pct_change":null,"amortisation_pct_change":null,"avg_revenue":197270783.9166666567,"total_revenue":2367249407.0,"avg_wages":113169614.8333333284,"total_wages":1358035378.0,"avg_amortisation":41754475.75,"total_amortisation":501053709.0},{"year":2015,"team":"Leicester","revenue":104437000.0,"wages":57438000.0,"amortisation":7337000.0,"revenue_pct_change":null,"wages_pct_change":null,"amortisation_pct_change":null,"avg_revenue":197270783.9166666567,"total_revenue":2367249407.0,"avg_wages":113169614.8333333284,"total_wages":1358035378.0,"avg_amortisation":41754475.75,"total_amortisation":501053709.0},{"year":2017,"team":"Leicester","revenue":233013000.0,"wages":112555000.0,"amortisation":29701000.0,"revenue_pct_change":81.0301829624,"wages_pct_change":63.6639911592,"amortisation_pct_change":87.9334345735,"avg_revenue":271606750.0,"total_revenue":3259281000.0,"avg_wages":138313750.0,"total_wages":1659765000.0,"avg_amortisation":58785250.0,"total_amortisation":705423000.0},{"year":2016,"team":"Manchester City","revenue":391774000.0,"wages":174360000.0,"amortisation":93952000.0,"revenue_pct_change":11.3734698635,"wages_pct_change":3.3440415368,"amortisation_pct_change":33.6614929365,"avg_revenue":203240153.8461538553,"total_revenue":2642122000.0,"avg_wages":115060230.7692307681,"total_wages":1495783000.0,"avg_amortisation":43959461.5384615362,"total_amortisation":571473000.0},{"year":2017,"team":"Tottenham","revenue":306321000.0,"wages":111817000.0,"amortisation":42905000.0,"revenue_pct_change":46.0270772751,"wages_pct_change":11.7700565762,"amortisation_pct_change":34.985055844,"avg_revenue":271606750.0,"total_revenue":3259281000.0,"avg_wages":138313750.0,"total_wages":1659765000.0,"avg_amortisation":58785250.0,"total_amortisation":705423000.0},{"year":2021,"team":"Crystal Palace","revenue":134383000.0,"wages":111375000.0,"amortisation":36454000.0,"revenue_pct_change":-5.5947789557,"wages_pct_change":-3.9787912751,"amortisation_pct_change":-15.977504264,"avg_revenue":270048250.0,"total_revenue":4320772000.0,"avg_wages":172793250.0,"total_wages":2764692000.0,"avg_amortisation":79808250.0,"total_amortisation":1276932000.0},{"year":2020,"team":"Crystal Palace","revenue":142347000.0,"wages":115990000.0,"amortisation":43386000.0,"revenue_pct_change":-8.4019716352,"wages_pct_change":10.5951677187,"amortisation_pct_change":-12.9703923614,"avg_revenue":247233000.0,"total_revenue":3955728000.0,"avg_wages":159204187.5,"total_wages":2547267000.0,"avg_amortisation":80973375.0,"total_amortisation":1295574000.0},{"year":2016,"team":"Tottenham","revenue":209770000.0,"wages":100042000.0,"amortisation":31785000.0,"revenue_pct_change":6.8200451173,"wages_pct_change":11.4649255727,"amortisation_pct_change":-14.5610451051,"avg_revenue":203240153.8461538553,"total_revenue":2642122000.0,"avg_wages":115060230.7692307681,"total_wages":1495783000.0,"avg_amortisation":43959461.5384615362,"total_amortisation":571473000.0},{"year":2017,"team":"Manchester City","revenue":473375000.0,"wages":232840000.0,"amortisation":121742000.0,"revenue_pct_change":20.8285899524,"wages_pct_change":33.539802707,"amortisation_pct_change":29.5789339237,"avg_revenue":271606750.0,"total_revenue":3259281000.0,"avg_wages":138313750.0,"total_wages":1659765000.0,"avg_amortisation":58785250.0,"total_amortisation":705423000.0},{"year":2016,"team":"Leicester","revenue":128715000.0,"wages":68772000.0,"amortisation":15804000.0,"revenue_pct_change":23.246550552,"wages_pct_change":19.732581218,"amortisation_pct_change":115.401390214,"avg_revenue":203240153.8461538553,"total_revenue":2642122000.0,"avg_wages":115060230.7692307681,"total_wages":1495783000.0,"avg_amortisation":43959461.5384615362,"total_amortisation":571473000.0},{"year":2017,"team":"West Ham","revenue":183340000.0,"wages":83468000.0,"amortisation":45394000.0,"revenue_pct_change":29.0554190746,"wages_pct_change":11.5464799273,"amortisation_pct_change":31.8979544398,"avg_revenue":271606750.0,"total_revenue":3259281000.0,"avg_wages":138313750.0,"total_wages":1659765000.0,"avg_amortisation":58785250.0,"total_amortisation":705423000.0},{"year":2022,"team":"Southampton","revenue":150628000.0,"wages":98872000.0,"amortisation":35134000.0,"revenue_pct_change":-4.2080829279,"wages_pct_change":-0.2884285685,"amortisation_pct_change":-25.7993664203,"avg_revenue":301934812.5,"total_revenue":4830957000.0,"avg_wages":176098562.5,"total_wages":2817577000.0,"avg_amortisation":79896750.0,"total_amortisation":1278348000.0},{"year":2020,"team":"Bournemouth","revenue":95380000.0,"wages":95021000.0,"amortisation":47170000.0,"revenue_pct_change":-27.265240136,"wages_pct_change":-2.4545230567,"amortisation_pct_change":30.3218676613,"avg_revenue":247233000.0,"total_revenue":3955728000.0,"avg_wages":159204187.5,"total_wages":2547267000.0,"avg_amortisation":80973375.0,"total_amortisation":1295574000.0},{"year":2023,"team":"Southampton","revenue":145539000.0,"wages":89400000.0,"amortisation":52000000.0,"revenue_pct_change":-3.3785219216,"wages_pct_change":-9.5800631119,"amortisation_pct_change":48.0047816929,"avg_revenue":306817947.3684210777,"total_revenue":5829541000.0,"avg_wages":181045736.8421052694,"total_wages":3439869000.0,"avg_amortisation":86110368.4210526347,"total_amortisation":1636097000.0},{"year":2016,"team":"West Ham","revenue":142063000.0,"wages":74828000.0,"amortisation":34416000.0,"revenue_pct_change":17.6534406652,"wages_pct_change":2.9058653648,"amortisation_pct_change":59.3923675435,"avg_revenue":203240153.8461538553,"total_revenue":2642122000.0,"avg_wages":115060230.7692307681,"total_wages":1495783000.0,"avg_amortisation":43959461.5384615362,"total_amortisation":571473000.0},{"year":2018,"team":"Everton","revenue":188836000.0,"wages":100707000.0,"amortisation":66929000.0,"revenue_pct_change":10.2177085157,"wages_pct_change":9.2930630318,"amortisation_pct_change":79.4439380128,"avg_revenue":286837928.571428597,"total_revenue":4015731000.0,"avg_wages":144374000.0,"total_wages":2021236000.0,"avg_amortisation":68021714.2857142836,"total_amortisation":952304000.0},{"year":2018,"team":"Manchester United","revenue":571577000.0,"wages":255181000.0,"amortisation":136993000.0,"revenue_pct_change":97.7515067223,"wages_pct_change":35.8350056691,"amortisation_pct_change":10.7497413013,"avg_revenue":286837928.571428597,"total_revenue":4015731000.0,"avg_wages":144374000.0,"total_wages":2021236000.0,"avg_amortisation":68021714.2857142836,"total_amortisation":952304000.0},{"year":2021,"team":"Southampton","revenue":157245000.0,"wages":99158000.0,"amortisation":47350000.0,"revenue_pct_change":24.1708518905,"wages_pct_change":-0.9479856553,"amortisation_pct_change":-16.4519885662,"avg_revenue":270048250.0,"total_revenue":4320772000.0,"avg_wages":172793250.0,"total_wages":2764692000.0,"avg_amortisation":79808250.0,"total_amortisation":1276932000.0},{"year":2019,"team":"Manchester United","revenue":601935000.0,"wages":324004000.0,"amortisation":125532000.0,"revenue_pct_change":5.3112703975,"wages_pct_change":26.9702681626,"amortisation_pct_change":-8.3661208967,"avg_revenue":286903437.5,"total_revenue":4590455000.0,"avg_wages":158972500.0,"total_wages":2543560000.0,"avg_amortisation":73441937.5,"total_amortisation":1175071000.0},{"year":2015,"team":"West Ham","revenue":120747000.0,"wages":72715000.0,"amortisation":21592000.0,"revenue_pct_change":null,"wages_pct_change":null,"amortisation_pct_change":null,"avg_revenue":197270783.9166666567,"total_revenue":2367249407.0,"avg_wages":113169614.8333333284,"total_wages":1358035378.0,"avg_amortisation":41754475.75,"total_amortisation":501053709.0},{"year":2023,"team":"Bournemouth","revenue":140983000.0,"wages":87832000.0,"amortisation":41226000.0,"revenue_pct_change":47.8119102537,"wages_pct_change":-7.565696004,"amortisation_pct_change":-12.6012295951,"avg_revenue":306817947.3684210777,"total_revenue":5829541000.0,"avg_wages":181045736.8421052694,"total_wages":3439869000.0,"avg_amortisation":86110368.4210526347,"total_amortisation":1636097000.0},{"year":2020,"team":"Southampton","revenue":126636000.0,"wages":100107000.0,"amortisation":56674000.0,"revenue_pct_change":-15.3655423152,"wages_pct_change":-0.3652686267,"amortisation_pct_change":6.322227225,"avg_revenue":247233000.0,"total_revenue":3955728000.0,"avg_wages":159204187.5,"total_wages":2547267000.0,"avg_amortisation":80973375.0,"total_amortisation":1295574000.0},{"year":2019,"team":"Everton","revenue":187664000.0,"wages":140468000.0,"amortisation":95057000.0,"revenue_pct_change":-0.6206443687,"wages_pct_change":39.481863227,"amortisation_pct_change":42.0266252297,"avg_revenue":286903437.5,"total_revenue":4590455000.0,"avg_wages":158972500.0,"total_wages":2543560000.0,"avg_amortisation":73441937.5,"total_amortisation":1175071000.0},{"year":2017,"team":"Chelsea","revenue":361308000.0,"wages":195290000.0,"amortisation":89642000.0,"revenue_pct_change":9.7793523374,"wages_pct_change":-0.2838965309,"amortisation_pct_change":26.4754433737,"avg_revenue":271606750.0,"total_revenue":3259281000.0,"avg_wages":138313750.0,"total_wages":1659765000.0,"avg_amortisation":58785250.0,"total_amortisation":705423000.0},{"year":2021,"team":"Everton","revenue":193143000.0,"wages":159221000.0,"amortisation":81243000.0,"revenue_pct_change":3.9062415941,"wages_pct_change":10.4152508287,"amortisation_pct_change":-18.1282247662,"avg_revenue":270048250.0,"total_revenue":4320772000.0,"avg_wages":172793250.0,"total_wages":2764692000.0,"avg_amortisation":79808250.0,"total_amortisation":1276932000.0},{"year":2022,"team":"Aston Villa","revenue":178399000.0,"wages":119037000.0,"amortisation":82535000.0,"revenue_pct_change":-2.8497211815,"wages_pct_change":-2.3774767091,"amortisation_pct_change":47.0556792873,"avg_revenue":301934812.5,"total_revenue":4830957000.0,"avg_wages":176098562.5,"total_wages":2817577000.0,"avg_amortisation":79896750.0,"total_amortisation":1278348000.0},{"year":2021,"team":"Manchester United","revenue":464839000.0,"wages":276752000.0,"amortisation":120206000.0,"revenue_pct_change":-4.6405858942,"wages_pct_change":14.0977172376,"amortisation_pct_change":-2.0294060116,"avg_revenue":270048250.0,"total_revenue":4320772000.0,"avg_wages":172793250.0,"total_wages":2764692000.0,"avg_amortisation":79808250.0,"total_amortisation":1276932000.0},{"year":2018,"team":"Southampton","revenue":152623000.0,"wages":99557000.0,"amortisation":36706000.0,"revenue_pct_change":-16.2571604152,"wages_pct_change":0.7060561001,"amortisation_pct_change":33.9928451486,"avg_revenue":286837928.571428597,"total_revenue":4015731000.0,"avg_wages":144374000.0,"total_wages":2021236000.0,"avg_amortisation":68021714.2857142836,"total_amortisation":952304000.0},{"year":2016,"team":"Liverpool","revenue":301765000.0,"wages":184829000.0,"amortisation":64537000.0,"revenue_pct_change":1.2814359601,"wages_pct_change":26.895931454,"amortisation_pct_change":5.8330600197,"avg_revenue":203240153.8461538553,"total_revenue":2642122000.0,"avg_wages":115060230.7692307681,"total_wages":1495783000.0,"avg_amortisation":43959461.5384615362,"total_amortisation":571473000.0},{"year":2017,"team":"Liverpool","revenue":364246000.0,"wages":184300000.0,"amortisation":58352000.0,"revenue_pct_change":20.7051844979,"wages_pct_change":-0.2862104973,"amortisation_pct_change":-9.5836496893,"avg_revenue":271606750.0,"total_revenue":3259281000.0,"avg_wages":138313750.0,"total_wages":1659765000.0,"avg_amortisation":58785250.0,"total_amortisation":705423000.0},{"year":2019,"team":"Southampton","revenue":149627000.0,"wages":100474000.0,"amortisation":53304000.0,"revenue_pct_change":-1.9630068862,"wages_pct_change":0.9210803861,"amortisation_pct_change":45.2187653245,"avg_revenue":286903437.5,"total_revenue":4590455000.0,"avg_wages":158972500.0,"total_wages":2543560000.0,"avg_amortisation":73441937.5,"total_amortisation":1175071000.0},{"year":2020,"team":"Manchester United","revenue":487460000.0,"wages":242557000.0,"amortisation":122696000.0,"revenue_pct_change":-19.0178341515,"wages_pct_change":-25.1376526216,"amortisation_pct_change":-2.259184909,"avg_revenue":247233000.0,"total_revenue":3955728000.0,"avg_wages":159204187.5,"total_wages":2547267000.0,"avg_amortisation":80973375.0,"total_amortisation":1295574000.0},{"year":2023,"team":"Aston Villa","revenue":217694000.0,"wages":168892000.0,"amortisation":92519000.0,"revenue_pct_change":22.0264687582,"wages_pct_change":41.8819358687,"amortisation_pct_change":12.0966862543,"avg_revenue":306817947.3684210777,"total_revenue":5829541000.0,"avg_wages":181045736.8421052694,"total_wages":3439869000.0,"avg_amortisation":86110368.4210526347,"total_amortisation":1636097000.0},{"year":2020,"team":"Everton","revenue":185882000.0,"wages":144202000.0,"amortisation":99232000.0,"revenue_pct_change":-0.9495694433,"wages_pct_change":2.6582566848,"amortisation_pct_change":4.3921015812,"avg_revenue":247233000.0,"total_revenue":3955728000.0,"avg_wages":159204187.5,"total_wages":2547267000.0,"avg_amortisation":80973375.0,"total_amortisation":1295574000.0},{"year":2016,"team":"Chelsea","revenue":329122000.0,"wages":195846000.0,"amortisation":70877000.0,"revenue_pct_change":4.7202079628,"wages_pct_change":-9.1821356198,"amortisation_pct_change":2.1827198939,"avg_revenue":203240153.8461538553,"total_revenue":2642122000.0,"avg_wages":115060230.7692307681,"total_wages":1495783000.0,"avg_amortisation":43959461.5384615362,"total_amortisation":571473000.0},{"year":2022,"team":"Everton","revenue":181007000.0,"wages":141390000.0,"amortisation":68327000.0,"revenue_pct_change":-6.2834273052,"wages_pct_change":-11.1988996426,"amortisation_pct_change":-15.8979850572,"avg_revenue":301934812.5,"total_revenue":4830957000.0,"avg_wages":176098562.5,"total_wages":2817577000.0,"avg_amortisation":79896750.0,"total_amortisation":1278348000.0},{"year":2021,"team":"Aston Villa","revenue":183632000.0,"wages":121936000.0,"amortisation":56125000.0,"revenue_pct_change":63.0892749298,"wages_pct_change":28.1904101092,"amortisation_pct_change":-20.501706823,"avg_revenue":270048250.0,"total_revenue":4320772000.0,"avg_wages":172793250.0,"total_wages":2764692000.0,"avg_amortisation":79808250.0,"total_amortisation":1276932000.0},{"year":2022,"team":"Manchester United","revenue":539937000.0,"wages":329694000.0,"amortisation":148838000.0,"revenue_pct_change":16.1557012213,"wages_pct_change":19.1297623865,"amortisation_pct_change":23.8191105269,"avg_revenue":301934812.5,"total_revenue":4830957000.0,"avg_wages":176098562.5,"total_wages":2817577000.0,"avg_amortisation":79896750.0,"total_amortisation":1278348000.0},{"year":2018,"team":"Bournemouth","revenue":134861000.0,"wages":88608000.0,"amortisation":26750000.0,"revenue_pct_change":-1.1688749487,"wages_pct_change":41.7455848477,"amortisation_pct_change":37.0389344262,"avg_revenue":286837928.571428597,"total_revenue":4015731000.0,"avg_wages":144374000.0,"total_wages":2021236000.0,"avg_amortisation":68021714.2857142836,"total_amortisation":952304000.0},{"year":2015,"team":"Liverpool","revenue":297947000.0,"wages":145654000.0,"amortisation":60980000.0,"revenue_pct_change":null,"wages_pct_change":null,"amortisation_pct_change":null,"avg_revenue":197270783.9166666567,"total_revenue":2367249407.0,"avg_wages":113169614.8333333284,"total_wages":1358035378.0,"avg_amortisation":41754475.75,"total_amortisation":501053709.0},{"year":2019,"team":"Bournemouth","revenue":131134000.0,"wages":97412000.0,"amortisation":36195000.0,"revenue_pct_change":-2.763586211,"wages_pct_change":9.9358974359,"amortisation_pct_change":35.308411215,"avg_revenue":286903437.5,"total_revenue":4590455000.0,"avg_wages":158972500.0,"total_wages":2543560000.0,"avg_amortisation":73441937.5,"total_amortisation":1175071000.0},{"year":2023,"team":"Manchester United","revenue":601313000.0,"wages":276596000.0,"amortisation":169531000.0,"revenue_pct_change":11.3672521053,"wages_pct_change":-16.1052369773,"amortisation_pct_change":13.9030355151,"avg_revenue":306817947.3684210777,"total_revenue":5829541000.0,"avg_wages":181045736.8421052694,"total_wages":3439869000.0,"avg_amortisation":86110368.4210526347,"total_amortisation":1636097000.0},{"year":2020,"team":"Aston Villa","revenue":112596000.0,"wages":95121000.0,"amortisation":70599000.0,"revenue_pct_change":null,"wages_pct_change":null,"amortisation_pct_change":null,"avg_revenue":247233000.0,"total_revenue":3955728000.0,"avg_wages":159204187.5,"total_wages":2547267000.0,"avg_amortisation":80973375.0,"total_amortisation":1295574000.0},{"year":2023,"team":"Everton","revenue":172155000.0,"wages":138394000.0,"amortisation":77621000.0,"revenue_pct_change":-4.8904186026,"wages_pct_change":-2.118961737,"amortisation_pct_change":13.6022363048,"avg_revenue":306817947.3684210777,"total_revenue":5829541000.0,"avg_wages":181045736.8421052694,"total_wages":3439869000.0,"avg_amortisation":86110368.4210526347,"total_amortisation":1636097000.0},{"year":2015,"team":"Chelsea","revenue":314287000.0,"wages":215647000.0,"amortisation":69363000.0,"revenue_pct_change":null,"wages_pct_change":null,"amortisation_pct_change":null,"avg_revenue":197270783.9166666567,"total_revenue":2367249407.0,"avg_wages":113169614.8333333284,"total_wages":1358035378.0,"avg_amortisation":41754475.75,"total_amortisation":501053709.0},{"year":2023,"team":"Leicester","revenue":177326000.0,"wages":171950000.0,"amortisation":76945000.0,"revenue_pct_change":-17.3652080712,"wages_pct_change":15.8669299138,"amortisation_pct_change":6.3878326996,"avg_revenue":306817947.3684210777,"total_revenue":5829541000.0,"avg_wages":181045736.8421052694,"total_wages":3439869000.0,"avg_amortisation":86110368.4210526347,"total_amortisation":1636097000.0}];
+    
+    // Process data to ensure consistent types
+    var data = rawData.map(function(item) {
+      return {
+        year: parseInt(item.year),
+        team: item.team,
+        revenue: parseFloat(item.revenue || 0),
+        wages: parseFloat(item.wages || 0),
+        amortisation: parseFloat(item.amortisation || 0),
+        revenue_pct_change: parseFloat(item.revenue_pct_change || 0),
+        wages_pct_change: parseFloat(item.wages_pct_change || 0),
+        amortisation_pct_change: parseFloat(item.amortisation_pct_change || 0),
+        avg_revenue: parseFloat(item.avg_revenue || 0),
+        avg_wages: parseFloat(item.avg_wages || 0),
+        avg_amortisation: parseFloat(item.avg_amortisation || 0),
+        total_revenue: parseFloat(item.total_revenue || 0),
+        total_wages: parseFloat(item.total_wages || 0),
+        total_amortisation: parseFloat(item.total_amortisation || 0)
+      };
+    });
+    
+    // Debug function
+    function showDebugInfo() {
+      var debugDiv = document.getElementById('debugInfo');
+      debugDiv.style.display = debugDiv.style.display === 'none' ? 'block' : 'none';
+      
+      if (debugDiv.style.display === 'block') {
+        var yearSample = {};
+        var years = [...new Set(data.map(function(item) { return item.year; }))].sort();
+        
+        years.forEach(function(y) {
+          yearSample[y] = data.filter(function(item) { return item.year === y; }).length;
+        });
+        
+        var selectedYear = parseInt(document.getElementById('yearSelect').value);
+        var selectedMetric = document.getElementById('metricSelect').value;
+        var filtered = data.filter(function(item) { return item.year === selectedYear; });
+        
+        debugDiv.innerHTML = 'Data counts by year: ' + JSON.stringify(yearSample, null, 2) + 
+                            '\n\nSelected year: ' + selectedYear +
+                            '\n\nSelected metric: ' + selectedMetric +
+                            '\n\nFirst few values: ' + JSON.stringify(filtered.slice(0, 3).map(item => item[selectedMetric]), null, 2) +
+                            '\n\nSample records: \n' + JSON.stringify(filtered.slice(0, 3), null, 2);
+      }
+    }
+    
+    // Populate the year dropdown with unique years from the data
+    var years = [...new Set(data.map(function(item) { return item.year; }))].sort();
     var yearSelect = document.getElementById('yearSelect');
+    
     years.forEach(function(year) {
       var option = document.createElement('option');
       option.value = year;
       option.text = year;
       yearSelect.appendChild(option);
     });
-    // Set default value to the latest year
-    yearSelect.value = years[0];
-
-    // Function to update the bar chart with smooth animation
-    function updateChart() {
+    
+    // Set to most recent year by default
+    yearSelect.value = years[years.length - 1]; 
+    
+    // Utility functions
+    function formatCurrency(value) { 
+      return '£' + (value / 1000000).toFixed(1) + 'M'; 
+    }
+    
+    function formatPercentage(value) { 
+      if (isNaN(value)) return '-';
+      return (value > 0 ? '+' : '') + value.toFixed(1) + '%';
+    }
+    
+    // Function to update metrics cards
+    function updateMetricsCards(filtered, selectedMetric, selectedYear) {
+      // Ensure we have data for the selected year
+      if (filtered.length === 0) return;
+      
+      // Highest value
+      var maxValueItem = filtered.reduce(function(max, item) {
+        return item[selectedMetric] > max[selectedMetric] ? item : max;
+      }, filtered[0]);
+      
+      document.getElementById('highestValue').textContent = formatCurrency(maxValueItem[selectedMetric]);
+      document.getElementById('highestClub').textContent = maxValueItem.team;
+      
+      // League total
+      var totalKey = 'total_' + selectedMetric;
+      var total = filtered[0][totalKey]; // All items in filtered have the same total value
+      
+      document.getElementById('leagueTotal').textContent = formatCurrency(total);
+      
+      // Calculate total change from previous year if available
+      var previousYear = selectedYear - 1;
+      var previousYearData = data.filter(function(item) { return item.year === previousYear; });
+      
+      if (previousYearData.length > 0) {
+        var prevTotal = previousYearData[0][totalKey]; // Get total from first record (all have same value)
+        
+        var totalChange = ((total - prevTotal) / prevTotal) * 100;
+        var changeElement = document.getElementById('totalChange');
+        changeElement.textContent = formatPercentage(totalChange);
+        changeElement.className = 'metric-change ' + (totalChange >= 0 ? 'positive-change' : 'negative-change');
+      } else {
+        document.getElementById('totalChange').textContent = '-';
+        document.getElementById('totalChange').className = 'metric-change';
+      }
+      
+      // Highest year-on-year growth
+      var changeKey = selectedMetric + '_pct_change';
+      var maxGrowthItem = filtered.reduce(function(max, item) {
+        if (isNaN(item[changeKey])) return max;
+        if (max[changeKey] === undefined || item[changeKey] > max[changeKey]) return item;
+        return max;
+      }, {});
+      
+      if (maxGrowthItem.team) {
+        document.getElementById('highestGrowth').textContent = formatPercentage(maxGrowthItem[changeKey]);
+        document.getElementById('growthClub').textContent = maxGrowthItem.team;
+      } else {
+        document.getElementById('highestGrowth').textContent = '-';
+        document.getElementById('growthClub').textContent = '-';
+      }
+    }
+    
+    // Function to update the bar chart (D3.js implementation)
+    function updateBarChart() {
       var selectedYear = parseInt(document.getElementById('yearSelect').value);
       var selectedMetric = document.getElementById('metricSelect').value;
-
-      // Filter data for the selected year
-      var filtered = data.filter(item => item.year === selectedYear);
-      // Sort data descending by the selected metric
-      filtered.sort(function(a, b) {
-        return b[selectedMetric] - a[selectedMetric];
-      });
-
-      // Prepare arrays for team names.
-      var teams = filtered.map(item => item.team);
+      var sortBy = document.getElementById('sortSelect').value;
       
-      // For revenue, wages, and amortisation use the _m values.
-      var values;
-      if(selectedMetric === "revenue") {
-        values = filtered.map(item => item.revenue_m);
-      } else if(selectedMetric === "wages") {
-        values = filtered.map(item => item.wages_m);
-      } else if(selectedMetric === "amortisation") {
-        values = filtered.map(item => item.amortisation_m);
-      } else {
-        values = filtered.map(item => item[selectedMetric]);
-      }
-
-      // Prepare an array for finish info (e.g., "14th")
-      var finishInfo = filtered.map(item => item.position_finished);
-
-      // Compute maximum value and set y-axis maximum (with 10% margin)
-      var maxVal = Math.max.apply(null, values);
-      var yMax = maxVal * 1.1;
-
-      // Create the main bar trace.
-      var trace = {
-        x: teams,
-        y: values,
-        type: 'bar',
-        marker: { color: '#05D4BE' },
-        customdata: finishInfo,
-        hovertemplate: "League Position - <b>%{customdata}</b><br>£%{y:.1f}m<extra></extra>"
-      };
-
-      // Define layout with y-axis starting at 0 and unified hover mode.
-      var layout = {
-        title: selectedMetric.charAt(0).toUpperCase() + selectedMetric.slice(1) +
-               ' for Premier League Clubs in ' + selectedYear,
-        xaxis: {
-          title: 'Club',
-          tickangle: -45,
-          showgrid: false,
-          showline: true,
-          linecolor: 'white',
-          linewidth: 2
-        },
-        yaxis: {
-          title: selectedMetric.charAt(0).toUpperCase() + selectedMetric.slice(1) + ' (in millions)',
-          showgrid: true,
-          gridcolor: 'rgba(128,128,128,0.2)',
-          showline: true,
-          linecolor: 'white',
-          linewidth: 2,
-          range: [0, yMax]
-        },
-        plot_bgcolor: '#000000',
-        paper_bgcolor: '#000000',
-        font: {
-          family: 'aglet-sans, sans-serif',
-          size: 12,
-          color: 'white'
-        },
-        margin: { l: 60, r: 40, t: 60, b: 100 },
-        hovermode: 'x unified'
-      };
-
-      Plotly.react('barChart', [trace], layout, {
-        transition: { duration: 1000, easing: 'cubic-in-out' },
-        frame: { duration: 1000 }
+      console.log("Selected year:", selectedYear, "type:", typeof selectedYear);
+      
+      // Filter data for the selected year
+      var filtered = data.filter(function(item) { 
+        return item.year === selectedYear; 
       });
+      
+      console.log("Filtered data count:", filtered.length);
+      
+      // Check if there is data for the selected year
+      if (filtered.length === 0) {
+        document.getElementById('barChart').innerHTML = '<div style="text-align: center; padding: 50px; color: #FF3B30;">No data available for ' + selectedYear + '</div>';
+        return;
+      }
+      
+      // Sort data based on selection
+      if (sortBy === 'value') {
+        filtered.sort(function(a, b) { return b[selectedMetric] - a[selectedMetric]; });
+      } else if (sortBy === 'name') {
+        filtered.sort(function(a, b) { return a.team.localeCompare(b.team); });
+      } else if (sortBy === 'change') {
+        var changeKey = selectedMetric + '_pct_change';
+        filtered.sort(function(a, b) {
+          if (isNaN(a[changeKey]) && isNaN(b[changeKey])) return 0;
+          if (isNaN(a[changeKey])) return 1;
+          if (isNaN(b[changeKey])) return -1;
+          return b[changeKey] - a[changeKey];
+        });
+      }
+      
+      // Update metrics cards
+      updateMetricsCards(filtered, selectedMetric, selectedYear);
+      
+      // Clear previous chart
+      d3.select("#barChart").html("");
+      
+      // Set up dimensions
+      var chartContainer = document.getElementById('barChart');
+      var width = chartContainer.clientWidth;
+      var height = chartContainer.clientHeight;
+      var margin = {top: 60, right: 40, bottom: 120, left: 80};
+      var innerWidth = width - margin.left - margin.right;
+      var innerHeight = height - margin.top - margin.bottom;
+      
+      // Get data ready for chart
+      var teams = filtered.map(function(item) { return item.team; });
+      var values = filtered.map(function(item) { return Number(item[selectedMetric]); });
+      var avgKey = 'avg_' + selectedMetric;
+      var average = filtered[0][avgKey];
+      
+      // Create SVG container
+      var svg = d3.select("#barChart")
+        .append("svg")
+        .attr("width", width)
+        .attr("height", height);
+      
+      // Create main group with margin
+      var g = svg.append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+      
+      // Set up scales
+      var xScale = d3.scaleBand()
+        .domain(teams)
+        .range([0, innerWidth])
+        .padding(0.2);
+      
+      var maxValue = d3.max(values);
+      var yScale = d3.scaleLinear()
+        .domain([0, maxValue])
+        .range([innerHeight, 0]);
+      
+      // Color scale for bars
+      var colorScale = function(value) {
+        return value > average ? '#05D4BE' : '#FF3B30';
+      };
+      
+      // Create bars
+      g.selectAll(".bar")
+        .data(filtered)
+        .enter()
+        .append("rect")
+        .attr("class", "bar")
+        .attr("x", function(d) { return xScale(d.team); })
+        .attr("y", function(d) { return yScale(d[selectedMetric]); })
+        .attr("width", xScale.bandwidth())
+        .attr("height", function(d) { return innerHeight - yScale(d[selectedMetric]); })
+        .attr("fill", function(d) { return colorScale(d[selectedMetric]); })
+        .attr("stroke", "rgba(255, 255, 255, 0.5)")
+        .attr("stroke-width", 1)
+        .on("mouseover", function(event, d) {
+          // Highlight bar
+          d3.select(this)
+            .attr("stroke-width", 2);
+          
+          // Show tooltip
+          var changeKey = selectedMetric + '_pct_change';
+          var percentFromAvg = ((d[selectedMetric] / d[avgKey]) * 100 - 100).toFixed(1);
+          var changeText = isNaN(d[changeKey]) ? 'N/A' : formatPercentage(d[changeKey]);
+          
+          var tooltipContent = '<b>' + d.team + '</b><br>' +
+                              selectedMetric.charAt(0).toUpperCase() + selectedMetric.slice(1) + ': ' + formatCurrency(d[selectedMetric]) + '<br>' +
+                              'vs League Avg: ' + percentFromAvg + '%<br>' +
+                              'YoY Change: ' + changeText;
+                              
+          var tooltip = d3.select("#tooltip")
+            .style("left", (event.pageX + 10) + "px")
+            .style("top", (event.pageY - 20) + "px")
+            .style("opacity", 1);
+            
+          tooltip.html(tooltipContent);
+        })
+        .on("mouseout", function() {
+          // Restore bar style
+          d3.select(this)
+            .attr("stroke-width", 1);
+          
+          // Hide tooltip
+          d3.select("#tooltip")
+            .style("opacity", 0);
+        });
+      
+      // Add bar value labels
+      g.selectAll(".bar-value")
+        .data(filtered)
+        .enter()
+        .append("text")
+        .attr("class", "bar-value")
+        .attr("x", function(d) { return xScale(d.team) + xScale.bandwidth() / 2; })
+        .attr("y", function(d) { return yScale(d[selectedMetric]) - 5; })
+        .text(function(d) { return formatCurrency(d[selectedMetric]); });
+      
+      // Add X axis
+      g.append("g")
+        .attr("class", "axis-x")
+        .attr("transform", "translate(0," + innerHeight + ")")
+        .call(d3.axisBottom(xScale))
+        .selectAll("text")
+        .attr("transform", "rotate(-45)")
+        .style("text-anchor", "end")
+        .attr("dx", "-.8em")
+        .attr("dy", ".15em");
+      
+      // Add Y axis
+      g.append("g")
+        .attr("class", "axis-y")
+        .call(d3.axisLeft(yScale)
+          .tickFormat(function(d) { return "£" + (d / 1000000).toFixed(0) + "M"; }));
+      
+      // Add Y axis label
+      g.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", -60)
+        .attr("x", -(innerHeight / 2))
+        .attr("text-anchor", "middle")
+        .style("fill", "white")
+        .style("font-size", "14px")
+        .text(selectedMetric.charAt(0).toUpperCase() + selectedMetric.slice(1) + " (in millions £)");
+      
+      // Add title
+      svg.append("text")
+        .attr("class", "chart-title")
+        .attr("x", width / 2)
+        .attr("y", 30)
+        .text(selectedMetric.charAt(0).toUpperCase() + selectedMetric.slice(1) + " for Premier League Clubs (" + selectedYear + ")");
+      
+      // Add average line
+      g.append("line")
+        .attr("class", "average-line")
+        .attr("x1", 0)
+        .attr("x2", innerWidth)
+        .attr("y1", yScale(average))
+        .attr("y2", yScale(average));
+      
+      // Add average label
+      g.append("text")
+        .attr("class", "average-label")
+        .attr("x", innerWidth - 5)
+        .attr("y", yScale(average) - 5)
+        .attr("text-anchor", "end")
+        .text("League Average: " + formatCurrency(average))
+        .attr("fill", "white")
+        .attr("padding", "4px")
+        .attr("background", "rgba(0,0,0,0.5)");
     }
-
-    document.getElementById('yearSelect').addEventListener('change', updateChart);
-    document.getElementById('metricSelect').addEventListener('change', updateChart);
-
-    updateChart();
-
-    // Ensure Plotly text elements use Aglet Sans after rendering
-    document.addEventListener("DOMContentLoaded", function(){
-        setTimeout(function(){
-            var texts = document.querySelectorAll('svg text');
-            for(var i = 0; i < texts.length; i++) {
-                texts[i].setAttribute("font-family", "aglet-sans, sans-serif");
-            }
-        }, 500);
+    
+    // Function to update the trend chart (D3.js implementation)
+    function updateTrendChart() {
+      var selectedMetric = document.getElementById('metricSelect').value;
+      
+      // Clear previous chart
+      d3.select("#trendChart").html("");
+      
+      // Get the averages and totals for each year
+      var yearlyData = [];
+      years.forEach(function(year) {
+        var yearData = data.filter(function(item) { return item.year === year; });
+        if (yearData.length > 0) {
+          var totalKey = 'total_' + selectedMetric;
+          var total = yearData[0][totalKey]; // All records for this year have the same total
+          
+          var maxItem = yearData.reduce(function(max, item) { 
+            return item[selectedMetric] > max[selectedMetric] ? item : max; 
+          }, yearData[0]);
+          
+          yearlyData.push({
+            year: year,
+            total: total,
+            max: maxItem[selectedMetric],
+            maxClub: maxItem.team
+          });
+        }
+      });
+      
+      // Set up dimensions
+      var chartContainer = document.getElementById('trendChart');
+      var width = chartContainer.clientWidth;
+      var height = chartContainer.clientHeight;
+      var margin = {top: 50, right: 40, bottom: 60, left: 80};
+      var innerWidth = width - margin.left - margin.right;
+      var innerHeight = height - margin.top - margin.bottom;
+      
+      // Create SVG container
+      var svg = d3.select("#trendChart")
+        .append("svg")
+        .attr("width", width)
+        .attr("height", height);
+      
+      // Create main group with margin
+      var g = svg.append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+      
+      // Set up scales
+      var xScale = d3.scaleBand()
+        .domain(yearlyData.map(function(d) { return d.year; }))
+        .range([0, innerWidth])
+        .padding(0.2);
+      
+      var maxTotal = d3.max(yearlyData, function(d) { return d.total; });
+      var maxValue = d3.max(yearlyData, function(d) { return d.max; });
+      var yMax = Math.max(maxTotal, maxValue);
+      
+      var yScale = d3.scaleLinear()
+        .domain([0, yMax])
+        .range([innerHeight, 0]);
+      
+      // Create line generators
+      var totalLine = d3.line()
+        .x(function(d) { return xScale(d.year) + xScale.bandwidth() / 2; })
+        .y(function(d) { return yScale(d.total); })
+        .curve(d3.curveMonotoneX);
+      
+      var maxLine = d3.line()
+        .x(function(d) { return xScale(d.year) + xScale.bandwidth() / 2; })
+        .y(function(d) { return yScale(d.max); })
+        .curve(d3.curveMonotoneX);
+      
+      // Add X axis
+      g.append("g")
+        .attr("class", "axis-x")
+        .attr("transform", "translate(0," + innerHeight + ")")
+        .call(d3.axisBottom(xScale));
+      
+      // Add Y axis
+      g.append("g")
+        .attr("class", "axis-y")
+        .call(d3.axisLeft(yScale)
+          .tickFormat(function(d) { return "£" + (d / 1000000).toFixed(0) + "M"; }));
+      
+      // Add Y axis label
+      g.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", -60)
+        .attr("x", -(innerHeight / 2))
+        .attr("text-anchor", "middle")
+        .style("fill", "white")
+        .style("font-size", "14px")
+        .text(selectedMetric.charAt(0).toUpperCase() + selectedMetric.slice(1) + " (in millions £)");
+      
+      // Add title
+      svg.append("text")
+        .attr("class", "chart-title")
+        .attr("x", width / 2)
+        .attr("y", 30)
+        .text(selectedMetric.charAt(0).toUpperCase() + selectedMetric.slice(1) + " Trends (2015-2023)");
+      
+      // Draw total line
+      g.append("path")
+        .datum(yearlyData)
+        .attr("fill", "none")
+        .attr("stroke", "#05D4BE")
+        .attr("stroke-width", 3)
+        .attr("d", totalLine);
+      
+      // Draw max line
+      g.append("path")
+        .datum(yearlyData)
+        .attr("fill", "none")
+        .attr("stroke", "#FF9500")
+        .attr("stroke-width", 3)
+        .attr("d", maxLine);
+      
+      // Add points for total
+      g.selectAll(".total-point")
+        .data(yearlyData)
+        .enter()
+        .append("circle")
+        .attr("class", "total-point")
+        .attr("cx", function(d) { return xScale(d.year) + xScale.bandwidth() / 2; })
+        .attr("cy", function(d) { return yScale(d.total); })
+        .attr("r", 6)
+        .attr("fill", "#05D4BE")
+        .attr("stroke", "white")
+        .attr("stroke-width", 1)
+        .on("mouseover", function(event, d) {
+          // Highlight point
+          d3.select(this)
+            .attr("r", 8)
+            .attr("stroke-width", 2);
+          
+          // Show tooltip
+          var tooltipContent = 'Year: ' + d.year + '<br>Total ' + 
+                             selectedMetric + ': ' + formatCurrency(d.total);
+                             
+          var tooltip = d3.select("#tooltip")
+            .style("left", (event.pageX + 10) + "px")
+            .style("top", (event.pageY - 20) + "px")
+            .style("opacity", 1);
+            
+          tooltip.html(tooltipContent);
+        })
+        .on("mouseout", function() {
+          // Restore point style
+          d3.select(this)
+            .attr("r", 6)
+            .attr("stroke-width", 1);
+          
+          // Hide tooltip
+          d3.select("#tooltip")
+            .style("opacity", 0);
+        });
+      
+      // Add points for max
+      g.selectAll(".max-point")
+        .data(yearlyData)
+        .enter()
+        .append("circle")
+        .attr("class", "max-point")
+        .attr("cx", function(d) { return xScale(d.year) + xScale.bandwidth() / 2; })
+        .attr("cy", function(d) { return yScale(d.max); })
+        .attr("r", 6)
+        .attr("fill", "#FF9500")
+        .attr("stroke", "white")
+        .attr("stroke-width", 1)
+        .on("mouseover", function(event, d) {
+          // Highlight point
+          d3.select(this)
+            .attr("r", 8)
+            .attr("stroke-width", 2);
+          
+          // Show tooltip
+          var tooltipContent = 'Year: ' + d.year + '<br>Highest ' + 
+                             selectedMetric + ': ' + formatCurrency(d.max) + 
+                             '<br>Club: ' + d.maxClub;
+                             
+          var tooltip = d3.select("#tooltip")
+            .style("left", (event.pageX + 10) + "px")
+            .style("top", (event.pageY - 20) + "px")
+            .style("opacity", 1);
+            
+          tooltip.html(tooltipContent);
+        })
+        .on("mouseout", function() {
+          // Restore point style
+          d3.select(this)
+            .attr("r", 6)
+            .attr("stroke-width", 1);
+          
+          // Hide tooltip
+          d3.select("#tooltip")
+            .style("opacity", 0);
+        });
+      
+      // Add legend
+      var legend = svg.append("g")
+        .attr("transform", "translate(" + (width/2 - 100) + "," + (margin.top - 20) + ")");
+      
+      // Legend for total
+      legend.append("rect")
+        .attr("x", 0)
+        .attr("width", 20)
+        .attr("height", 10)
+        .attr("fill", "#05D4BE");
+        
+      legend.append("text")
+        .attr("x", 30)
+        .attr("y", 8)
+        .text("League Total")
+        .attr("font-size", "12px")
+        .attr("fill", "white");
+      
+      // Legend for max
+      legend.append("rect")
+        .attr("x", 150)
+        .attr("width", 20)
+        .attr("height", 10)
+        .attr("fill", "#FF9500");
+        
+      legend.append("text")
+        .attr("x", 180)
+        .attr("y", 8)
+        .text("Highest Value")
+        .attr("font-size", "12px")
+        .attr("fill", "white");
+    }
+    
+    // Event listeners
+    document.getElementById('yearSelect').addEventListener('change', updateBarChart);
+    document.getElementById('metricSelect').addEventListener('change', function() {
+      updateBarChart();
+      updateTrendChart();
     });
+    document.getElementById('sortSelect').addEventListener('change', updateBarChart);
+    
+    // Add event listener for debug function
+    document.getElementById('barChart').addEventListener('dblclick', showDebugInfo);
+    document.getElementById('trendChart').addEventListener('dblclick', showDebugInfo);
+    
+    // Initial render
+    updateBarChart();
+    updateTrendChart();
   </script>
 </body>
 </html>
