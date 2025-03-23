@@ -3,47 +3,185 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>Player Amortisation Graph</title>
+    <title>Bristol City - Player Amortisation Analysis</title>
     <!-- Load Aglet Sans from Typekit -->
     <link href="https://use.typekit.net/xxs6huv.css" rel="stylesheet">
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <style>
+      :root {
+        --background: #11242B;
+        --text: #FFFFFF;
+        --muted-text: #CCCCCC;
+        --primary: #05D4BE;
+        --secondary: #5F84FB;
+        --accent: #FF9500;
+        --positive: #4CD964;
+        --negative: #FF3B30;
+        --grid: rgba(128, 128, 128, 0.2);
+        --line: rgba(255, 255, 255, 0.3);
+        --tooltip-bg: #1D3B48;
+        --area-fill: rgba(5, 212, 190, 0.2);
+      }
+      
+      body.light-mode {
+        --background: #F5F7FA;
+        --text: #11242B;
+        --muted-text: #555555;
+        --primary: #05D4BE;
+        --secondary: #5F84FB;
+        --accent: #FF9500;
+        --positive: #34A853;
+        --negative: #EA4335;
+        --grid: rgba(0, 0, 0, 0.1);
+        --line: rgba(0, 0, 0, 0.3);
+        --tooltip-bg: #FFFFFF;
+        --area-fill: rgba(5, 212, 190, 0.1);
+      }
+      
       body {
           font-family: 'aglet-sans', sans-serif !important;
-          background-color: #11242B;
+          background-color: var(--background);
+          color: var(--text);
           margin: 0;
           padding: 0;
+          transition: background-color 0.3s ease, color 0.3s ease;
       }
-      .toggle-container {
-          text-align: center;
+      
+      .container {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 20px;
+      }
+      
+      .header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding-bottom: 15px;
+          margin-bottom: 25px;
+          border-bottom: 1px solid var(--primary);
+      }
+      
+      .club-info {
+          display: flex;
+          flex-direction: column;
+      }
+      
+      .club-name {
+          font-size: 2rem;
+          font-weight: bold;
+          color: var(--primary);
+      }
+      
+      .financial-details {
+          font-size: 1rem;
+          color: var(--muted-text);
+          margin-top: 5px;
+      }
+      
+      .controls {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 20px;
+          align-items: center;
           margin-bottom: 20px;
-          color: white;
-          font-size: 14px;
-          padding-top: 20px;
+          padding: 15px;
+          background-color: rgba(0, 0, 0, 0.1);
+          border-radius: 8px;
       }
-      .toggle-container input {
-          margin-right: 6px;
+      
+      .control-group {
+          display: flex;
+          align-items: center;
+          gap: 10px;
       }
+      
+      .toggle-switch {
+          position: relative;
+          display: inline-block;
+          width: 48px;
+          height: 24px;
+      }
+      
+      .toggle-switch input {
+          opacity: 0;
+          width: 0;
+          height: 0;
+      }
+      
+      .slider {
+          position: absolute;
+          cursor: pointer;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: rgba(255, 255, 255, 0.3);
+          transition: .4s;
+          border-radius: 24px;
+      }
+      
+      .slider:before {
+          position: absolute;
+          content: "";
+          height: 16px;
+          width: 16px;
+          left: 4px;
+          bottom: 4px;
+          background-color: white;
+          transition: .4s;
+          border-radius: 50%;
+      }
+      
+      input:checked + .slider {
+          background-color: var(--primary);
+      }
+      
+      input:checked + .slider:before {
+          transform: translateX(24px);
+      }
+      
+      .chart-wrapper {
+          background-color: rgba(255, 255, 255, 0.05);
+          border-radius: 8px;
+          padding: 20px;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+          border: 1px solid rgba(5, 212, 190, 0.3);
+          margin-bottom: 20px;
+      }
+      
+      .chart-title {
+          font-size: 1.2rem;
+          margin-bottom: 15px;
+          color: var(--primary);
+          border-bottom: 1px solid rgba(5, 212, 190, 0.3);
+          padding-bottom: 5px;
+      }
+      
       svg text {
           font-family: 'aglet-sans', sans-serif !important;
-          fill: white;
+          fill: var(--text);
       }
+      
       .axis-x path, .axis-y path {
-          stroke: rgba(255, 255, 255, 0.3);
+          stroke: var(--line);
       }
+      
       .axis-x .tick line, .axis-y .tick line {
-          stroke: rgba(128, 128, 128, 0.2);
+          stroke: var(--grid);
       }
+      
       .axis-x text, .axis-y text {
-          fill: white;
+          fill: var(--text);
           font-size: 12px;
       }
+      
       .tooltip {
           position: absolute;
           padding: 10px;
-          background: #1D3B48;
-          color: white;
-          border: 1px solid #05D4BE;
+          background: var(--tooltip-bg);
+          color: var(--text);
+          border: 1px solid var(--primary);
           border-radius: 5px;
           pointer-events: none;
           font-family: 'aglet-sans', sans-serif;
@@ -51,46 +189,118 @@
           opacity: 0;
           transition: opacity 0.3s;
           z-index: 10;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
       }
+      
+      .tooltip.light-mode {
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      
       .area {
-          fill: rgba(5, 212, 190, 0.2);
+          fill: var(--area-fill);
+          transition: fill 0.3s ease;
       }
+      
       .line {
           fill: none;
-          stroke: #05D4BE;
+          stroke: var(--primary);
           stroke-width: 2;
+          transition: stroke 0.3s ease;
+      }
+      
+      .footer {
+          text-align: center;
+          margin-top: 30px;
+          padding-top: 15px;
+          border-top: 1px solid rgba(5, 212, 190, 0.2);
+          font-size: 0.8rem;
+          color: var(--muted-text);
+      }
+      
+      .back-to-index {
+          margin-top: 10px;
+          text-align: center;
+      }
+      
+      .back-to-index a {
+          color: var(--primary);
+          text-decoration: none;
+      }
+      
+      .back-to-index a:hover {
+          text-decoration: underline;
       }
     </style>
 </head>
 <body>
-    <div class="toggle-container">
-      <label>
-         <input type="checkbox" id="inflationCheckbox"> Adjust for Inflation
-      </label>
+    <div class="container">
+        <div class="header">
+            <div class="club-info">
+                <div class="club-name">Bristol City</div>
+                <div class="financial-details">Player Amortisation Analysis | 2015 - 2024</div>
+            </div>
+            <div class="theme-toggle">
+                <label class="toggle-switch">
+                    <input type="checkbox" id="themeToggle">
+                    <span class="slider"></span>
+                </label>
+                <span id="themeLabel">Dark Mode</span>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label class="toggle-switch">
+                    <input type="checkbox" id="inflationToggle">
+                    <span class="slider"></span>
+                </label>
+                <span>Adjust for Inflation</span>
+            </div>
+        </div>
+        
+        <div class="chart-wrapper">
+            <div class="chart-title">Player Amortisation Over Time</div>
+            <div id="mainChart" style="width: 100%; height: 500px;"></div>
+        </div>
+        
+        <div class="footer">
+            <div>Data last updated: 2025-03-23 20:43:51 | Source: Published Club Accounts</div>
+            <div><small>Created with D3.js visualization library. Hover over any data point for details.</small></div>
+            <div class="back-to-index">
+                <a href="index.html">View All Clubs</a>
+            </div>
+        </div>
     </div>
-    <div id="chart" style="width: 100%; height: 550px;"></div>
+    
     <div id="tooltip" class="tooltip"></div>
     
     <script>
+      // Initialize with dark mode
+      let isDarkMode = true;
+      
       // Data for the chart
+      const clubName = "Bristol City";
       const financialYears = [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024];
       const absolutePlayerAmortisation = [1518485.0, 1984642.0, 5627706.0, 6789450.0, 7753115.0, 11116495.0, 11587331.0, 7438301.0, 6834873.0, 3208956.0];
       const adjustedPlayerAmortisation = [2277727.5, 2877730.9, 7878788.399999999, 9165757.5, 10079049.5, 13895618.75, 13904797.2, 8554046.149999999, 7518360.300000001, 3208956.0];
       const positionData = [null, null, null, null, null, null, null, null, null, null];
       const leagueData = [null, null, null, null, null, null, null, null, null, null];
       
+      // Store active data set
+      let activeAmortisationData = absolutePlayerAmortisation;
+      
       // Chart rendering function
-      function renderChart(amortisationData) {
+      function renderMainChart() {
           // Clear previous chart if any
-          d3.select("#chart").html("");
+          d3.select("#mainChart").html("");
           
           // Set up dimensions
-          const margin = {top: 40, right: 40, bottom: 60, left: 60};
-          const width = document.getElementById('chart').clientWidth - margin.left - margin.right;
-          const height = document.getElementById('chart').clientHeight - margin.top - margin.bottom;
+          const margin = {top: 30, right: 40, bottom: 60, left: 70};
+          const width = document.getElementById('mainChart').clientWidth - margin.left - margin.right;
+          const height = document.getElementById('mainChart').clientHeight - margin.top - margin.bottom;
           
           // Create SVG container
-          const svg = d3.select("#chart")
+          const svg = d3.select("#mainChart")
               .append("svg")
               .attr("width", width + margin.left + margin.right)
               .attr("height", height + margin.top + margin.bottom)
@@ -103,21 +313,32 @@
               .range([0, width]);
           
           const y = d3.scaleLinear()
-              .domain([0, d3.max(amortisationData) * 1.1])
+              .domain([0, d3.max(activeAmortisationData) * 1.1])
               .range([height, 0]);
           
-          // Create a line generator
-          const line = d3.line()
-              .x((d, i) => x(financialYears[i]))
-              .y(d => y(d))
-              .curve(d3.curveMonotoneX);
+          // Add grid lines
+          svg.append("g")
+              .attr("class", "grid")
+              .attr("transform", `translate(0, ${height})`)
+              .call(d3.axisBottom(x)
+                  .tickFormat("")
+                  .tickSize(-height)
+                  .tickValues(financialYears));
+              
+          svg.append("g")
+              .attr("class", "grid")
+              .call(d3.axisLeft(y)
+                  .tickFormat("")
+                  .tickSize(-width));
           
-          // Create area generator for the fill
-          const area = d3.area()
-              .x((d, i) => x(financialYears[i]))
-              .y0(height)
-              .y1(d => y(d))
-              .curve(d3.curveMonotoneX);
+          // Style grid lines
+          svg.selectAll(".grid line")
+              .style("stroke", "var(--grid)")
+              .style("stroke-opacity", "0.7")
+              .style("shape-rendering", "crispEdges");
+          
+          svg.selectAll(".grid path")
+              .style("stroke-width", "0");
           
           // Add X axis
           svg.append("g")
@@ -134,39 +355,52 @@
               .call(d3.axisLeft(y)
                   .tickFormat(d => `£${(d/1000000).toFixed(0)}M`));
           
+          // Create a line generator
+          const line = d3.line()
+              .x((d, i) => x(financialYears[i]))
+              .y(d => y(d))
+              .curve(d3.curveMonotoneX);
+          
+          // Create area generator for the fill
+          const area = d3.area()
+              .x((d, i) => x(financialYears[i]))
+              .y0(height)
+              .y1(d => y(d))
+              .curve(d3.curveMonotoneX);
+          
           // Add the area
           svg.append("path")
-              .datum(amortisationData)
+              .datum(activeAmortisationData)
               .attr("class", "area")
               .attr("d", area);
           
           // Add the line
           svg.append("path")
-              .datum(amortisationData)
+              .datum(activeAmortisationData)
               .attr("class", "line")
               .attr("d", line);
           
-          // Add data points with tooltips
-          svg.selectAll(".dot")
-              .data(amortisationData)
+          // Add data points
+          svg.selectAll(".club-dot")
+              .data(activeAmortisationData)
               .enter()
               .append("circle")
-              .attr("class", "dot")
+              .attr("class", "club-dot")
               .attr("cx", (d, i) => x(financialYears[i]))
               .attr("cy", d => y(d))
-              .attr("r", 5)
-              .attr("fill", "#05D4BE")
+              .attr("r", 6)
+              .attr("fill", "var(--primary)")
               .attr("stroke", "white")
-              .attr("stroke-width", 1)
+              .attr("stroke-width", 1.5)
               .on("mouseover", function(event, d, i) {
-                  const index = amortisationData.indexOf(d);
+                  const index = activeAmortisationData.indexOf(d);
                   const year = financialYears[index];
                   const position = positionData[index];
                   const league = leagueData[index];
                   
                   // Highlight dot
                   d3.select(this)
-                      .attr("r", 7)
+                      .attr("r", 8)
                       .attr("stroke-width", 2);
                   
                   // Show tooltip
@@ -175,51 +409,79 @@
                       .style("left", (event.pageX + 10) + "px")
                       .style("top", (event.pageY - 15) + "px")
                       .html(`
-                          <b>${position} in ${league}</b><br>
+                          <strong>${clubName}</strong><br>
                           Financial Year: ${year}<br>
                           Player Amortisation: £${(d/1000000).toFixed(1)}M
+                          ${position && league ? `<br>Position: ${position} in ${league}` : ""}
                       `);
               })
               .on("mouseout", function() {
                   // Reset dot size
                   d3.select(this)
-                      .attr("r", 5)
-                      .attr("stroke-width", 1);
+                      .attr("r", 6)
+                      .attr("stroke-width", 1.5);
                   
                   // Hide tooltip
                   d3.select("#tooltip")
                       .style("opacity", 0);
               });
-          
+              
           // Add axis labels
           svg.append("text")
               .attr("class", "axis-title")
               .attr("x", width / 2)
               .attr("y", height + margin.bottom - 10)
               .attr("text-anchor", "middle")
-              .style("fill", "white")
+              .style("fill", "var(--text)")
+              .style("font-size", "14px")
               .text("Financial Year");
           
           svg.append("text")
               .attr("class", "axis-title")
               .attr("transform", "rotate(-90)")
               .attr("x", -height / 2)
-              .attr("y", -margin.left + 15)
+              .attr("y", -margin.left + 20)
               .attr("text-anchor", "middle")
-              .style("fill", "white")
+              .style("fill", "var(--text)")
+              .style("font-size", "14px")
               .text("Player Amortisation (GBP)");
+          
+          // Add chart title as annotation
+          svg.append("text")
+              .attr("x", width / 2)
+              .attr("y", -10)
+              .attr("text-anchor", "middle")
+              .style("fill", "var(--text)")
+              .style("font-size", "16px")
+              .style("font-weight", "bold")
+              .text(`${document.getElementById("inflationToggle").checked ? "Inflation-Adjusted " : ""}Player Amortisation for ${clubName}`);
       }
       
-      // Initial render with absolute data
-      renderChart(absolutePlayerAmortisation);
+      // Theme toggle
+      document.getElementById("themeToggle").addEventListener("change", function() {
+          isDarkMode = !this.checked;
+          document.body.classList.toggle("light-mode", !isDarkMode);
+          document.getElementById("tooltip").classList.toggle("light-mode", !isDarkMode);
+          document.getElementById("themeLabel").textContent = isDarkMode ? "Dark Mode" : "Light Mode";
+          
+          // Re-render chart with new theme
+          renderMainChart();
+      });
       
-      // Add event listener to toggle inflation adjustment
-      document.getElementById("inflationCheckbox").addEventListener("change", function() {
-          if (this.checked) {
-              renderChart(adjustedPlayerAmortisation);
-          } else {
-              renderChart(absolutePlayerAmortisation);
-          }
+      // Inflation toggle
+      document.getElementById("inflationToggle").addEventListener("change", function() {
+          activeAmortisationData = this.checked ? adjustedPlayerAmortisation : absolutePlayerAmortisation;
+          
+          // Re-render chart with new data
+          renderMainChart();
+      });
+      
+      // Initialize chart on load
+      document.addEventListener("DOMContentLoaded", renderMainChart);
+      
+      // Handle window resize
+      window.addEventListener("resize", function() {
+          renderMainChart();
       });
     </script>
 </body>

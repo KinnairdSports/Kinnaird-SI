@@ -1,84 +1,440 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Premier League Financial Snapshots</title>
-  <link rel="stylesheet" href="https://use.typekit.net/xxs6huv.css">
-  <style>
-    body {
-      background-color: #000000;
-      color: white;
-      font-family: 'aglet-sans', sans-serif;
-      padding: 20px;
-      margin: 0;
-      min-height: 100vh;
-    }
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px;
-      background-color: #000000;
-    }
-    h1 {
-      color: #05D4BE;
-      text-align: center;
-      margin-bottom: 40px;
-      border-bottom: 1px solid rgba(5, 212, 190, 0.3);
-      padding-bottom: 20px;
-    }
-    ul {
-      list-style-type: none;
-      padding: 0;
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: 15px;
-    }
-    li {
-      background: linear-gradient(135deg, rgba(5, 212, 190, 0.2), rgba(95, 132, 251, 0.2));
-      border-radius: 8px;
-      padding: 15px;
-      text-align: center;
-      transition: all 0.3s ease;
-      border: 1px solid rgba(5, 212, 190, 0.3);
-    }
-    li:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-      background: linear-gradient(135deg, rgba(5, 212, 190, 0.3), rgba(95, 132, 251, 0.3));
-    }
-    a {
-      color: white;
-      text-decoration: none;
-      font-size: 1.1rem;
-      display: block;
-      width: 100%;
-      height: 100%;
-    }
-    .footer {
-      text-align: center;
-      margin-top: 50px;
-      font-size: 0.8rem;
-      color: #666;
-    }
-  </style>
+    <meta charset="utf-8" />
+    <title>Football Club Player Amortisation Analysis</title>
+    <!-- Load Aglet Sans from Typekit -->
+    <link href="https://use.typekit.net/xxs6huv.css" rel="stylesheet">
+    <style>
+      :root {
+        --background: #11242B;
+        --text: #FFFFFF;
+        --muted-text: #CCCCCC;
+        --primary: #05D4BE;
+        --secondary: #5F84FB;
+        --accent: #FF9500;
+      }
+      
+      body.light-mode {
+        --background: #F5F7FA;
+        --text: #11242B;
+        --muted-text: #555555;
+        --primary: #05D4BE;
+        --secondary: #5F84FB;
+        --accent: #FF9500;
+      }
+      
+      body {
+          font-family: 'aglet-sans', sans-serif !important;
+          background-color: var(--background);
+          color: var(--text);
+          margin: 0;
+          padding: 0;
+          transition: background-color 0.3s ease, color 0.3s ease;
+      }
+      
+      .container {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 20px;
+      }
+      
+      .header {
+          text-align: center;
+          margin-bottom: 30px;
+          padding-bottom: 20px;
+          border-bottom: 1px solid var(--primary);
+      }
+      
+      .main-title {
+          font-size: 2.5rem;
+          font-weight: bold;
+          color: var(--primary);
+          margin-bottom: 5px;
+      }
+      
+      .subtitle {
+          font-size: 1.2rem;
+          color: var(--muted-text);
+      }
+      
+      .theme-toggle {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          margin: 20px 0;
+      }
+      
+      .toggle-switch {
+          position: relative;
+          display: inline-block;
+          width: 48px;
+          height: 24px;
+          margin-right: 10px;
+      }
+      
+      .toggle-switch input {
+          opacity: 0;
+          width: 0;
+          height: 0;
+      }
+      
+      .slider {
+          position: absolute;
+          cursor: pointer;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: rgba(255, 255, 255, 0.3);
+          transition: .4s;
+          border-radius: 24px;
+      }
+      
+      .slider:before {
+          position: absolute;
+          content: "";
+          height: 16px;
+          width: 16px;
+          left: 4px;
+          bottom: 4px;
+          background-color: white;
+          transition: .4s;
+          border-radius: 50%;
+      }
+      
+      input:checked + .slider {
+          background-color: var(--primary);
+      }
+      
+      input:checked + .slider:before {
+          transform: translateX(24px);
+      }
+      
+      .league-section {
+          margin-bottom: 40px;
+      }
+      
+      h2 {
+          color: var(--primary);
+          padding-bottom: 10px;
+          border-bottom: 1px solid rgba(5, 212, 190, 0.3);
+      }
+      
+      .club-list {
+          list-style-type: none;
+          padding: 0;
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+          gap: 15px;
+      }
+      
+      .club-list li {
+          background: linear-gradient(135deg, rgba(5, 212, 190, 0.1), rgba(95, 132, 251, 0.1));
+          border-radius: 8px;
+          border: 1px solid rgba(5, 212, 190, 0.3);
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+      
+      .club-list li:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+      
+      .club-list a {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 15px;
+          color: var(--text);
+          text-decoration: none;
+      }
+      
+      .club-name {
+          font-weight: bold;
+      }
+      
+      .club-metric {
+          color: var(--primary);
+          font-weight: bold;
+      }
+      
+      .intro {
+          margin-bottom: 30px;
+          line-height: 1.6;
+          text-align: center;
+      }
+      
+      .footer {
+          text-align: center;
+          margin-top: 40px;
+          padding-top: 20px;
+          border-top: 1px solid rgba(5, 212, 190, 0.2);
+          font-size: 0.9rem;
+          color: var(--muted-text);
+      }
+      
+      @media (max-width: 600px) {
+          .club-list {
+              grid-template-columns: 1fr;
+          }
+      }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Premier League Financial Snapshots</h1>
-    <ul>
-      <li><a href="club_snapshots/arsenal.html">Arsenal</a></li>
-<li><a href="club_snapshots/brighton.html">Brighton</a></li>
-<li><a href="club_snapshots/liverpool.html">Liverpool</a></li>
-<li><a href="club_snapshots/west_ham.html">West Ham</a></li>
-<li><a href="club_snapshots/wolves.html">Wolves</a></li>
-
-    </ul>
-    <div class="footer">
-      Data last updated: 2025-03-23 19:18:05 | Source: Published Club Accounts & Premier League Financial Records
+    <div class="container">
+        <div class="header">
+            <div class="main-title">Football Club Player Amortisation Analysis</div>
+            <div class="subtitle">Examining the financial cost of transfer market activity</div>
+            
+            <div class="theme-toggle">
+                <label class="toggle-switch">
+                    <input type="checkbox" id="themeToggle">
+                    <span class="slider"></span>
+                </label>
+                <span id="themeLabel">Dark Mode</span>
+            </div>
+        </div>
+        
+        <div class="intro">
+            <p>Player amortisation represents how transfer fees are spread across a player's contract length in club accounts. 
+            Select a club below to view their historical player amortisation data.</p>
+        </div>
+        
+        
+        <div class="league-section">
+            <h2>Premier League</h2>
+            <ul class="club-list">
+                
+            <li>
+                <a href="chelsea_player_amortisation.html">
+                    <span class="club-name">Chelsea</span>
+                    <span class="club-metric">£203.2M</span>
+                </a>
+            </li>
+            
+            <li>
+                <a href="arsenal_player_amortisation.html">
+                    <span class="club-name">Arsenal</span>
+                    <span class="club-metric">£171.1M</span>
+                </a>
+            </li>
+            
+            <li>
+                <a href="manchester_united_player_amortisation.html">
+                    <span class="club-name">Manchester United</span>
+                    <span class="club-metric">£169.5M</span>
+                </a>
+            </li>
+            
+            <li>
+                <a href="manchester_city_player_amortisation.html">
+                    <span class="club-name">Manchester City</span>
+                    <span class="club-metric">£145.4M</span>
+                </a>
+            </li>
+            
+            <li>
+                <a href="liverpool_player_amortisation.html">
+                    <span class="club-name">Liverpool</span>
+                    <span class="club-metric">£114.5M</span>
+                </a>
+            </li>
+            
+            <li>
+                <a href="tottenham_player_amortisation.html">
+                    <span class="club-name">Tottenham</span>
+                    <span class="club-metric">£109.1M</span>
+                </a>
+            </li>
+            
+            <li>
+                <a href="aston_villa_player_amortisation.html">
+                    <span class="club-name">Aston Villa</span>
+                    <span class="club-metric">£92.5M</span>
+                </a>
+            </li>
+            
+            <li>
+                <a href="newcastle_player_amortisation.html">
+                    <span class="club-name">Newcastle</span>
+                    <span class="club-metric">£86.8M</span>
+                </a>
+            </li>
+            
+            <li>
+                <a href="west_ham_player_amortisation.html">
+                    <span class="club-name">West Ham</span>
+                    <span class="club-metric">£83.5M</span>
+                </a>
+            </li>
+            
+            <li>
+                <a href="everton_player_amortisation.html">
+                    <span class="club-name">Everton</span>
+                    <span class="club-metric">£77.6M</span>
+                </a>
+            </li>
+            
+            <li>
+                <a href="leicester_player_amortisation.html">
+                    <span class="club-name">Leicester</span>
+                    <span class="club-metric">£76.9M</span>
+                </a>
+            </li>
+            
+            <li>
+                <a href="wolves_player_amortisation.html">
+                    <span class="club-name">Wolves</span>
+                    <span class="club-metric">£64.2M</span>
+                </a>
+            </li>
+            
+            <li>
+                <a href="southampton_player_amortisation.html">
+                    <span class="club-name">Southampton</span>
+                    <span class="club-metric">£52.0M</span>
+                </a>
+            </li>
+            
+            <li>
+                <a href="fulham_player_amortisation.html">
+                    <span class="club-name">Fulham</span>
+                    <span class="club-metric">£45.6M</span>
+                </a>
+            </li>
+            
+            <li>
+                <a href="bournemouth_player_amortisation.html">
+                    <span class="club-name">Bournemouth</span>
+                    <span class="club-metric">£41.2M</span>
+                </a>
+            </li>
+            
+            <li>
+                <a href="nottingham_forest_player_amortisation.html">
+                    <span class="club-name">Nottingham Forest</span>
+                    <span class="club-metric">£40.8M</span>
+                </a>
+            </li>
+            
+            <li>
+                <a href="crystal_palace_player_amortisation.html">
+                    <span class="club-name">Crystal Palace</span>
+                    <span class="club-metric">£40.5M</span>
+                </a>
+            </li>
+            
+            <li>
+                <a href="brighton_player_amortisation.html">
+                    <span class="club-name">Brighton</span>
+                    <span class="club-metric">£39.3M</span>
+                </a>
+            </li>
+            
+            <li>
+                <a href="brentford_player_amortisation.html">
+                    <span class="club-name">Brentford</span>
+                    <span class="club-metric">£30.9M</span>
+                </a>
+            </li>
+            
+            </ul>
+        </div>
+        
+        <div class="league-section">
+            <h2>Unknown</h2>
+            <ul class="club-list">
+                
+            <li>
+                <a href="leeds_player_amortisation.html">
+                    <span class="club-name">Leeds</span>
+                    <span class="club-metric">£80.9M</span>
+                </a>
+            </li>
+            
+            <li>
+                <a href="burnley_player_amortisation.html">
+                    <span class="club-name">Burnley</span>
+                    <span class="club-metric">£22.1M</span>
+                </a>
+            </li>
+            
+            <li>
+                <a href="coventry_player_amortisation.html">
+                    <span class="club-name">Coventry</span>
+                    <span class="club-metric">£8.3M</span>
+                </a>
+            </li>
+            
+            <li>
+                <a href="hull_city_player_amortisation.html">
+                    <span class="club-name">Hull City</span>
+                    <span class="club-metric">£4.7M</span>
+                </a>
+            </li>
+            
+            <li>
+                <a href="cardiff_player_amortisation.html">
+                    <span class="club-name">Cardiff</span>
+                    <span class="club-metric">£4.2M</span>
+                </a>
+            </li>
+            
+            <li>
+                <a href="bristol_city_player_amortisation.html">
+                    <span class="club-name">Bristol City</span>
+                    <span class="club-metric">£3.2M</span>
+                </a>
+            </li>
+            
+            <li>
+                <a href="ipswich_player_amortisation.html">
+                    <span class="club-name">Ipswich</span>
+                    <span class="club-metric">£3.0M</span>
+                </a>
+            </li>
+            
+            <li>
+                <a href="luton_town_player_amortisation.html">
+                    <span class="club-name">Luton Town</span>
+                    <span class="club-metric">£2.4M</span>
+                </a>
+            </li>
+            
+            <li>
+                <a href="blackburn_player_amortisation.html">
+                    <span class="club-name">Blackburn</span>
+                    <span class="club-metric">£2.3M</span>
+                </a>
+            </li>
+            
+            <li>
+                <a href="derby_player_amortisation.html">
+                    <span class="club-name">Derby</span>
+                    <span class="club-metric">£0.4M</span>
+                </a>
+            </li>
+            
+            </ul>
+        </div>
+        
+        
+        <div class="footer">
+            <div>Data last updated: 2025-03-23 20:43:51</div>
+            <div><small>Source: Published Club Accounts | Created with D3.js visualization library.</small></div>
+        </div>
     </div>
-  </div>
+    
+    <script>
+        // Theme toggle
+        document.getElementById("themeToggle").addEventListener("change", function() {
+            const isDarkMode = !this.checked;
+            document.body.classList.toggle("light-mode", !isDarkMode);
+            document.getElementById("themeLabel").textContent = isDarkMode ? "Dark Mode" : "Light Mode";
+        });
+    </script>
 </body>
 </html>
     
