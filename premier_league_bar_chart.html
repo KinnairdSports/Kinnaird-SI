@@ -4,12 +4,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Premier League Club Financials - Bar Chart</title>
+  <title>Premier League Club Financials</title>
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <link rel="stylesheet" href="https://use.typekit.net/xxs6huv.css">
   <style>
     body {
-      background-color: #0A1824;
+      background-color: #000000;
       color: white;
       font-family: 'aglet-sans', sans-serif;
       padding: 20px;
@@ -19,34 +19,31 @@
     .container {
       max-width: 1200px;
       margin: 0 auto;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-      border-radius: 10px;
       padding: 20px;
-      background-color: #11242B;
+      background-color: #000000;
     }
-    h1 {
-      text-align: center;
-      margin-bottom: 20px;
-      font-size: 2.2rem;
-      background: linear-gradient(90deg, #05D4BE, #5F84FB);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      text-shadow: 0 0 10px rgba(5, 212, 190, 0.4);
-      font-family: 'aglet-sans', sans-serif;
+    .controls-container { 
+      display: flex; 
+      flex-wrap: wrap; 
+      justify-content: center; 
+      margin-bottom: 30px; 
+      gap: 20px; 
     }
-    .subtitle { text-align: center; margin-bottom: 30px; color: #cccccc; font-weight: 300; }
-    .controls-container { display: flex; flex-wrap: wrap; justify-content: center; margin-bottom: 30px; gap: 20px; }
     .control-group {
-      background-color: rgba(0, 0, 0, 0.2);
+      background-color: rgba(5, 212, 190, 0.1);
       padding: 15px;
       border-radius: 8px;
       border: 1px solid rgba(5, 212, 190, 0.3);
     }
-    label { font-size: 1rem; margin-right: 10px; color: #05D4BE; }
+    label { 
+      font-size: 1rem; 
+      margin-right: 10px; 
+      color: #05D4BE; 
+    }
     select {
       font-size: 1rem;
       padding: 8px 15px;
-      background-color: #1D3B48;
+      background-color: #121212;
       color: white;
       border: 1px solid #05D4BE;
       border-radius: 5px;
@@ -54,13 +51,13 @@
       transition: all 0.3s ease;
       font-family: 'aglet-sans', sans-serif;
     }
-    select:hover { background-color: #275562; }
+    select:hover { background-color: #1D3B48; }
     .charts-container { display: flex; flex-direction: column; gap: 20px; }
     .chart-wrapper {
-      background-color: rgba(0, 0, 0, 0.15);
+      background-color: rgba(5, 212, 190, 0.05);
       border-radius: 8px;
       padding: 10px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(5, 212, 190, 0.2);
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
     .metrics-cards {
@@ -113,7 +110,7 @@
     }
     
     #debugInfo { 
-      background-color: rgba(0, 0, 0, 0.3); 
+      background-color: rgba(5, 212, 190, 0.1); 
       padding: 10px; 
       margin-top: 20px; 
       border-radius: 5px; 
@@ -131,10 +128,7 @@
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Premier League Financial Dashboard</h1>
-    <p class="subtitle">Club financial performance comparison</p>
-    
+  <div class="container">    
     <div class="controls-container">
       <div class="control-group">
         <label for="yearSelect">Financial Year:</label>
@@ -193,7 +187,7 @@
     <div id="debugInfo"></div>
     
     <div class="footer">
-      Data last updated: 2025-03-23 12:54:42 | Source: Premier League Financial Records 2015-2023
+      Data last updated: 2025-03-23 13:14:36 | Source: Premier League Financial Records 2015-2023
       <div><small>Double-click on chart area to show data info</small></div>
     </div>
   </div>
@@ -617,6 +611,14 @@
         .text(selectedMetric.charAt(0).toUpperCase() + selectedMetric.slice(1) + " Trends (2015-2023)");
       
       // Draw total line
+      g.append("path")
+        .datum(yearlyData)
+        .attr("fill", "none")
+        .attr("stroke", "#05D4BE")
+        .attr("stroke-width", 3)
+        .attr("d", totalLine);
+      
+      // Draw max line
       g.append("path")
         .datum(yearlyData)
         .attr("fill", "none")
