@@ -3,7 +3,7 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>Brighton - Player Amortisation Analysis</title>
+    <title>Player Amortisation Analysis</title>
     <!-- Load Aglet Sans from Typekit -->
     <link href="https://use.typekit.net/xxs6huv.css" rel="stylesheet">
     <script src="https://d3js.org/d3.v7.min.js"></script>
@@ -236,15 +236,7 @@
     <div class="container">
         <div class="header">
             <div class="club-info">
-                <div class="club-name">Brighton</div>
                 <div class="financial-details">Player Amortisation Analysis | 2015 - 2024</div>
-            </div>
-            <div class="theme-toggle">
-                <label class="toggle-switch">
-                    <input type="checkbox" id="themeToggle">
-                    <span class="slider"></span>
-                </label>
-                <span id="themeLabel">Dark Mode</span>
             </div>
         </div>
         
@@ -261,14 +253,6 @@
         <div class="chart-wrapper">
             <div class="chart-title">Player Amortisation Over Time</div>
             <div id="mainChart" style="width: 100%; height: 500px;"></div>
-        </div>
-        
-        <div class="footer">
-            <div>Data last updated: 2025-03-23 20:43:51 | Source: Published Club Accounts</div>
-            <div><small>Created with D3.js visualization library. Hover over any data point for details.</small></div>
-            <div class="back-to-index">
-                <a href="index.html">View All Clubs</a>
-            </div>
         </div>
     </div>
     
@@ -445,28 +429,7 @@
               .style("fill", "var(--text)")
               .style("font-size", "14px")
               .text("Player Amortisation (GBP)");
-          
-          // Add chart title as annotation
-          svg.append("text")
-              .attr("x", width / 2)
-              .attr("y", -10)
-              .attr("text-anchor", "middle")
-              .style("fill", "var(--text)")
-              .style("font-size", "16px")
-              .style("font-weight", "bold")
-              .text(`${document.getElementById("inflationToggle").checked ? "Inflation-Adjusted " : ""}Player Amortisation for ${clubName}`);
       }
-      
-      // Theme toggle
-      document.getElementById("themeToggle").addEventListener("change", function() {
-          isDarkMode = !this.checked;
-          document.body.classList.toggle("light-mode", !isDarkMode);
-          document.getElementById("tooltip").classList.toggle("light-mode", !isDarkMode);
-          document.getElementById("themeLabel").textContent = isDarkMode ? "Dark Mode" : "Light Mode";
-          
-          // Re-render chart with new theme
-          renderMainChart();
-      });
       
       // Inflation toggle
       document.getElementById("inflationToggle").addEventListener("change", function() {

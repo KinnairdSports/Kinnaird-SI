@@ -3,55 +3,394 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>Wages Graph</title>
+    <title>Wages Analysis</title>
     <!-- Load Aglet Sans from Typekit -->
     <link href="https://use.typekit.net/xxs6huv.css" rel="stylesheet">
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
     <style>
-      body, .plotly, .plotly text {
+      :root {
+        --background: #11242B;
+        --text: #FFFFFF;
+        --muted-text: #CCCCCC;
+        --primary: #05D4BE;
+        --secondary: #5F84FB;
+        --accent: #FF9500;
+        --positive: #4CD964;
+        --negative: #FF3B30;
+        --grid: rgba(128, 128, 128, 0.2);
+        --line: rgba(255, 255, 255, 0.3);
+        --tooltip-bg: #1D3B48;
+        --area-fill: rgba(5, 212, 190, 0.2);
+      }
+      
+      body {
           font-family: 'aglet-sans', sans-serif !important;
-          background-color: #11242B;
+          background-color: var(--background);
+          color: var(--text);
           margin: 0;
           padding: 0;
       }
-      .toggle-container {
-          text-align: center;
-          margin-bottom: 10px;
-          color: white;
-          font-size: 14px;
+      
+      .container {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 20px;
       }
-      .toggle-container input {
-          margin-right: 6px;
+      
+      .header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding-bottom: 15px;
+          margin-bottom: 25px;
+          border-bottom: 1px solid var(--primary);
+      }
+      
+      .club-info {
+          display: flex;
+          flex-direction: column;
+      }
+      
+      .financial-details {
+          font-size: 1rem;
+          color: var(--muted-text);
+          margin-top: 5px;
+      }
+      
+      .controls {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 20px;
+          align-items: center;
+          margin-bottom: 20px;
+          padding: 15px;
+          background-color: rgba(0, 0, 0, 0.1);
+          border-radius: 8px;
+      }
+      
+      .control-group {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+      }
+      
+      .toggle-switch {
+          position: relative;
+          display: inline-block;
+          width: 48px;
+          height: 24px;
+      }
+      
+      .toggle-switch input {
+          opacity: 0;
+          width: 0;
+          height: 0;
+      }
+      
+      .slider {
+          position: absolute;
+          cursor: pointer;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: rgba(255, 255, 255, 0.3);
+          transition: .4s;
+          border-radius: 24px;
+      }
+      
+      .slider:before {
+          position: absolute;
+          content: "";
+          height: 16px;
+          width: 16px;
+          left: 4px;
+          bottom: 4px;
+          background-color: white;
+          transition: .4s;
+          border-radius: 50%;
+      }
+      
+      input:checked + .slider {
+          background-color: var(--primary);
+      }
+      
+      input:checked + .slider:before {
+          transform: translateX(24px);
+      }
+      
+      .chart-wrapper {
+          background-color: rgba(255, 255, 255, 0.05);
+          border-radius: 8px;
+          padding: 20px;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+          border: 1px solid rgba(5, 212, 190, 0.3);
+          margin-bottom: 20px;
+      }
+      
+      .chart-title {
+          font-size: 1.2rem;
+          margin-bottom: 15px;
+          color: var(--primary);
+          border-bottom: 1px solid rgba(5, 212, 190, 0.3);
+          padding-bottom: 5px;
+      }
+      
+      svg text {
+          font-family: 'aglet-sans', sans-serif !important;
+          fill: var(--text);
+      }
+      
+      .axis-x path, .axis-y path {
+          stroke: var(--line);
+      }
+      
+      .axis-x .tick line, .axis-y .tick line {
+          stroke: var(--grid);
+      }
+      
+      .axis-x text, .axis-y text {
+          fill: var(--text);
+          font-size: 12px;
+      }
+      
+      .tooltip {
+          position: absolute;
+          padding: 10px;
+          background: var(--tooltip-bg);
+          color: var(--text);
+          border: 1px solid var(--primary);
+          border-radius: 5px;
+          pointer-events: none;
+          font-family: 'aglet-sans', sans-serif;
+          font-size: 14px;
+          opacity: 0;
+          transition: opacity 0.3s;
+          z-index: 10;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+      
+      .area {
+          fill: var(--area-fill);
+          transition: fill 0.3s ease;
+      }
+      
+      .line {
+          fill: none;
+          stroke: var(--primary);
+          stroke-width: 2;
+          transition: stroke 0.3s ease;
       }
     </style>
 </head>
 <body>
-    <div class="toggle-container">
-      <label>
-         <input type="checkbox" id="inflationCheckbox"> Adjust for Inflation
-      </label>
+    <div class="container">
+        <div class="header">
+            <div class="club-info">
+                <div class="financial-details">Wages Analysis | 2015 - 2023</div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label class="toggle-switch">
+                    <input type="checkbox" id="inflationToggle">
+                    <span class="slider"></span>
+                </label>
+                <span>Adjust for Inflation</span>
+            </div>
+        </div>
+        
+        <div class="chart-wrapper">
+            <div class="chart-title">Wages Over Time</div>
+            <div id="mainChart" style="width: 100%; height: 500px;"></div>
+        </div>
     </div>
-    <div>                        <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
-        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.0.0.min.js"></script>                <div id="graph" class="plotly-graph-div" style="height:550px; width:100%;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("graph")) {                    Plotly.newPlot(                        "graph",                        [{"customdata":[["4th","Premier League"],["5th","Premier League"],["6th","Premier League"],["2nd","Premier League"],["6th","Premier League"],["3rd","Premier League"],["2nd","Premier League"],["6th","Premier League"],["3rd","Premier League"]],"hovertemplate":"\u003cb\u003e%{customdata[0]} in %{customdata[1]}\u003c\u002fb\u003e\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"rgba(0,0,0,0)","width":0},"mode":"lines","name":"","showlegend":false,"x":{"dtype":"i2","bdata":"3wfgB+EH4gfjB+QH5QfmB+cH"},"y":[0,0,0,0,0,0,0,0,0],"type":"scatter"},{"customdata":{"dtype":"f8","bdata":"IbByaJHJYUC8dJMYBIpkQGQ730+Ne2dAbxKDwMrlb0Dy0k1iEEB0QOf7qfHSUW5AeekmMQhMcUDJdr6fGpt0QKjGSzeJSXFA","shape":"9, 1"},"fill":"tozeroy","fillcolor":"rgba(5, 212, 190, 0.2)","hovertemplate":"Wages: £%{customdata[0]:.1f}m\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"#05D4BE","shape":"spline","width":2},"mode":"lines","name":"Wages","x":{"dtype":"i2","bdata":"3wfgB+EH4gfjB+QH5QfmB+cH"},"y":[142299000.0,164313000.0,187861000.0,255181000.0,324004000.0,242557000.0,276752000.0,329694000.0,276596000.0],"type":"scatter"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"xaxis":{"title":{"text":"Financial Year"},"dtick":1,"showgrid":false,"showline":true,"linecolor":"white","linewidth":2,"tickmode":"linear","tick0":2015,"range":[2015,2023.5]},"yaxis":{"title":{"text":"Wages (GBP)"},"range":[0,362663400.0],"showgrid":true,"gridcolor":"rgba(128, 128, 128, 0.2)","gridwidth":0.5,"showline":true,"linecolor":"white","linewidth":2},"font":{"family":"aglet-sans, sans-serif","size":12,"color":"white"},"hoverlabel":{"font":{"size":12,"color":"white"},"bgcolor":"rgba(17,36,43,0.8)","bordercolor":"rgba(0,0,0,0)"},"margin":{"t":60,"l":60,"r":40,"b":60},"showlegend":false,"paper_bgcolor":"#11242B","plot_bgcolor":"#11242B","hovermode":"x unified","height":550},                        {"displayModeBar": false, "responsive": true}                    )                };            </script>        </div>
+    
+    <div id="tooltip" class="tooltip"></div>
+    
     <script>
-      // Ensure Plotly texts use Aglet Sans
-      document.addEventListener("DOMContentLoaded", function(){
-          setTimeout(function(){
-              var texts = document.querySelectorAll('svg text');
-              for(var i = 0; i < texts.length; i++){
-                  texts[i].setAttribute("font-family", "aglet-sans, sans-serif");
-              }
-          }, 500);
+      // Data for the chart
+      const financialYears = [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023];
+      const absoluteWages = [142299000.0, 164313000.0, 187861000.0, 255181000.0, 324004000.0, 242557000.0, 276752000.0, 329694000.0, 276596000.0];
+      const adjustedWages = [213448500.0, 238253850.0, 263005399.99999997, 344494350.0, 421205200.0, 303196250.0, 332102400.0, 379148100.0, 304255600.0];
+      const positionData = ["4th", "5th", "6th", "2nd", "6th", "3rd", "2nd", "6th", "3rd"];
+      const leagueData = ["Premier League", "Premier League", "Premier League", "Premier League", "Premier League", "Premier League", "Premier League", "Premier League", "Premier League"];
+      
+      // Store active data set
+      let activeWagesData = absoluteWages;
+      
+      // Chart rendering function
+      function renderMainChart() {
+          // Clear previous chart if any
+          d3.select("#mainChart").html("");
+          
+          // Set up dimensions
+          const margin = {top: 30, right: 40, bottom: 60, left: 70};
+          const width = document.getElementById('mainChart').clientWidth - margin.left - margin.right;
+          const height = document.getElementById('mainChart').clientHeight - margin.top - margin.bottom;
+          
+          // Create SVG container
+          const svg = d3.select("#mainChart")
+              .append("svg")
+              .attr("width", width + margin.left + margin.right)
+              .attr("height", height + margin.top + margin.bottom)
+              .append("g")
+              .attr("transform", `translate(${margin.left}, ${margin.top})`);
+          
+          // Set up scales
+          const x = d3.scaleLinear()
+              .domain([d3.min(financialYears), d3.max(financialYears) + 0.5])
+              .range([0, width]);
+          
+          const y = d3.scaleLinear()
+              .domain([0, d3.max(activeWagesData) * 1.1])
+              .range([height, 0]);
+          
+          // Add grid lines
+          svg.append("g")
+              .attr("class", "grid")
+              .attr("transform", `translate(0, ${height})`)
+              .call(d3.axisBottom(x)
+                  .tickFormat("")
+                  .tickSize(-height)
+                  .tickValues(financialYears));
+              
+          svg.append("g")
+              .attr("class", "grid")
+              .call(d3.axisLeft(y)
+                  .tickFormat("")
+                  .tickSize(-width));
+          
+          // Style grid lines
+          svg.selectAll(".grid line")
+              .style("stroke", "var(--grid)")
+              .style("stroke-opacity", "0.7")
+              .style("shape-rendering", "crispEdges");
+          
+          svg.selectAll(".grid path")
+              .style("stroke-width", "0");
+          
+          // Add X axis
+          svg.append("g")
+              .attr("class", "axis-x")
+              .attr("transform", `translate(0, ${height})`)
+              .call(d3.axisBottom(x)
+                  .tickFormat(d3.format("d"))
+                  .ticks(financialYears.length)
+                  .tickValues(financialYears));
+          
+          // Add Y axis
+          svg.append("g")
+              .attr("class", "axis-y")
+              .call(d3.axisLeft(y)
+                  .tickFormat(d => `£${(d/1000000).toFixed(0)}M`));
+          
+          // Create a line generator
+          const line = d3.line()
+              .x((d, i) => x(financialYears[i]))
+              .y(d => y(d))
+              .curve(d3.curveMonotoneX);
+          
+          // Create area generator for the fill
+          const area = d3.area()
+              .x((d, i) => x(financialYears[i]))
+              .y0(height)
+              .y1(d => y(d))
+              .curve(d3.curveMonotoneX);
+          
+          // Add the area
+          svg.append("path")
+              .datum(activeWagesData)
+              .attr("class", "area")
+              .attr("d", area);
+          
+          // Add the line
+          svg.append("path")
+              .datum(activeWagesData)
+              .attr("class", "line")
+              .attr("d", line);
+          
+          // Add data points
+          svg.selectAll(".club-dot")
+              .data(activeWagesData)
+              .enter()
+              .append("circle")
+              .attr("class", "club-dot")
+              .attr("cx", (d, i) => x(financialYears[i]))
+              .attr("cy", d => y(d))
+              .attr("r", 6)
+              .attr("fill", "var(--primary)")
+              .attr("stroke", "white")
+              .attr("stroke-width", 1.5)
+              .on("mouseover", function(event, d, i) {
+                  const index = activeWagesData.indexOf(d);
+                  const year = financialYears[index];
+                  const position = positionData[index];
+                  const league = leagueData[index];
+                  
+                  // Highlight dot
+                  d3.select(this)
+                      .attr("r", 8)
+                      .attr("stroke-width", 2);
+                  
+                  // Show tooltip
+                  d3.select("#tooltip")
+                      .style("opacity", 1)
+                      .style("left", (event.pageX + 10) + "px")
+                      .style("top", (event.pageY - 15) + "px")
+                      .html(`
+                          <strong>Financial Year: ${year}</strong><br>
+                          Wages: £${(d/1000000).toFixed(1)}M
+                          ${position && league ? `<br>Position: ${position} in ${league}` : ""}
+                      `);
+              })
+              .on("mouseout", function() {
+                  // Reset dot size
+                  d3.select(this)
+                      .attr("r", 6)
+                      .attr("stroke-width", 1.5);
+                  
+                  // Hide tooltip
+                  d3.select("#tooltip")
+                      .style("opacity", 0);
+              });
+              
+          // Add axis labels
+          svg.append("text")
+              .attr("class", "axis-title")
+              .attr("x", width / 2)
+              .attr("y", height + margin.bottom - 10)
+              .attr("text-anchor", "middle")
+              .style("fill", "var(--text)")
+              .style("font-size", "14px")
+              .text("Financial Year");
+          
+          svg.append("text")
+              .attr("class", "axis-title")
+              .attr("transform", "rotate(-90)")
+              .attr("x", -height / 2)
+              .attr("y", -margin.left + 20)
+              .attr("text-anchor", "middle")
+              .style("fill", "var(--text)")
+              .style("font-size", "14px")
+              .text("Wages (GBP)");
+      }
+      
+      // Inflation toggle
+      document.getElementById("inflationToggle").addEventListener("change", function() {
+          activeWagesData = this.checked ? adjustedWages : absoluteWages;
+          
+          // Re-render chart with new data
+          renderMainChart();
       });
       
-      // JavaScript arrays holding absolute and inflation-adjusted wages data
-      var absoluteWages = [142299000.0, 164313000.0, 187861000.0, 255181000.0, 324004000.0, 242557000.0, 276752000.0, 329694000.0, 276596000.0];
-      var adjustedWages = [213448500.0, 238253850.0, 263005399.99999997, 344494350.0, 421205200.0, 303196250.0, 332102400.0, 379148100.0, 304255600.0];
-
-      // Add event listener to checkbox to update the graph trace data
-      document.getElementById("inflationCheckbox").addEventListener("change", function(){
-          var newY = this.checked ? adjustedWages : absoluteWages;
-          Plotly.restyle("graph", "y", [newY]);
+      // Initialize chart on load
+      document.addEventListener("DOMContentLoaded", renderMainChart);
+      
+      // Handle window resize
+      window.addEventListener("resize", function() {
+          renderMainChart();
       });
     </script>
 </body>
