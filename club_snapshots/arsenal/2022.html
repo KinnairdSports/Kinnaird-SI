@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Bournemouth - Financial Snapshot</title>
+  <title>Arsenal - Financial Snapshot</title>
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <link rel="stylesheet" href="https://use.typekit.net/xxs6huv.css">
   <style>
@@ -279,30 +279,30 @@
   <div class="container">
     <div class="header">
       <div class="club-info">
-        <div class="club-name">Bournemouth</div>
-        <div class="team-performance">Finished 15th in Premier League</div>
+        <div class="club-name">Arsenal</div>
+        <div class="team-performance">Finished 5th in Premier League</div>
       </div>
     </div>
     
     <div class="year-slider-container">
       <button id="prevYear" class="year-nav-button">&lt;</button>
       <div class="slider-year-label" id="minYearLabel">2015</div>
-      <input type="range" min="0" max="8" value="0" class="year-slider" id="yearSlider" step="1">
-      <div class="slider-year-label" id="maxYearLabel">2023</div>
+      <input type="range" min="0" max="9" value="2" class="year-slider" id="yearSlider" step="1">
+      <div class="slider-year-label" id="maxYearLabel">2024</div>
       <button id="nextYear" class="year-nav-button">&gt;</button>
-      <div class="financial-year" style="margin-left: 20px;">Financial Year: <span id="currentYear">2023</span></div>
+      <div class="financial-year" style="margin-left: 20px;">Financial Year: <span id="currentYear">2022</span></div>
     </div>
     
     <div class="metrics-cards">
       <div class="metric-card">
         <div class="metric-title">Total Revenue</div>
-        <div class="metric-value">£141.0M</div>
+        <div class="metric-value">£367.1M</div>
         <div class="metric-change">0% of league average</div>
       </div>
       
       <div class="metric-card">
         <div class="metric-title">Wage Bill</div>
-        <div class="metric-value">£87.8M</div>
+        <div class="metric-value">£185.6M</div>
         <div class="metric-change neutral">None% of revenue</div>
       </div>
       
@@ -319,15 +319,15 @@
         <div>
           <div class="metric-row">
             <span class="metric-label">Matchday</span>
-            <span class="metric-value">£5.4M (3.8%)</span>
+            <span class="metric-value">£79.4M (21.6%)</span>
           </div>
           <div class="metric-row">
             <span class="metric-label">Broadcasting</span>
-            <span class="metric-value">£123.0M (87.2%)</span>
+            <span class="metric-value">£146.0M (39.8%)</span>
           </div>
           <div class="metric-row">
             <span class="metric-label">Commercial</span>
-            <span class="metric-value">£12.6M (8.9%)</span>
+            <span class="metric-value">£141.7M (38.6%)</span>
           </div>
         </div>
         <div id="revenueChart" style="height: 180px;"></div>
@@ -339,7 +339,7 @@
         <div class="panel-title">Costs & Profitability</div>
         <div class="metric-row">
           <span class="metric-label">Wages</span>
-          <span class="metric-value negative">£87.8M</span>
+          <span class="metric-value negative">£185.6M</span>
         </div>
         <div class="metric-row">
           <span class="metric-label">Other Costs</span>
@@ -347,7 +347,7 @@
         </div>
         <div class="metric-row">
           <span class="metric-label">Player Amortisation</span>
-          <span class="metric-value negative">£41.2M</span>
+          <span class="metric-value negative">£124.6M</span>
         </div>
         <div class="metric-row">
           <span class="metric-label">Operating Profit/Loss</span>
@@ -457,16 +457,16 @@
   <script>
   
     // Club data
-    const clubData = {"club_name": "Bournemouth", "financial_year": 2023, "league": "Premier League", "position_finished": "15th", "matchday_income": 5414000.0, "broadcast_income": 122976000.0, "commercial_income": 12593000.0, "total_income": 140983000.0, "wages": 87832000.0, "other_costs": null, "player_amortisation": 41226000.0, "operating_profit_loss": null, "profit_before_tax": null, "profit_after_tax": null, "player_signings": null, "player_sales": null, "net_spend": null, "gross_squad_cost": null, "transfer_debtors": null, "transfer_creditors": null, "cash": null, "borrowing": null, "net_debt": null, "wages_income_percentage": null, "director_pay": null, "total_player_cost": null, "average_weekly_wage": null};
+    const clubData = {"club_name": "Arsenal", "financial_year": 2022, "league": "Premier League", "position_finished": "5th", "matchday_income": 79389000.0, "broadcast_income": 145965000.0, "commercial_income": 141745000.0, "total_income": 367099000.0, "wages": 185581000.0, "other_costs": null, "player_amortisation": 124567000.0, "operating_profit_loss": null, "profit_before_tax": null, "profit_after_tax": null, "player_signings": null, "player_sales": null, "net_spend": null, "gross_squad_cost": null, "transfer_debtors": null, "transfer_creditors": null, "cash": null, "borrowing": null, "net_debt": null, "wages_income_percentage": null, "director_pay": null, "total_player_cost": null, "average_weekly_wage": null};
     
     // Historical data for trends
-    const historicalData = [{"financial_year": 2019, "total_income": 131134000.0, "wages": 97412000.0, "operating_profit_loss": null, "net_debt": null, "year_display": "2019"}, {"financial_year": 2020, "total_income": 95380000.0, "wages": 95021000.0, "operating_profit_loss": null, "net_debt": null, "year_display": "2020"}, {"financial_year": 2021, "total_income": 71686000.0, "wages": 50140000.0, "operating_profit_loss": null, "net_debt": null, "year_display": "2021"}, {"financial_year": 2022, "total_income": 53226000.0, "wages": 54019000.0, "operating_profit_loss": null, "net_debt": null, "year_display": "2022"}, {"financial_year": 2023, "total_income": 140983000.0, "wages": 87832000.0, "operating_profit_loss": null, "net_debt": null, "year_display": "2023"}];
+    const historicalData = [{"financial_year": 2018, "total_income": 385920000.0, "wages": 210141000.0, "operating_profit_loss": null, "net_debt": null, "year_display": "2018"}, {"financial_year": 2019, "total_income": 390148000.0, "wages": 205210000.0, "operating_profit_loss": null, "net_debt": null, "year_display": "2019"}, {"financial_year": 2020, "total_income": 339968000.0, "wages": 204700000.0, "operating_profit_loss": null, "net_debt": null, "year_display": "2020"}, {"financial_year": 2021, "total_income": 324519000.0, "wages": 212416000.0, "operating_profit_loss": null, "net_debt": null, "year_display": "2021"}, {"financial_year": 2022, "total_income": 367099000.0, "wages": 185581000.0, "operating_profit_loss": null, "net_debt": null, "year_display": "2022"}];
     
     // League averages
-    const leagueAverages = {"avg_income": 306817947.3684211, "avg_wages": 181045736.84210527, "avg_amortisation": 86110368.42105263, "avg_debt": null, "avg_wages_ratio": null};
+    const leagueAverages = {"avg_income": 301934812.5, "avg_wages": 176098562.5, "avg_amortisation": 79896750.0, "avg_debt": null, "avg_wages_ratio": null};
     
     // Available years
-    const availableYears = [2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015];
+    const availableYears = [2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015];
     
     // Format helpers
     function formatCurrency(value) {
