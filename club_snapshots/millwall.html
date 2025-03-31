@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Leicester - Financial Snapshot</title>
+  <title>Millwall - Financial Snapshot</title>
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <link rel="stylesheet" href="https://use.typekit.net/xxs6huv.css">
   <style>
@@ -196,22 +196,22 @@
   <div class="container">
     <div class="header">
       <div class="club-info">
-        <div class="club-name">Leicester</div>
-        <div class="financial-year">Financial Year: 2023</div>
-        <div class="team-performance">Team Performance: 18th in Premier League</div>
+        <div class="club-name">Millwall</div>
+        <div class="financial-year">Financial Year: 2024</div>
+        <div class="team-performance">Team Performance: None in None</div>
       </div>
     </div>
     
     <div class="metrics-cards">
       <div class="metric-card">
         <div class="metric-title">Total Revenue</div>
-        <div class="metric-value">£177.3M</div>
+        <div class="metric-value">£21.4M</div>
         <div class="metric-change">0% of league average</div>
       </div>
       
       <div class="metric-card">
         <div class="metric-title">Wage Bill</div>
-        <div class="metric-value">£171.9M</div>
+        <div class="metric-value">£22.7M</div>
         <div class="metric-change neutral">None% of revenue</div>
       </div>
       
@@ -228,15 +228,15 @@
         <div>
           <div class="metric-row">
             <span class="metric-label">Matchday</span>
-            <span class="metric-value">£18.4M (10.4%)</span>
+            <span class="metric-value">£7.5M (34.9%)</span>
           </div>
           <div class="metric-row">
             <span class="metric-label">Broadcasting</span>
-            <span class="metric-value">£114.5M (64.6%)</span>
+            <span class="metric-value">? (0.0%)</span>
           </div>
           <div class="metric-row">
             <span class="metric-label">Commercial</span>
-            <span class="metric-value">£44.4M (25.0%)</span>
+            <span class="metric-value">£2.9M (13.7%)</span>
           </div>
         </div>
         <div id="revenueChart" style="height: 180px;"></div>
@@ -248,7 +248,7 @@
         <div class="panel-title">Costs & Profitability</div>
         <div class="metric-row">
           <span class="metric-label">Wages</span>
-          <span class="metric-value negative">£171.9M</span>
+          <span class="metric-value negative">£22.7M</span>
         </div>
         <div class="metric-row">
           <span class="metric-label">Other Costs</span>
@@ -256,7 +256,7 @@
         </div>
         <div class="metric-row">
           <span class="metric-label">Player Amortisation</span>
-          <span class="metric-value negative">£76.9M</span>
+          <span class="metric-value negative">£3.4M</span>
         </div>
         <div class="metric-row">
           <span class="metric-label">Operating Profit/Loss</span>
@@ -366,13 +366,13 @@
   <script>
   
     // Club data
-    const clubData = {"club_name": "Leicester", "financial_year": 2023, "league": "Premier League", "position_finished": "18th", "matchday_income": 18391000.0, "broadcast_income": 114540000.0, "commercial_income": 44395000.0, "total_income": 177326000.0, "wages": 171950000.0, "other_costs": null, "player_amortisation": 76945000.0, "operating_profit_loss": null, "profit_before_tax": null, "profit_after_tax": null, "player_signings": null, "player_sales": null, "net_spend": null, "gross_squad_cost": null, "transfer_debtors": null, "transfer_creditors": null, "cash": null, "borrowing": null, "net_debt": null, "wages_income_percentage": null, "director_pay": null, "total_player_cost": null, "average_weekly_wage": null};
+    const clubData = {"club_name": "Millwall", "financial_year": 2024, "league": null, "position_finished": null, "matchday_income": 7475000.0, "broadcast_income": null, "commercial_income": 2940000.0, "total_income": 21415000.0, "wages": 22701000.0, "other_costs": null, "player_amortisation": 3440000.0, "operating_profit_loss": null, "profit_before_tax": null, "profit_after_tax": null, "player_signings": null, "player_sales": null, "net_spend": null, "gross_squad_cost": null, "transfer_debtors": null, "transfer_creditors": null, "cash": null, "borrowing": null, "net_debt": null, "wages_income_percentage": null, "director_pay": null, "total_player_cost": null, "average_weekly_wage": null};
     
     // Historical data for trends
-    const historicalData = [{"financial_year": 2019, "total_income": 178429000.0, "wages": 122396000.0, "operating_profit_loss": null, "net_debt": null, "year_display": "2019"}, {"financial_year": 2020, "total_income": 149950000.0, "wages": 128239000.0, "operating_profit_loss": null, "net_debt": null, "year_display": "2020"}, {"financial_year": 2021, "total_income": 226204000.0, "wages": 158794000.0, "operating_profit_loss": null, "net_debt": null, "year_display": "2021"}, {"financial_year": 2022, "total_income": 214590000.0, "wages": 148403000.0, "operating_profit_loss": null, "net_debt": null, "year_display": "2022"}, {"financial_year": 2023, "total_income": 177326000.0, "wages": 171950000.0, "operating_profit_loss": null, "net_debt": null, "year_display": "2023"}];
+    const historicalData = [{"financial_year": 2020, "total_income": 16427000.0, "wages": 16899000.0, "operating_profit_loss": null, "net_debt": null, "year_display": "2020"}, {"financial_year": 2021, "total_income": 12457000.0, "wages": 18567000.0, "operating_profit_loss": null, "net_debt": null, "year_display": "2021"}, {"financial_year": 2022, "total_income": 18593000.0, "wages": 19828000.0, "operating_profit_loss": null, "net_debt": null, "year_display": "2022"}, {"financial_year": 2023, "total_income": 19358000.0, "wages": 19977000.0, "operating_profit_loss": null, "net_debt": null, "year_display": "2023"}, {"financial_year": 2024, "total_income": 21415000.0, "wages": 22701000.0, "operating_profit_loss": null, "net_debt": null, "year_display": "2024"}];
     
     // League averages
-    const leagueAverages = {"avg_income": 306817947.3684211, "avg_wages": 181045736.84210527, "avg_amortisation": 86110368.42105263, "avg_debt": null, "avg_wages_ratio": null};
+    const leagueAverages = {"avg_income": 378933200.0, "avg_wages": 203739400.0, "avg_amortisation": 94515400.0, "avg_debt": null, "avg_wages_ratio": null};
     
     // Format helpers
     function formatCurrency(value) {

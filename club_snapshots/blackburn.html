@@ -48,42 +48,6 @@
       color: #cccccc;
       margin-top: 5px;
     }
-    .year-slider-container {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 20px;
-      background-color: rgba(5, 212, 190, 0.05);
-      border-radius: 8px;
-      padding: 15px;
-      border: 1px solid rgba(5, 212, 190, 0.2);
-    }
-    .year-slider {
-      width: 70%;
-      margin: 0 10px;
-    }
-    .slider-year-label {
-      font-size: 1.2rem;
-      color: #05D4BE;
-      width: 60px;
-      text-align: center;
-    }
-    .year-nav-button {
-      background-color: rgba(5, 212, 190, 0.2);
-      border: 1px solid rgba(5, 212, 190, 0.5);
-      color: white;
-      border-radius: 4px;
-      padding: 5px 10px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-    .year-nav-button:hover {
-      background-color: rgba(5, 212, 190, 0.4);
-    }
-    .year-nav-button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
     .metrics-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -220,58 +184,11 @@
     .axis-x text, .axis-y text { fill: white; font-size: 12px; font-family: 'aglet-sans', sans-serif; }
     .chart-title { fill: white; font-size: 18px; font-weight: bold; font-family: 'aglet-sans', sans-serif; text-anchor: middle; }
     
-    /* Slider styling */
-    input[type=range] {
-      -webkit-appearance: none;
-      width: 100%;
-      background: transparent;
-    }
-    input[type=range]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      height: 20px;
-      width: 20px;
-      border-radius: 50%;
-      background: #05D4BE;
-      cursor: pointer;
-      margin-top: -8px;
-    }
-    input[type=range]::-moz-range-thumb {
-      height: 20px;
-      width: 20px;
-      border-radius: 50%;
-      background: #05D4BE;
-      cursor: pointer;
-    }
-    input[type=range]::-webkit-slider-runnable-track {
-      width: 100%;
-      height: 4px;
-      cursor: pointer;
-      background: rgba(255, 255, 255, 0.3);
-      border-radius: 2px;
-    }
-    input[type=range]::-moz-range-track {
-      width: 100%;
-      height: 4px;
-      cursor: pointer;
-      background: rgba(255, 255, 255, 0.3);
-      border-radius: 2px;
-    }
-    input[type=range]:focus {
-      outline: none;
-    }
-    
     @media (max-width: 768px) {
       .metrics-grid, .chart-container {
         grid-template-columns: 1fr;
       }
       .metric-card { min-width: 100%; }
-      .year-slider-container {
-        flex-direction: column;
-      }
-      .year-slider {
-        width: 100%;
-        margin: 10px 0;
-      }
     }
   </style>
 </head>
@@ -280,17 +197,9 @@
     <div class="header">
       <div class="club-info">
         <div class="club-name">Blackburn</div>
-        <div class="team-performance">Finished None in None</div>
+        <div class="financial-year">Financial Year: 2024</div>
+        <div class="team-performance">Team Performance: None in None</div>
       </div>
-    </div>
-    
-    <div class="year-slider-container">
-      <button id="prevYear" class="year-nav-button">&lt;</button>
-      <div class="slider-year-label" id="minYearLabel">2015</div>
-      <input type="range" min="0" max="9" value="0" class="year-slider" id="yearSlider" step="1">
-      <div class="slider-year-label" id="maxYearLabel">2024</div>
-      <button id="nextYear" class="year-nav-button">&gt;</button>
-      <div class="financial-year" style="margin-left: 20px;">Financial Year: <span id="currentYear">2024</span></div>
     </div>
     
     <div class="metrics-cards">
@@ -447,7 +356,7 @@
     </div>
     
     <div class="footer">
-      Data last updated: 2025-03-31 10:38:42 | Source: Published Club Accounts & Premier League Financial Records
+      Data last updated: 2025-03-31 11:05:09 | Source: Published Club Accounts & Premier League Financial Records
       <div><small>Double-click on chart area to view data details</small></div>
     </div>
   </div>
@@ -465,9 +374,6 @@
     // League averages
     const leagueAverages = {"avg_income": 378933200.0, "avg_wages": 203739400.0, "avg_amortisation": 94515400.0, "avg_debt": null, "avg_wages_ratio": null};
     
-    // Available years
-    const availableYears = [2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015];
-    
     // Format helpers
     function formatCurrency(value) {
       if (value === null || isNaN(value)) return '?';
@@ -477,62 +383,6 @@
     function formatPercentage(value) { 
       if (isNaN(value)) return '-';
       return (value > 0 ? '+' : '') + value.toFixed(1) + '%';
-    }
-    
-    // Year slider functionality
-    function initYearSlider() {
-      const slider = document.getElementById('yearSlider');
-      const currentYearDisplay = document.getElementById('currentYear');
-      const prevButton = document.getElementById('prevYear');
-      const nextButton = document.getElementById('nextYear');
-      
-      // Initialize button states
-      updateButtonStates(parseInt(slider.value));
-      
-      // Event listeners for slider
-      slider.addEventListener('input', function() {
-        const index = parseInt(this.value);
-        currentYearDisplay.textContent = availableYears[index];
-        updateButtonStates(index);
-      });
-      
-      slider.addEventListener('change', function() {
-        const year = availableYears[parseInt(this.value)];
-        window.location.href = window.location.pathname + '?year=' + year;
-      });
-      
-      // Event listeners for navigation buttons
-      prevButton.addEventListener('click', function() {
-        const currentValue = parseInt(slider.value);
-        if (currentValue < availableYears.length - 1) {
-          slider.value = currentValue + 1;
-          currentYearDisplay.textContent = availableYears[currentValue + 1];
-          updateButtonStates(currentValue + 1);
-          
-          // Navigate to the new year
-          const year = availableYears[currentValue + 1];
-          window.location.href = window.location.pathname + '?year=' + year;
-        }
-      });
-      
-      nextButton.addEventListener('click', function() {
-        const currentValue = parseInt(slider.value);
-        if (currentValue > 0) {
-          slider.value = currentValue - 1;
-          currentYearDisplay.textContent = availableYears[currentValue - 1];
-          updateButtonStates(currentValue - 1);
-          
-          // Navigate to the new year
-          const year = availableYears[currentValue - 1];
-          window.location.href = window.location.pathname + '?year=' + year;
-        }
-      });
-      
-      function updateButtonStates(currentIndex) {
-        // Disable/enable buttons based on slider position
-        prevButton.disabled = currentIndex >= availableYears.length - 1;
-        nextButton.disabled = currentIndex <= 0;
-      }
     }
     
     // Create Revenue Breakdown Chart
@@ -900,7 +750,6 @@
     
     // Initialize everything
     document.addEventListener('DOMContentLoaded', function() {
-      initYearSlider();
       createRevenueChart();
       createTrendsChart();
     });
@@ -910,7 +759,6 @@
       console.log('Club Data:', clubData);
       console.log('Historical Data:', historicalData);
       console.log('League Averages:', leagueAverages);
-      console.log('Available Years:', availableYears);
     });
     
   </script>
