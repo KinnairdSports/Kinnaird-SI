@@ -220,7 +220,7 @@
     <div class="container">
         <div class="header">
             <div class="club-info">
-                <div class="financial-details">Revenue Analysis | 2015 - 2023</div>
+                <div class="financial-details">Revenue Analysis | 2020 - 2023</div>
             </div>
         </div>
         
@@ -269,22 +269,22 @@
     
     <script>
       // Data for the chart
-      const financialYears = [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023];
+      const financialYears = [2020, 2021, 2022, 2023];
       
       // Regular data
-      const matchdayData = [8236000.0, 6297000.0, 6184000.0, 7440000.0, 7210000.0, 7060000.0, 1257000.0, 8227000.0, 10992000.0];
-      const broadcastData = [4615000.0, 6118000.0, 8180000.0, 8959000.0, 9181000.0, 10183000.0, 1358000.0, 12159000.0, 124836000.0];
-      const commercialData = [3084000.0, 5250000.0, 5566000.0, 6262000.0, 7364000.0, 7177000.0, 15235000.0, 8824000.0, 18930000.0];
-      const totalData = [15935000.0, 17665000.0, 19930000.0, 22661000.0, 23755000.0, 24420000.0, 17850000.0, 29210000.0, 154758000.0];
+      const matchdayData = [7374, 1382000, 10163, 10992000];
+      const broadcastData = [1094, 9592000, 10143, 124836000];
+      const commercialData = [7101, 5443000, 8886, 18930000];
+      const totalData = [25688, 18408000, 29683, 154758000];
       
       // Inflation-adjusted data
-      const matchdayAdjData = [10624440.0, 7934220.0, 7544480.0, 8853600.0, 8435700.0, 8189599.999999999, 1420409.9999999998, 8967430.0, 11431680.0];
-      const broadcastAdjData = [5953350.0, 7708680.0, 9979600.0, 10661210.0, 10741770.0, 11812280.0, 1534539.9999999998, 13253310.000000002, 129829440.0];
-      const commercialAdjData = [3978360.0, 6615000.0, 6790520.0, 7451780.0, 8615880.0, 8325319.999999999, 17215550.0, 9618160.0, 19687200.0];
-      const totalAdjData = [20556150.0, 22257900.0, 24314600.0, 26966590.0, 27793350.0, 28327199.999999996, 20170499.999999996, 31838900.000000004, 160948320.0];
+      const matchdayAdjData = [8553.84, 1561659.9999999998, 11077.67, 11431680.0];
+      const broadcastAdjData = [1269.04, 10838959.999999998, 11055.87, 129829440.0];
+      const commercialAdjData = [8237.16, 6150589.999999999, 9685.740000000002, 19687200.0];
+      const totalAdjData = [29798.079999999998, 20801039.999999996, 32354.47, 160948320.0];
       
-      const positionData = ["14th", "16th", "21st", "17th", "9th", "7th", "17th", "4th", "16th"];
-      const leagueData = ["Championship", "Championship", "Championship", "Championship", "Championship", "Championship", "Championship", "Championship", "Premier League"];
+      const positionData = [null, null, null, "16th"];
+      const leagueData = [null, null, null, "Premier League"];
       
       // Active data sets
       let activeMatchdayData = matchdayData;
