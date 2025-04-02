@@ -205,7 +205,7 @@
     <div class="metrics-cards">
       <div class="metric-card">
         <div class="metric-title">Total Revenue</div>
-        <div class="metric-value">£0.2M</div>
+        <div class="metric-value">£180.1M</div>
         <div class="metric-change">0% of league average</div>
       </div>
       
@@ -228,15 +228,15 @@
         <div>
           <div class="metric-row">
             <span class="metric-label">Matchday</span>
-            <span class="metric-value">£0.0M (6.9%)</span>
+            <span class="metric-value">£12.3M (6.9%)</span>
           </div>
           <div class="metric-row">
             <span class="metric-label">Broadcasting</span>
-            <span class="metric-value">£0.1M (78.3%)</span>
+            <span class="metric-value">£141.1M (78.3%)</span>
           </div>
           <div class="metric-row">
             <span class="metric-label">Commercial</span>
-            <span class="metric-value">£0.0M (13.0%)</span>
+            <span class="metric-value">£26.7M (14.8%)</span>
           </div>
         </div>
         <div id="revenueChart" style="height: 180px;"></div>
@@ -329,7 +329,7 @@
         <div class="panel-title">League Comparison</div>
         <div class="metric-row">
           <span class="metric-label">Revenue vs. Avg</span>
-          <span class="metric-value">0%</span>
+          <span class="metric-value">65%</span>
         </div>
         <div class="metric-row">
           <span class="metric-label">Wages vs. Avg</span>
@@ -356,7 +356,7 @@
     </div>
     
     <div class="footer">
-      Data last updated: 2025-03-31 16:06:44 | Source: Published Club Accounts & Premier League Financial Records
+      Data last updated: 2025-04-02 11:49:35 | Source: Published Club Accounts & Premier League Financial Records
       <div><small>Double-click on chart area to view data details</small></div>
     </div>
   </div>
@@ -366,13 +366,13 @@
   <script>
   
     // Club data
-    const clubData = {"team_name": "Crystal Palace", "financial_year": 2023, "league": "Premier League", "position_finished": "11th", "matchday_income": 12344, "broadcast_income": 141059, "commercial_income": 23481, "total_income": 180066, "other_income": 3182, "staff_costs": 130626000, "operating_expenses": 156934000, "player_amortisation": 40487000, "depreciation": 2552000, "player_impairment": null, "exceptional_items": null, "operating_profit_loss": -19547000, "profit_on_player_sales": 331000, "profit_loss_before_interest_tax": null, "profit_loss_before_tax": -27527000, "profit_loss_after_tax": -27527000, "player_signings": null, "player_sales": null, "net_spend": null, "gross_squad_cost": null, "transfer_debtors": null, "transfer_creditors": null, "cash": null, "borrowing": null, "net_debt": null, "wages_income_percentage": 72543.4, "director_pay": null, "total_player_cost": null, "average_weekly_wage": null};
+    const clubData = {"team_name": "Crystal Palace", "financial_year": 2023, "league": "Premier League", "position_finished": "11th", "matchday_income": 12344000, "broadcast_income": 141059000, "commercial_income": 26663000, "total_income": 180066000, "other_income": null, "staff_costs": 130626000, "operating_expenses": 156934000, "player_amortisation": 40487000, "depreciation": 2552000, "player_impairment": null, "exceptional_items": null, "operating_profit_loss": -19547000, "profit_on_player_sales": 331000, "profit_loss_before_interest_tax": null, "profit_loss_before_tax": -27527000, "profit_loss_after_tax": -27527000, "player_signings": null, "player_sales": null, "net_spend": null, "gross_squad_cost": null, "transfer_debtors": null, "transfer_creditors": null, "cash": null, "borrowing": null, "net_debt": null, "wages_income_percentage": 72543.4, "director_pay": null, "total_player_cost": null, "average_weekly_wage": null};
     
     // Historical data for trends
-    const historicalData = [{"financial_year": 2020, "total_income": 142347000, "staff_costs": 132643000, "operating_profit_loss": -57152000, "net_debt": null, "year_display": "2020"}, {"financial_year": 2021, "total_income": 134383, "staff_costs": 127002000, "operating_profit_loss": -47932000, "net_debt": null, "year_display": "2021"}, {"financial_year": 2022, "total_income": 159999000, "staff_costs": 123835000, "operating_profit_loss": 16706000, "net_debt": null, "year_display": "2022"}, {"financial_year": 2023, "total_income": 180066, "staff_costs": 130626000, "operating_profit_loss": -19547000, "net_debt": null, "year_display": "2023"}];
+    const historicalData = [{"financial_year": 2020, "total_income": 142347000, "staff_costs": 132643000, "operating_profit_loss": -57152000, "net_debt": null, "year_display": "2020"}, {"financial_year": 2021, "total_income": 134383000, "staff_costs": 127002000, "operating_profit_loss": -47932000, "net_debt": null, "year_display": "2021"}, {"financial_year": 2022, "total_income": 159999000, "staff_costs": 123835000, "operating_profit_loss": 16706000, "net_debt": null, "year_display": "2022"}, {"financial_year": 2023, "total_income": 180066000, "staff_costs": 130626000, "operating_profit_loss": -19547000, "net_debt": null, "year_display": "2023"}];
     
     // League averages
-    const leagueAverages = {"avg_income": 227745912.52631578, "avg_wages": 194925617.83333334, "avg_amortisation": 80418898.57894737, "avg_debt": null, "avg_wages_ratio": 13436.138888888889};
+    const leagueAverages = {"avg_income": 278219875.42105263, "avg_wages": 194925617.83333334, "avg_amortisation": 80418898.57894737, "avg_debt": null, "avg_wages_ratio": 13436.138888888889};
     
     // Format helpers
     function formatCurrency(value) {

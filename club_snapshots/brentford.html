@@ -205,7 +205,7 @@
     <div class="metrics-cards">
       <div class="metric-card">
         <div class="metric-title">Total Revenue</div>
-        <div class="metric-value">£166.5M</div>
+        <div class="metric-value">£169.0M</div>
         <div class="metric-change">0% of league average</div>
       </div>
       
@@ -228,15 +228,15 @@
         <div>
           <div class="metric-row">
             <span class="metric-label">Matchday</span>
-            <span class="metric-value">£11.2M (6.8%)</span>
+            <span class="metric-value">£11.2M (6.7%)</span>
           </div>
           <div class="metric-row">
             <span class="metric-label">Broadcasting</span>
-            <span class="metric-value">£135.2M (81.2%)</span>
+            <span class="metric-value">£135.2M (80.0%)</span>
           </div>
           <div class="metric-row">
             <span class="metric-label">Commercial</span>
-            <span class="metric-value">£20.1M (12.1%)</span>
+            <span class="metric-value">£22.6M (13.4%)</span>
           </div>
         </div>
         <div id="revenueChart" style="height: 180px;"></div>
@@ -329,7 +329,7 @@
         <div class="panel-title">League Comparison</div>
         <div class="metric-row">
           <span class="metric-label">Revenue vs. Avg</span>
-          <span class="metric-value">73%</span>
+          <span class="metric-value">61%</span>
         </div>
         <div class="metric-row">
           <span class="metric-label">Wages vs. Avg</span>
@@ -356,7 +356,7 @@
     </div>
     
     <div class="footer">
-      Data last updated: 2025-03-31 16:06:44 | Source: Published Club Accounts & Premier League Financial Records
+      Data last updated: 2025-04-02 11:49:35 | Source: Published Club Accounts & Premier League Financial Records
       <div><small>Double-click on chart area to view data details</small></div>
     </div>
   </div>
@@ -366,13 +366,13 @@
   <script>
   
     // Club data
-    const clubData = {"team_name": "Brentford", "financial_year": 2023, "league": "Premier League", "position_finished": "9th", "matchday_income": 11250000, "broadcast_income": 135175000, "commercial_income": 20083000, "total_income": 166508000, "other_income": 1883000, "staff_costs": 98800000, "operating_expenses": null, "player_amortisation": 30903000, "depreciation": 5317000, "player_impairment": null, "exceptional_items": null, "operating_profit_loss": 10006, "profit_on_player_sales": 5561, "profit_loss_before_interest_tax": null, "profit_loss_before_tax": 9163, "profit_loss_after_tax": 10909, "player_signings": null, "player_sales": null, "net_spend": null, "gross_squad_cost": null, "transfer_debtors": null, "transfer_creditors": null, "cash": null, "borrowing": null, "net_debt": null, "wages_income_percentage": 59.3, "director_pay": null, "total_player_cost": null, "average_weekly_wage": null};
+    const clubData = {"team_name": "Brentford", "financial_year": 2023, "league": "Premier League", "position_finished": "9th", "matchday_income": 11250000, "broadcast_income": 135175000, "commercial_income": 22593000, "total_income": 169018000, "other_income": 1088000, "staff_costs": 98800000, "operating_expenses": null, "player_amortisation": 30903000, "depreciation": 5317000, "player_impairment": null, "exceptional_items": null, "operating_profit_loss": 10006, "profit_on_player_sales": 5561, "profit_loss_before_interest_tax": null, "profit_loss_before_tax": 9163, "profit_loss_after_tax": 10909, "player_signings": null, "player_sales": null, "net_spend": null, "gross_squad_cost": null, "transfer_debtors": null, "transfer_creditors": null, "cash": null, "borrowing": null, "net_debt": null, "wages_income_percentage": 59.3, "director_pay": null, "total_player_cost": null, "average_weekly_wage": null};
     
     // Historical data for trends
-    const historicalData = [{"financial_year": 2020, "total_income": 13907248, "staff_costs": 25861915, "operating_profit_loss": -9199063, "net_debt": null, "year_display": "2020"}, {"financial_year": 2021, "total_income": 15343550, "staff_costs": 41441161, "operating_profit_loss": -8971166, "net_debt": null, "year_display": "2021"}, {"financial_year": 2022, "total_income": 140913000, "staff_costs": 68152000, "operating_profit_loss": 25090000, "net_debt": null, "year_display": "2022"}, {"financial_year": 2023, "total_income": 166508000, "staff_costs": 98800000, "operating_profit_loss": 10006, "net_debt": null, "year_display": "2023"}];
+    const historicalData = [{"financial_year": 2020, "total_income": 13968562, "staff_costs": 25861915, "operating_profit_loss": -9199063, "net_debt": null, "year_display": "2020"}, {"financial_year": 2021, "total_income": 17080025, "staff_costs": 41441161, "operating_profit_loss": -8971166, "net_debt": null, "year_display": "2021"}, {"financial_year": 2022, "total_income": 142420000, "staff_costs": 68152000, "operating_profit_loss": 25090000, "net_debt": null, "year_display": "2022"}, {"financial_year": 2023, "total_income": 169018000, "staff_costs": 98800000, "operating_profit_loss": 10006, "net_debt": null, "year_display": "2023"}];
     
     // League averages
-    const leagueAverages = {"avg_income": 227745912.52631578, "avg_wages": 194925617.83333334, "avg_amortisation": 80418898.57894737, "avg_debt": null, "avg_wages_ratio": 13436.138888888889};
+    const leagueAverages = {"avg_income": 278219875.42105263, "avg_wages": 194925617.83333334, "avg_amortisation": 80418898.57894737, "avg_debt": null, "avg_wages_ratio": 13436.138888888889};
     
     // Format helpers
     function formatCurrency(value) {
