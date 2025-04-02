@@ -236,7 +236,7 @@
           </div>
           <div class="metric-row">
             <span class="metric-label">Commercial</span>
-            <span class="metric-value">£26.8M (15.1%)</span>
+            <span class="metric-value">£28.8M (16.2%)</span>
           </div>
         </div>
         <div id="revenueChart" style="height: 180px;"></div>
@@ -333,11 +333,11 @@
         </div>
         <div class="metric-row">
           <span class="metric-label">Wages vs. Avg</span>
-          <span class="metric-value">56%</span>
+          <span class="metric-value">60%</span>
         </div>
         <div class="metric-row">
           <span class="metric-label">Amortisation vs. Avg</span>
-          <span class="metric-value">68%</span>
+          <span class="metric-value">69%</span>
         </div>
         <div class="metric-row">
           <span class="metric-label">Net Debt vs. Avg</span>
@@ -356,7 +356,7 @@
     </div>
     
     <div class="footer">
-      Data last updated: 2025-04-02 11:49:35 | Source: Published Club Accounts & Premier League Financial Records
+      Data last updated: 2025-04-02 13:44:14 | Source: Published Club Accounts & Premier League Financial Records
       <div><small>Double-click on chart area to view data details</small></div>
     </div>
   </div>
@@ -366,13 +366,13 @@
   <script>
   
     // Club data
-    const clubData = {"team_name": "Wolverhampton Wanderers", "financial_year": 2024, "league": "Premier League", "position_finished": "14th", "matchday_income": 16193000, "broadcast_income": 132709000, "commercial_income": 26826000, "total_income": 177697000, "other_income": null, "staff_costs": 141925000, "operating_expenses": 183823000, "player_amortisation": 64168000, "depreciation": 3155000, "player_impairment": 3024000, "exceptional_items": null, "operating_profit_loss": -73318000, "profit_on_player_sales": 64631000, "profit_loss_before_interest_tax": -8687000, "profit_loss_before_tax": -14325000, "profit_loss_after_tax": -14325000, "player_signings": null, "player_sales": null, "net_spend": null, "gross_squad_cost": null, "transfer_debtors": null, "transfer_creditors": null, "cash": null, "borrowing": null, "net_debt": null, "wages_income_percentage": 79.9, "director_pay": null, "total_player_cost": null, "average_weekly_wage": null};
+    const clubData = {"team_name": "Wolverhampton Wanderers", "financial_year": 2024, "league": "Premier League", "position_finished": "14th", "matchday_income": 16193000, "broadcast_income": 132704000, "commercial_income": 28800000, "total_income": 177697000, "other_income": null, "staff_costs": 141925000, "operating_expenses": 183823000, "player_amortisation": 64168000, "depreciation": 3155000, "player_impairment": 3024000, "exceptional_items": null, "operating_profit_loss": -73318000, "profit_on_player_sales": 64631000, "profit_loss_before_interest_tax": -8687000, "profit_loss_before_tax": -14325000, "profit_loss_after_tax": -14325000, "player_signings": null, "player_sales": null, "net_spend": null, "gross_squad_cost": null, "transfer_debtors": null, "transfer_creditors": null, "cash": null, "borrowing": null, "net_debt": null, "wages_income_percentage": 79.9, "director_pay": null, "total_player_cost": null, "average_weekly_wage": null};
     
     // Historical data for trends
-    const historicalData = [{"financial_year": 2020, "total_income": 132609000, "staff_costs": 94701000, "operating_profit_loss": -44786000, "net_debt": null, "year_display": "2020"}, {"financial_year": 2021, "total_income": 194096, "staff_costs": 139262000, "operating_profit_loss": 34537000, "net_debt": null, "year_display": "2021"}, {"financial_year": 2022, "total_income": 165659000, "staff_costs": 120591000, "operating_profit_loss": -55480000, "net_debt": null, "year_display": "2022"}, {"financial_year": 2023, "total_income": 168575000, "staff_costs": 141599000, "operating_profit_loss": -100659000, "net_debt": null, "year_display": "2023"}, {"financial_year": 2024, "total_income": 177697000, "staff_costs": 141925000, "operating_profit_loss": -73318000, "net_debt": null, "year_display": "2024"}];
+    const historicalData = [{"financial_year": 2020, "total_income": 132609000, "staff_costs": 94701000, "operating_profit_loss": -44786000, "net_debt": null, "year_display": "2020"}, {"financial_year": 2021, "total_income": 194096000, "staff_costs": 139262000, "operating_profit_loss": 34537000, "net_debt": null, "year_display": "2021"}, {"financial_year": 2022, "total_income": 165659000, "staff_costs": 120591000, "operating_profit_loss": -55480000, "net_debt": null, "year_display": "2022"}, {"financial_year": 2023, "total_income": 168575000, "staff_costs": 141599000, "operating_profit_loss": -100659000, "net_debt": null, "year_display": "2023"}, {"financial_year": 2024, "total_income": 177697000, "staff_costs": 141925000, "operating_profit_loss": -73318000, "net_debt": null, "year_display": "2024"}];
     
     // League averages
-    const leagueAverages = {"avg_income": 370725000.0, "avg_wages": 254200500.0, "avg_amortisation": 94521800.0, "avg_debt": null, "avg_wages_ratio": 63.925000000000004};
+    const leagueAverages = {"avg_income": 371136272.72727275, "avg_wages": 236795454.54545453, "avg_amortisation": 93658200.0, "avg_debt": null, "avg_wages_ratio": 63.925000000000004};
     
     // Format helpers
     function formatCurrency(value) {
