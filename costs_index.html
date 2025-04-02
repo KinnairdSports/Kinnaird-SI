@@ -3,43 +3,86 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>Football Club Costs Analysis</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Football Club Financial Analysis</title>
     <!-- Load Aglet Sans from Typekit -->
     <link href="https://use.typekit.net/xxs6huv.css" rel="stylesheet">
+    <!-- Add Open Sans as fallback from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
       :root {
-        --background: #11242B;
+        /* Updated color scheme with black background */
+        --background: #000000;
         --text: #FFFFFF;
         --muted-text: #CCCCCC;
         --primary: #05D4BE;
+        --primary-light: rgba(5, 212, 190, 0.2);
+        --primary-dark: #04A599;
+        --secondary: #5F84FB;
+        --secondary-light: rgba(95, 132, 251, 0.2);
+        --accent: #FF9500;
+        --accent-light: rgba(255, 149, 0, 0.2);
+        --card-bg: rgba(20, 20, 20, 0.7);
+      }
+      
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
       }
       
       body {
-          font-family: 'aglet-sans', sans-serif !important;
+          font-family: 'aglet-sans', 'Open Sans', sans-serif;
           background-color: var(--background);
           color: var(--text);
           margin: 0;
           padding: 0;
+          line-height: 1.5;
+          font-size: 16px;
       }
       
       .container {
           max-width: 1200px;
           margin: 0 auto;
-          padding: 20px;
+          padding: 40px 20px;
       }
       
       .header {
           text-align: center;
-          margin-bottom: 30px;
-          padding-bottom: 20px;
-          border-bottom: 1px solid var(--primary);
+          margin-bottom: 50px;
+          padding-bottom: 30px;
+          border-bottom: 2px solid var(--primary);
+          animation: fadeIn 0.8s ease-out;
       }
       
       .main-title {
-          font-size: 2.5rem;
+          font-size: 3rem;
           font-weight: bold;
           color: var(--primary);
-          margin-bottom: 5px;
+          margin-bottom: 15px;
+          letter-spacing: -0.5px;
+      }
+      
+      .subtitle {
+          font-size: 1.2rem;
+          color: var(--muted-text);
+          max-width: 800px;
+          margin: 0 auto;
+      }
+      
+      .league-section {
+          margin-bottom: 50px;
+          animation: fadeIn 1s ease-out;
+      }
+      
+      .league-title {
+          font-size: 1.8rem;
+          font-weight: bold;
+          color: var(--primary);
+          margin-bottom: 20px;
+          padding-bottom: 10px;
+          border-bottom: 1px solid rgba(5, 212, 190, 0.3);
+          display: inline-block;
       }
       
       .club-list {
@@ -47,120 +90,277 @@
           padding: 0;
           display: grid;
           grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-          gap: 15px;
+          gap: 20px;
       }
       
-      .club-list li {
+      .club-card {
           background: linear-gradient(135deg, rgba(5, 212, 190, 0.1), rgba(95, 132, 251, 0.1));
-          border-radius: 8px;
+          border-radius: 12px;
           border: 1px solid rgba(5, 212, 190, 0.3);
-          transition: transform 0.3s ease, box-shadow 0.3s ease;
+          transition: all 0.3s ease;
+          padding: 20px;
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+      
+      .club-card:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+          border-color: var(--primary);
+          background: linear-gradient(135deg, rgba(5, 212, 190, 0.2), rgba(95, 132, 251, 0.2));
+      }
+      
+      .club-name {
+          font-size: 1.2rem;
+          font-weight: bold;
           text-align: center;
       }
       
-      .club-list li:hover {
-          transform: translateY(-3px);
-          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-      }
-      
       .club-list a {
-          display: block;
-          padding: 15px;
           color: var(--text);
           text-decoration: none;
-          font-weight: bold;
+          height: 100%;
+      }
+      
+      .footer {
+          text-align: center;
+          margin-top: 60px;
+          padding-top: 30px;
+          border-top: 1px solid rgba(255, 255, 255, 0.1);
+          color: var(--muted-text);
+          font-size: 0.9rem;
+      }
+      
+      /* Animations */
+      @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+      }
+      
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+          .container {
+              padding: 20px 15px;
+          }
+          
+          .main-title {
+              font-size: 2rem;
+          }
+          
+          .league-title {
+              font-size: 1.5rem;
+          }
+          
+          .club-list {
+              grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+              gap: 15px;
+          }
+      }
+      
+      @media (max-width: 480px) {
+          .club-list {
+              grid-template-columns: 1fr;
+          }
+          
+          .main-title {
+              font-size: 1.8rem;
+          }
       }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <div class="main-title">Football Club Costs Analysis</div>
+            <div class="main-title">Football Club Cost Analysis</div>
+            <div class="subtitle">
+                Explore detailed financial cost structures of football clubs across different leagues,
+                with options to analyze breakdowns of various expense categories.
+            </div>
         </div>
         
-        <ul class="club-list">
+        
+        <div class="league-section">
+            <h2 class="league-title">Other Leagues</h2>
+            <ul class="club-list">
+                
+            <li>
+                <a href="afc_bournemouth_costs.html">
+                    <div class="club-card">
+                        <div class="club-name">AFC Bournemouth</div>
+                    </div>
+                </a>
+            </li>
             
-        <li>
-            <a href="afc_bournemouth_costs.html">AFC Bournemouth</a>
-        </li>
+            <li>
+                <a href="fulham_costs.html">
+                    <div class="club-card">
+                        <div class="club-name">Fulham</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="ipswich_town_costs.html">
+                    <div class="club-card">
+                        <div class="club-name">Ipswich Town</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="manchester_city_costs.html">
+                    <div class="club-card">
+                        <div class="club-name">Manchester City</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="manchester_united_costs.html">
+                    <div class="club-card">
+                        <div class="club-name">Manchester United</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="newcastle_united_costs.html">
+                    <div class="club-card">
+                        <div class="club-name">Newcastle United</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="nottingham_forest_costs.html">
+                    <div class="club-card">
+                        <div class="club-name">Nottingham Forest</div>
+                    </div>
+                </a>
+            </li>
+            
+            </ul>
+        </div>
         
-        <li>
-            <a href="arsenal_costs.html">Arsenal</a>
-        </li>
+        <div class="league-section">
+            <h2 class="league-title">Premier League</h2>
+            <ul class="club-list">
+                
+            <li>
+                <a href="arsenal_costs.html">
+                    <div class="club-card">
+                        <div class="club-name">Arsenal</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="aston_villa_costs.html">
+                    <div class="club-card">
+                        <div class="club-name">Aston Villa</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="brentford_costs.html">
+                    <div class="club-card">
+                        <div class="club-name">Brentford</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="brighton_and_hove_albion_costs.html">
+                    <div class="club-card">
+                        <div class="club-name">Brighton and Hove Albion</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="chelsea_costs.html">
+                    <div class="club-card">
+                        <div class="club-name">Chelsea</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="crystal_palace_costs.html">
+                    <div class="club-card">
+                        <div class="club-name">Crystal Palace</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="everton_costs.html">
+                    <div class="club-card">
+                        <div class="club-name">Everton</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="leicester_city_costs.html">
+                    <div class="club-card">
+                        <div class="club-name">Leicester City</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="liverpool_costs.html">
+                    <div class="club-card">
+                        <div class="club-name">Liverpool</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="southampton_costs.html">
+                    <div class="club-card">
+                        <div class="club-name">Southampton</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="tottenham_hotspur_costs.html">
+                    <div class="club-card">
+                        <div class="club-name">Tottenham Hotspur</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="west_ham_united_costs.html">
+                    <div class="club-card">
+                        <div class="club-name">West Ham United</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="wolverhampton_wanderers_costs.html">
+                    <div class="club-card">
+                        <div class="club-name">Wolverhampton Wanderers</div>
+                    </div>
+                </a>
+            </li>
+            
+            </ul>
+        </div>
         
-        <li>
-            <a href="aston_villa_costs.html">Aston Villa</a>
-        </li>
         
-        <li>
-            <a href="brentford_costs.html">Brentford</a>
-        </li>
-        
-        <li>
-            <a href="brighton_and_hove_albion_costs.html">Brighton and Hove Albion</a>
-        </li>
-        
-        <li>
-            <a href="chelsea_costs.html">Chelsea</a>
-        </li>
-        
-        <li>
-            <a href="crystal_palace_costs.html">Crystal Palace</a>
-        </li>
-        
-        <li>
-            <a href="everton_costs.html">Everton</a>
-        </li>
-        
-        <li>
-            <a href="fulham_costs.html">Fulham</a>
-        </li>
-        
-        <li>
-            <a href="ipswich_town_costs.html">Ipswich Town</a>
-        </li>
-        
-        <li>
-            <a href="leicester_city_costs.html">Leicester City</a>
-        </li>
-        
-        <li>
-            <a href="liverpool_costs.html">Liverpool</a>
-        </li>
-        
-        <li>
-            <a href="manchester_city_costs.html">Manchester City</a>
-        </li>
-        
-        <li>
-            <a href="manchester_united_costs.html">Manchester United</a>
-        </li>
-        
-        <li>
-            <a href="newcastle_united_costs.html">Newcastle United</a>
-        </li>
-        
-        <li>
-            <a href="nottingham_forest_costs.html">Nottingham Forest</a>
-        </li>
-        
-        <li>
-            <a href="southampton_costs.html">Southampton</a>
-        </li>
-        
-        <li>
-            <a href="tottenham_hotspur_costs.html">Tottenham Hotspur</a>
-        </li>
-        
-        <li>
-            <a href="west_ham_united_costs.html">West Ham United</a>
-        </li>
-        
-        <li>
-            <a href="wolverhampton_wanderers_costs.html">Wolverhampton Wanderers</a>
-        </li>
-        
-        </ul>
+        <div class="footer">
+            <p>Data sourced from Companies House | Visualisation by Kinnaird Analytics</p>
+            <p>© 2025 Kinnaird Sports Intelligence</p>
+        </div>
     </div>
 </body>
 </html>

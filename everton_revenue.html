@@ -21,7 +21,8 @@
         --matchday: #05D4BE;
         --broadcast: #4D7AFF;
         --commercial: #07887B;
-        --grid: rgba(255, 255, 255, 0.1);
+        --total: #9C68F5; /* Purple color for total revenue - fits better with cool tones */
+        --grid: rgba(255, 255, 255, 0.25); /* Brighter grid lines */
         --line: rgba(255, 255, 255, 0.3);
         --tooltip-bg: #111111;
         --card-bg: rgba(20, 20, 20, 0.7);
@@ -48,26 +49,6 @@
           max-width: 1200px;
           margin: 0 auto;
           padding: 30px 20px;
-      }
-      
-      .header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding-bottom: 20px;
-          margin-bottom: 30px;
-          border-bottom: 2px solid var(--primary);
-      }
-      
-      .club-info {
-          display: flex;
-          flex-direction: column;
-      }
-      
-      .financial-details {
-          font-size: 1.1rem;
-          color: var(--muted-text);
-          margin-top: 5px;
       }
       
       .controls {
@@ -243,6 +224,54 @@
           backdrop-filter: blur(4px);
       }
       
+      .tooltip-header {
+          margin-bottom: 5px;
+      }
+      
+      .tooltip-title {
+          font-weight: bold;
+          color: var(--primary);
+          margin-bottom: 4px;
+          font-size: 16px;
+      }
+      
+      .tooltip-subtitle {
+          color: var(--muted-text);
+          font-size: 13px;
+          margin-bottom: 8px;
+      }
+      
+      .tooltip-divider {
+          height: 1px;
+          background-color: rgba(255, 255, 255, 0.2);
+          margin: 8px 0;
+          width: 100%;
+      }
+      
+      .tooltip-item {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 4px;
+      }
+      
+      .tooltip-item-value {
+          font-weight: bold;
+          margin-left: 15px;
+      }
+      
+      .tooltip-total {
+          margin-top: 8px;
+          padding-top: 8px;
+          border-top: 1px solid rgba(255, 255, 255, 0.2);
+          font-weight: bold;
+          display: flex;
+          justify-content: space-between;
+      }
+      
+      .tooltip-total-value {
+          color: var(--total);
+      }
+      
       .legend {
           display: flex;
           flex-wrap: wrap;
@@ -259,16 +288,62 @@
           display: flex;
           align-items: center;
           gap: 8px;
-          cursor: pointer;
+          cursor: help;
           padding: 6px 12px;
           border-radius: 6px;
           transition: all 0.2s;
           user-select: none;
+          position: relative;
       }
       
       .legend-item:hover {
           background-color: rgba(255, 255, 255, 0.1);
           transform: translateY(-2px);
+      }
+      
+      .legend-tooltip {
+          position: absolute;
+          bottom: 100%;
+          left: 50%;
+          transform: translateX(-50%);
+          min-width: 200px;
+          max-width: 250px;
+          background-color: var(--tooltip-bg);
+          color: var(--text);
+          padding: 10px 12px;
+          border-radius: 6px;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+          border: 1px solid var(--primary);
+          z-index: 100;
+          opacity: 0;
+          visibility: hidden;
+          transition: all 0.3s;
+          font-size: 0.9rem;
+          margin-bottom: 10px;
+      }
+      
+      .legend-tooltip::after {
+          content: "";
+          position: absolute;
+          top: 100%;
+          left: 50%;
+          margin-left: -8px;
+          border-width: 8px;
+          border-style: solid;
+          border-color: var(--primary) transparent transparent transparent;
+      }
+      
+      .legend-item:hover .legend-tooltip {
+          opacity: 1;
+          visibility: visible;
+      }
+      
+      .legend-tooltip-title {
+          font-weight: bold;
+          color: var(--primary);
+          margin-bottom: 5px;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+          padding-bottom: 3px;
       }
       
       .legend-color {
@@ -344,18 +419,12 @@
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <div class="club-info">
-                <div class="financial-details">Revenue Analysis | 2020 - 2023</div>
-            </div>
-        </div>
-        
         <div class="controls">
             <div class="control-group">
                 <div style="display: flex; align-items: center; gap: 10px;">
                     <span>View: </span>
                     <select id="viewSelector">
-                        <option value="stacked">All Revenue (Stacked)</option>
+                        <option value="stacked">Total Revenue (Stacked)</option>
                         <option value="matchday">Matchday Only</option>
                         <option value="broadcast">Broadcast Only</option>
                         <option value="commercial">Commercial Only</option>
@@ -372,20 +441,32 @@
                 <div class="legend-item">
                     <div class="legend-color" style="background-color: var(--matchday);"></div>
                     <span>Matchday</span>
+                    <div class="legend-tooltip">
+                        <div class="legend-tooltip-title">Matchday Revenue</div>
+                        <div>Income earned from fans attending matches, including gate receipts from all competitive home matches (league, cups, international competitions), premium seating and hospitality packages, and revenue from season tickets and memberships.</div>
+                    </div>
                 </div>
                 <div class="legend-item">
                     <div class="legend-color" style="background-color: var(--broadcast);"></div>
                     <span>Broadcast</span>
+                    <div class="legend-tooltip">
+                        <div class="legend-tooltip-title">Broadcasting Revenue</div>
+                        <div>Externally distributed income linked to competition participation and TV rights deals, including distributions from domestic leagues, revenue from international competitions, distributions from national cup competitions, and other broadcast agreements including overseas deals.</div>
+                    </div>
                 </div>
                 <div class="legend-item">
                     <div class="legend-color" style="background-color: var(--commercial);"></div>
                     <span>Commercial</span>
+                    <div class="legend-tooltip">
+                        <div class="legend-tooltip-title">Commercial Revenue</div>
+                        <div>Income generated from a club's own commercial activities and relationships, including sponsorships (shirt, sleeve, training kit), merchandising and retail operations, stadium tours, and non-matchday events held at the stadium such as concerts.</div>
+                    </div>
                 </div>
             </div>
         </div>
         
         <div class="footer">
-            <p>Data sourced from financial reports | Visualization by Kinnaird Analytics</p>
+            <p>Data sourced from Companies House | Visualisation by Kinnaird Analytics</p>
         </div>
     </div>
     
@@ -470,7 +551,7 @@
               .domain([0, yMax])
               .range([height, 0]);
           
-          // Add horizontal grid lines
+          // Improve grid lines - make them much more visible
           svg.selectAll("line.horizontal-grid")
               .data(y.ticks(10))
               .enter()
@@ -481,23 +562,31 @@
               .attr("y1", d => y(d))
               .attr("y2", d => y(d))
               .style("stroke", "var(--grid)")
-              .style("stroke-opacity", "0.4")
+              .style("stroke-width", "1px")
+              .style("stroke-opacity", "0.8")
               .style("stroke-dasharray", "2,3");
           
-          // Add vertical grid lines
-          svg.append("g")
-              .attr("class", "grid")
-              .attr("transform", `translate(0, ${height})`)
-              .call(d3.axisBottom(x)
-                  .tickFormat("")
-                  .tickSize(-height)
-                  .tickValues(financialYears));
+          // Add vertical grid lines with better visibility
+          svg.selectAll("line.vertical-grid")
+              .data(financialYears)
+              .enter()
+              .append("line")
+              .attr("class", "vertical-grid")
+              .attr("x1", d => x(d))
+              .attr("x2", d => x(d))
+              .attr("y1", 0)
+              .attr("y2", height)
+              .style("stroke", "var(--grid)")
+              .style("stroke-width", "1px")
+              .style("stroke-opacity", "0.8")
+              .style("stroke-dasharray", "2,3");
               
           // Style grid lines
           svg.selectAll(".grid line")
               .style("stroke", "var(--grid)")
-              .style("stroke-opacity", "0.7")
+              .style("stroke-opacity", "0.8")
               .style("stroke-dasharray", "3,3")
+              .style("stroke-width", "1px")
               .style("shape-rendering", "crispEdges");
           
           svg.selectAll(".grid path")
@@ -596,20 +685,7 @@
                   .attr("stroke-width", 1.5)
                   .attr("stroke-linejoin", "round");
               
-              // Add data points at the top of each stacked column
-              svg.selectAll(".stacked-data-point")
-                  .data(cumulativeData)
-                  .enter()
-                  .append("circle")
-                  .attr("class", "stacked-data-point")
-                  .attr("cx", d => x(d.year))
-                  .attr("cy", d => y(d.commercial1))
-                  .attr("r", 5)
-                  .attr("fill", "white")
-                  .attr("opacity", 0.5)
-                  .attr("stroke", "var(--primary)")
-                  .attr("stroke-width", 1)
-                  .style("cursor", "pointer");
+              // Removed circles at top of stacked columns
           } else {
               // Add line only for individual view (no area fill)
               const singleLine = d3.line()
@@ -709,14 +785,10 @@
                   // Show data point and guide line for stacked view
                   if (activeViewMode === "stacked") {
                       const yearIndex = financialYears.indexOf(d.year);
-                      // Highlight data point
-                      svg.selectAll(".stacked-data-point")
-                          .filter((_, i) => i === yearIndex)
-                          .attr("opacity", 1)
-                          .attr("r", 7);
+                      // No need to highlight data points as they've been removed
                   }
                   
-                  // Format tooltip content
+                  // Format tooltip content with improved styling
                   let tooltipContent = "";
                   
                   if (activeViewMode === "stacked") {
@@ -740,7 +812,7 @@
                           </div>
                           <div class="tooltip-total">
                               <span>Total:</span>
-                              <span class="tooltip-total-value">£${(d.total/1000000).toFixed(1)}M</span>
+                              <span class="tooltip-total-value" style="color: var(--total);">£${(d.total/1000000).toFixed(1)}M</span>
                           </div>
                       `;
                   } else if (activeViewMode === "matchday") {
@@ -807,9 +879,7 @@
                   
                   // Reset stacked data points
                   if (activeViewMode === "stacked") {
-                      svg.selectAll(".stacked-data-point")
-                          .attr("opacity", 0.5)
-                          .attr("r", 5);
+                      // No stacked data points to reset now
                   }
               });
       }
