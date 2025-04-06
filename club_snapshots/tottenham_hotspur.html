@@ -211,7 +211,7 @@
       
       <div class="metric-card">
         <div class="metric-title">Wage Bill</div>
-        <div class="metric-value">£0.3M</div>
+        <div class="metric-value">£251.1M</div>
         <div class="metric-change positive">45.7% of revenue</div>
       </div>
       
@@ -248,15 +248,15 @@
         <div class="panel-title">Costs & Profitability</div>
         <div class="metric-row">
           <span class="metric-label">Wages</span>
-          <span class="metric-value negative">£0.3M</span>
+          <span class="metric-value negative">£251.1M</span>
         </div>
         <div class="metric-row">
           <span class="metric-label">Other Operating Costs</span>
-          <span class="metric-value negative">£0.5M</span>
+          <span class="metric-value negative">£615.1M</span>
         </div>
         <div class="metric-row">
           <span class="metric-label">Player Amortisation</span>
-          <span class="metric-value negative">£0.1M</span>
+          <span class="metric-value negative">£109.1M</span>
         </div>
         <div class="metric-row">
           <span class="metric-label">Operating Profit/Loss</span>
@@ -333,11 +333,11 @@
         </div>
         <div class="metric-row">
           <span class="metric-label">Wages vs. Avg</span>
-          <span class="metric-value">0%</span>
+          <span class="metric-value">126%</span>
         </div>
         <div class="metric-row">
           <span class="metric-label">Amortisation vs. Avg</span>
-          <span class="metric-value">0%</span>
+          <span class="metric-value">132%</span>
         </div>
         <div class="metric-row">
           <span class="metric-label">Net Debt vs. Avg</span>
@@ -356,7 +356,7 @@
     </div>
     
     <div class="footer">
-      Data last updated: 2025-04-02 13:44:14 | Source: Published Club Accounts & Premier League Financial Records
+      Data last updated: 2025-04-06 09:05:07 | Source: Published Club Accounts & Premier League Financial Records
       <div><small>Double-click on chart area to view data details</small></div>
     </div>
   </div>
@@ -366,13 +366,13 @@
   <script>
   
     // Club data
-    const clubData = {"team_name": "Tottenham Hotspur", "financial_year": 2023, "league": "Premier League", "position_finished": "8th", "matchday_income": 117598000, "broadcast_income": 204285000, "commercial_income": 227750000, "total_income": 549633000, "other_income": null, "staff_costs": 251121, "operating_expenses": 487948, "player_amortisation": 109073, "depreciation": 71868, "player_impairment": 10856, "exceptional_items": 5110, "operating_profit_loss": null, "profit_on_player_sales": null, "profit_loss_before_interest_tax": null, "profit_loss_before_tax": null, "profit_loss_after_tax": null, "player_signings": null, "player_sales": null, "net_spend": null, "gross_squad_cost": null, "transfer_debtors": null, "transfer_creditors": null, "cash": null, "borrowing": null, "net_debt": null, "wages_income_percentage": 45.7, "director_pay": null, "total_player_cost": null, "average_weekly_wage": null};
+    const clubData = {"team_name": "Tottenham Hotspur", "financial_year": 2023, "league": "Premier League", "position_finished": "8th", "matchday_income": 117598000, "broadcast_income": 204285000, "commercial_income": 227750000, "total_income": 549633000, "other_income": null, "staff_costs": 251121000, "operating_expenses": 615054000, "player_amortisation": 109073000, "depreciation": 71868000, "player_impairment": 10856000, "exceptional_items": 5110000, "operating_profit_loss": null, "profit_on_player_sales": null, "profit_loss_before_interest_tax": null, "profit_loss_before_tax": null, "profit_loss_after_tax": null, "player_signings": null, "player_sales": null, "net_spend": null, "gross_squad_cost": null, "transfer_debtors": null, "transfer_creditors": null, "cash": null, "borrowing": null, "net_debt": null, "wages_income_percentage": 45.7, "director_pay": null, "total_player_cost": null, "average_weekly_wage": null};
     
     // Historical data for trends
-    const historicalData = [{"financial_year": 2020, "total_income": 402386000, "staff_costs": 181280, "operating_profit_loss": -58278.0, "net_debt": null, "year_display": "2020"}, {"financial_year": 2021, "total_income": 361872000, "staff_costs": 204875000, "operating_profit_loss": -62325000.0, "net_debt": null, "year_display": "2021"}, {"financial_year": 2022, "total_income": 444028000, "staff_costs": 209180, "operating_profit_loss": 40061000.0, "net_debt": null, "year_display": "2022"}, {"financial_year": 2023, "total_income": 549633000, "staff_costs": 251121, "operating_profit_loss": NaN, "net_debt": null, "year_display": "2023"}];
+    const historicalData = [{"financial_year": 2020, "total_income": 402386000, "staff_costs": 181280000, "operating_profit_loss": -58278.0, "net_debt": null, "year_display": "2020"}, {"financial_year": 2021, "total_income": 361872000, "staff_costs": 204875, "operating_profit_loss": -62325000.0, "net_debt": null, "year_display": "2021"}, {"financial_year": 2022, "total_income": 444028000, "staff_costs": 209180000, "operating_profit_loss": 40061000.0, "net_debt": null, "year_display": "2022"}, {"financial_year": 2023, "total_income": 549633000, "staff_costs": 251121000, "operating_profit_loss": NaN, "net_debt": null, "year_display": "2023"}];
     
     // League averages
-    const leagueAverages = {"avg_income": 306963684.2105263, "avg_wages": 191382111.63157895, "avg_amortisation": 80417267.0, "avg_debt": null, "avg_wages_ratio": 13436.138888888889};
+    const leagueAverages = {"avg_income": 306963684.2105263, "avg_wages": 199120270.47368422, "avg_amortisation": 82722910.84210527, "avg_debt": null, "avg_wages_ratio": 13436.138888888889};
     
     // Format helpers
     function formatCurrency(value) {
