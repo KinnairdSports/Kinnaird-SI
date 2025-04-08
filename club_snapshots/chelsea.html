@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -191,6 +190,7 @@
   <div class="container">
     <div class="header">
       <div class="club-info">
+        <!-- Team name title removed as requested -->
         <div class="financial-year">Financial Year: 2024</div>
         <div class="team-performance">Team Performance: 6th in Premier League</div>
       </div>
@@ -206,17 +206,17 @@
       <div class="metric-card">
         <div class="metric-title">Wage Bill</div>
         <div class="metric-value">£338.0M</div>
-        <div class="metric-change"><span class="negative-change">-16.3% vs prev. year</span></div>
+        <div class="metric-change"><span class="positive-change">-16.3% vs prev. year</span></div>
       </div>
       
       <div class="metric-card">
         <div class="metric-title">Operating Result</div>
-        <div class="metric-value negative">£-213.0M</div>
-        <div class="metric-change"><span class="negative-change">+12.2% vs prev. year</span></div>
+        <div class="metric-value">£138.3M</div>
+        <div class="metric-change"><span class="positive-change">+£216.9M vs prev. year</span></div>
       </div>
     </div>
     
-    <div class="chart-wrapper">
+    <div class="chart-wrapper" style="margin-bottom: 20px;">
       <div class="panel-title">Revenue Breakdown</div>
       <div class="metrics-grid">
         <div>
@@ -242,23 +242,23 @@
         <div class="panel-title">Costs & Profitability</div>
         <div class="metric-row">
           <span class="metric-label">Wages</span>
-          <span class="metric-value negative">£338.0M</span>
+          <span class="metric-value">£338.0M</span>
         </div>
         <div class="metric-row">
           <span class="metric-label">Other Operating Costs</span>
-          <span class="metric-value negative">£293.1M</span>
+          <span class="metric-value">£138.9M</span>
         </div>
         <div class="metric-row">
           <span class="metric-label">Player Amortisation</span>
-          <span class="metric-value negative">£190.1M</span>
+          <span class="metric-value">£191.8M</span>
         </div>
         <div class="metric-row">
           <span class="metric-label">Operating Profit/Loss</span>
-          <span class="metric-value negative">£-213.0M</span>
+          <span class="metric-value">£138.3M</span>
         </div>
         <div class="metric-row">
           <span class="metric-label">Pre-Tax Profit/Loss</span>
-          <span class="metric-value positive">£128.4M</span>
+          <span class="metric-value">£128.4M</span>
         </div>
       </div>
       
@@ -266,15 +266,15 @@
         <div class="panel-title">Transfer Activity</div>
         <div class="metric-row">
           <span class="metric-label">Player Signings</span>
-          <span class="metric-value negative">£552.7M</span>
+          <span class="metric-value">£552.7M</span>
         </div>
         <div class="metric-row">
           <span class="metric-label">Player Sales</span>
-          <span class="metric-value positive">£189.3M</span>
+          <span class="metric-value">£189.3M</span>
         </div>
         <div class="metric-row">
           <span class="metric-label">Net Transfer Spend</span>
-          <span class="metric-value negative">£363.4M</span>
+          <span class="metric-value">£363.4M</span>
         </div>
         <div class="metric-row">
           <span class="metric-label">Gross Squad Cost</span>
@@ -292,27 +292,20 @@
         <div class="panel-title">Financial Health</div>
         <div class="metric-row">
           <span class="metric-label">Cash</span>
-          <span class="metric-value positive">£36.0M</span>
+          <span class="metric-value">£36.0M</span>
         </div>
         <div class="metric-row">
           <span class="metric-label">Borrowings</span>
-          <span class="metric-value negative">£303.2M</span>
+          <span class="metric-value">£303.2M</span>
         </div>
         <div class="metric-row">
           <span class="metric-label">Net Debt</span>
-          <span class="metric-value neutral">?</span>
+          <span class="metric-value">?</span>
         </div>
-        <div class="metric-row">
-          <span class="metric-label">Transfer Creditors</span>
-          <span class="metric-value negative">?</span>
-        </div>
-        <div class="metric-row">
-          <span class="metric-label">Transfer Debtors</span>
-          <span class="metric-value positive">?</span>
-        </div>
+
         <div class="metric-row">
           <span class="metric-label">Wages to Revenue Ratio</span>
-          <span class="metric-value neutral">None%</span>
+          <span class="metric-value">None%</span>
         </div>
       </div>
       
@@ -320,15 +313,15 @@
         <div class="panel-title">League Comparison</div>
         <div class="metric-row">
           <span class="metric-label">Revenue vs. Avg</span>
-          <span class="metric-value">135%</span>
+          <span class="metric-value">31% above average</span>
         </div>
         <div class="metric-row">
           <span class="metric-label">Wages vs. Avg</span>
-          <span class="metric-value">152%</span>
+          <span class="metric-value">63% above average</span>
         </div>
         <div class="metric-row">
           <span class="metric-label">Amortisation vs. Avg</span>
-          <span class="metric-value">199%</span>
+          <span class="metric-value">114% above average</span>
         </div>
         <div class="metric-row">
           <span class="metric-label">Net Debt vs. Avg</span>
@@ -341,13 +334,25 @@
       </div>
     </div>
     
+    <div class="chart-container">
+      <div class="chart-wrapper">
+        <div class="panel-title">Revenue Trend</div>
+        <div id="revenueTrendChart" style="height: 200px;"></div>
+      </div>
+      
+      <div class="chart-wrapper">
+        <div class="panel-title">Wages Trend</div>
+        <div id="wagesTrendChart" style="height: 200px;"></div>
+      </div>
+    </div>
+    
     <div class="chart-wrapper">
-      <div class="panel-title">5-Year Financial Trends</div>
-      <div id="trendsChart" style="height: 300px;"></div>
+      <div class="panel-title">Operating Profit/Loss Trend</div>
+      <div id="profitTrendChart" style="height: 200px;"></div>
     </div>
     
     <div class="footer">
-      Data last updated: 2025-04-08 13:04:25 | Source: Published Club Accounts & Premier League Financial Records
+      Data last updated: 2025-04-08 19:00:04 | Source: Published Club Accounts & Premier League Financial Records
       <div><small>Double-click on chart area to view data details</small></div>
     </div>
   </div>
@@ -355,15 +360,14 @@
   <div id="tooltip" class="tooltip"></div>
   
   <script>
-  
     // Club data
-    const clubData = {"team_name": "Chelsea", "financial_year": 2024, "league": "Premier League", "position_finished": "6th", "matchday_income": 80120000, "broadcast_income": 163101000, "commercial_income": 225265000, "total_income": 468486000, "other_income": 715000, "staff_costs": 338021000, "operating_expenses": 293101000, "player_amortisation": 190056000, "depreciation": 13445000, "player_impairment": 0, "exceptional_items": null, "operating_profit_loss": -212959000, "profit_on_player_sales": 152463000, "profit_loss_before_interest_tax": -212959000, "profit_loss_before_tax": 128400000, "profit_loss_after_tax": 129606000, "player_signings": 552701000, "player_sales": 189254000, "net_spend": 363447000, "gross_squad_cost": null, "transfer_debtors": null, "transfer_creditors": null, "cash": 36025000, "borrowing": 303196000, "net_debt": null, "wages_income_percentage": null, "director_pay": null, "total_player_cost": null, "average_weekly_wage": null};
+    const clubData = {"team_name": "Chelsea", "financial_year": 2024, "league": "Premier League", "position_finished": "6th", "matchday_income": 80120000, "broadcast_income": 163101000, "commercial_income": 225265000, "total_income": 468486000, "other_income": 715000, "staff_costs": 338021000, "operating_expenses": 138868000, "player_amortisation": 191826000, "depreciation": 13445000, "player_impairment": null, "exceptional_items": 198803000, "operating_profit_loss": 138307000, "profit_on_player_sales": 152463000, "profit_loss_before_interest_tax": -212959000, "profit_loss_before_tax": 128400000, "profit_loss_after_tax": 129606000, "player_signings": 552701000, "player_sales": 189254000, "net_spend": 363447000, "gross_squad_cost": null, "transfer_debtors": null, "transfer_creditors": null, "cash": 36025000, "borrowing": 303196000, "net_debt": null, "wages_income_percentage": null, "director_pay": null, "total_player_cost": null, "average_weekly_wage": null};
     
     // Historical data for trends
-    const historicalData = [{"financial_year": 2020, "total_income": 407402000, "staff_costs": 283480000, "operating_profit_loss": -111564000, "net_debt": null, "year_display": "2020"}, {"financial_year": 2021, "total_income": 434863000, "staff_costs": 332905000, "operating_profit_loss": -21038000, "net_debt": null, "year_display": "2021"}, {"financial_year": 2022, "total_income": 481278000, "staff_costs": 340249000, "operating_profit_loss": -242429000, "net_debt": null, "year_display": "2022"}, {"financial_year": 2023, "total_income": 512467000, "staff_costs": 403962000, "operating_profit_loss": -242429000, "net_debt": null, "year_display": "2023"}, {"financial_year": 2024, "total_income": 468486000, "staff_costs": 338021000, "operating_profit_loss": -212959000, "net_debt": null, "year_display": "2024"}];
+    const historicalData = [{"financial_year": 2020, "total_income": 407402000, "staff_costs": 283480000, "operating_profit_loss": 31081000, "net_debt": null, "year_display": "2020"}, {"financial_year": 2021, "total_income": 434863000, "staff_costs": 332905000, "operating_profit_loss": -154903000, "net_debt": null, "year_display": "2021"}, {"financial_year": 2022, "total_income": 481278000, "staff_costs": 340249000, "operating_profit_loss": -119216000, "net_debt": null, "year_display": "2022"}, {"financial_year": 2023, "total_income": 512467000, "staff_costs": 403962000, "operating_profit_loss": -78597000, "net_debt": null, "year_display": "2023"}, {"financial_year": 2024, "total_income": 468486000, "staff_costs": 338021000, "operating_profit_loss": 138307000, "net_debt": null, "year_display": "2024"}];
     
     // League averages
-    const leagueAverages = {"avg_income": 346853733.3333333, "avg_wages": 221673585.46666667, "avg_amortisation": 95619705.4, "avg_debt": null, "avg_wages_ratio": 63.925000000000004};
+    const leagueAverages = {"avg_income": 357535562.5, "avg_wages": 207832856.9375, "avg_amortisation": 89762586.5, "avg_debt": null, "avg_wages_ratio": 63.925000000000004};
     
     // Format helpers
     function formatCurrency(value) {
@@ -479,280 +483,166 @@
         .attr("stroke", "rgba(255, 255, 255, 0.3)");
     }
     
-    // Create Trends Chart
-    function createTrendsChart() {
-      if (!historicalData || historicalData.length === 0) {
-        d3.select("#trendsChart")
-          .append("div")
-          .style("text-align", "center")
-          .style("padding", "40px")
-          .style("color", "rgba(255, 255, 255, 0.5)")
-          .text("Historical data not available");
+    // Create trend charts
+    function createTrendCharts() {
+      if (!historicalData || historicalData.length <= 1) {
+        // Not enough historical data, display a message
+        ["revenueTrendChart", "wagesTrendChart", "profitTrendChart"].forEach(id => {
+          d3.select(`#${id}`)
+            .append("div")
+            .style("text-align", "center")
+            .style("padding", "40px")
+            .style("color", "rgba(255, 255, 255, 0.5)")
+            .text("Not enough historical data available");
+        });
         return;
       }
       
-      const width = document.getElementById('trendsChart').clientWidth;
-      const height = document.getElementById('trendsChart').clientHeight;
-      const margin = {top: 20, right: 60, bottom: 40, left: 60};
+      // Create Revenue Trend Chart
+      createTrendChart('revenueTrendChart', 'total_income', '#05D4BE', '£');
+      
+      // Create Wages Trend Chart
+      createTrendChart('wagesTrendChart', 'staff_costs', '#FF9500', '£');
+      
+      // Create Profit Trend Chart
+      createTrendChart('profitTrendChart', 'operating_profit_loss', '#4CD964', '£', true);
+    }
+    
+    function createTrendChart(elementId, dataKey, color, prefix, allowNegative = false) {
+      const width = document.getElementById(elementId).clientWidth;
+      const height = document.getElementById(elementId).clientHeight;
+      const margin = {top: 20, right: 30, bottom: 40, left: 60};
       const innerWidth = width - margin.left - margin.right;
       const innerHeight = height - margin.top - margin.bottom;
       
-      const svg = d3.select("#trendsChart")
+      const svg = d3.select(`#${elementId}`)
         .append("svg")
         .attr("width", width)
         .attr("height", height)
         .append("g")
         .attr("transform", `translate(${margin.left}, ${margin.top})`);
       
-      // Parse the data
-      const data = historicalData.map(d => ({
-        year: d.financial_year,
-        year_display: d.year_display,
-        revenue: d.total_income,
-        wages: d.staff_costs,
-        profit: d.operating_profit_loss,
-        debt: d.net_debt
-      }));
+      // Filter out entries with null values
+      const filteredData = historicalData.filter(d => d[dataKey] !== null);
       
-      // Setup scales
+      if (filteredData.length <= 1) {
+        svg.append("text")
+          .attr("x", innerWidth / 2)
+          .attr("y", innerHeight / 2)
+          .attr("text-anchor", "middle")
+          .attr("fill", "rgba(255, 255, 255, 0.5)")
+          .text("Not enough historical data available");
+        return;
+      }
+      
+      // Set up scales
       const x = d3.scaleBand()
-        .domain(data.map(d => d.year_display))
+        .domain(filteredData.map(d => d.financial_year))
         .range([0, innerWidth])
-        .padding(0.2);
+        .padding(0.3);
       
-      const y1 = d3.scaleLinear()  // For revenue and wages
-        .domain([0, d3.max(data, d => Math.max(d.revenue || 0, d.wages || 0)) * 1.1])
+      // For y scale, handle negative values if allowed
+      let yMin, yMax;
+      
+      if (allowNegative) {
+        yMin = Math.min(0, d3.min(filteredData, d => d[dataKey]) * 1.1);
+        yMax = Math.max(0, d3.max(filteredData, d => d[dataKey]) * 1.1);
+      } else {
+        yMin = 0;
+        yMax = d3.max(filteredData, d => d[dataKey]) * 1.1 || 1;
+      }
+      
+      const y = d3.scaleLinear()
+        .domain([yMin, yMax])
         .range([innerHeight, 0]);
       
-      const y2 = d3.scaleLinear()  // For profit/loss
-        .domain([
-          d3.min(data, d => Math.min(d.profit || 0, 0)) * 1.2,
-          d3.max(data, d => Math.max(d.profit || 0, 0)) * 1.2 || 10
-        ])
-        .range([innerHeight, 0]);
+      // Create bars
+      svg.selectAll(".bar")
+        .data(filteredData)
+        .enter()
+        .append("rect")
+        .attr("class", "bar")
+        .attr("x", d => x(d.financial_year))
+        .attr("y", d => d[dataKey] >= 0 ? y(d[dataKey]) : y(0))
+        .attr("width", x.bandwidth())
+        .attr("height", d => Math.abs(y(d[dataKey]) - y(0)))
+        .attr("fill", d => allowNegative && d[dataKey] < 0 ? "#FF3B30" : color)
+        .attr("rx", 3) // Rounded corners
+        .attr("ry", 3)
+        .attr("stroke", "rgba(255, 255, 255, 0.5)")
+        .attr("stroke-width", 1)
+        .on("mouseover", function(event, d) {
+          // Highlight bar
+          d3.select(this)
+            .attr("stroke-width", 2);
+          
+          d3.select("#tooltip")
+            .style("opacity", 1)
+            .style("left", (event.pageX + 10) + "px")
+            .style("top", (event.pageY - 15) + "px")
+            .html(`
+              <strong>Year: ${d.financial_year}</strong><br>
+              ${prefix}${(d[dataKey]/1000000).toFixed(1)}M
+            `);
+        })
+        .on("mouseout", function() {
+          // Restore bar style
+          d3.select(this)
+            .attr("stroke-width", 1);
+            
+          d3.select("#tooltip")
+            .style("opacity", 0);
+        });
       
-      // Create lines
-      const revenueLine = d3.line()
-        .defined(d => d.revenue !== null)
-        .x(d => x(d.year_display) + x.bandwidth() / 2)
-        .y(d => y1(d.revenue || 0));
-      
-      const wagesLine = d3.line()
-        .defined(d => d.wages !== null)
-        .x(d => x(d.year_display) + x.bandwidth() / 2)
-        .y(d => y1(d.wages || 0));
-      
-      const profitLine = d3.line()
-        .defined(d => d.profit !== null)
-        .x(d => x(d.year_display) + x.bandwidth() / 2)
-        .y(d => y2(d.profit || 0));
-      
-      // Add revenue line
-      svg.append("path")
-        .datum(data.filter(d => d.revenue !== null))
-        .attr("fill", "none")
-        .attr("stroke", "#05D4BE")
-        .attr("stroke-width", 2)
-        .attr("d", revenueLine);
-      
-      // Add wages line
-      svg.append("path")
-        .datum(data.filter(d => d.wages !== null))
-        .attr("fill", "none")
-        .attr("stroke", "#FF9500")
-        .attr("stroke-width", 2)
-        .attr("d", wagesLine);
-      
-      // Add profit line
-      svg.append("path")
-        .datum(data.filter(d => d.profit !== null))
-        .attr("fill", "none")
-        .attr("stroke", "#4CD964")
-        .attr("stroke-width", 2)
-        .attr("stroke-dasharray", "3,3")
-        .attr("d", profitLine);
+      // Add a zero line if we allow negative values
+      if (allowNegative) {
+        svg.append("line")
+          .attr("x1", 0)
+          .attr("y1", y(0))
+          .attr("x2", innerWidth)
+          .attr("y2", y(0))
+          .attr("stroke", "rgba(255, 255, 255, 0.5)")
+          .attr("stroke-width", 1)
+          .attr("stroke-dasharray", "5,5");
+      }
       
       // Add X axis
       svg.append("g")
-        .attr("transform", `translate(0, ${innerHeight})`)
+        .attr("transform", `translate(0, ${y(0)})`)
         .call(d3.axisBottom(x))
         .selectAll("text")
-        .attr("fill", "white");
+        .attr("fill", "white")
+        .style("font-size", "10px");
       
-      // Add Y axis (left - revenue and wages)
+      // Add Y axis
       svg.append("g")
-        .call(d3.axisLeft(y1)
-          .tickFormat(d => "£" + (d/1000000) + "M"))
+        .call(d3.axisLeft(y)
+          .ticks(5)
+          .tickFormat(d => `${prefix}${(d/1000000).toFixed(0)}M`))
         .selectAll("text")
-        .attr("fill", "white");
-      
-      // Add Y axis (right - profit)
-      svg.append("g")
-        .attr("transform", `translate(${innerWidth}, 0)`)
-        .call(d3.axisRight(y2)
-          .tickFormat(d => "£" + (d/1000000) + "M"))
-        .selectAll("text")
-        .attr("fill", "white");
-      
-      // Add dots for revenue
-      svg.selectAll(".revenue-dot")
-        .data(data.filter(d => d.revenue !== null))
-        .enter()
-        .append("circle")
-        .attr("class", "revenue-dot")
-        .attr("cx", d => x(d.year_display) + x.bandwidth() / 2)
-        .attr("cy", d => y1(d.revenue))
-        .attr("r", 4)
-        .attr("fill", "#05D4BE")
-        .attr("stroke", "white")
-        .attr("stroke-width", 1)
-        .on("mouseover", function(event, d) {
-          d3.select(this)
-            .attr("r", 6)
-            .attr("stroke-width", 2);
-          
-          d3.select("#tooltip")
-            .style("opacity", 1)
-            .style("left", (event.pageX + 10) + "px")
-            .style("top", (event.pageY - 15) + "px")
-            .html(`
-              <strong>Revenue (${d.year_display})</strong><br>
-              £${(d.revenue/1000000).toFixed(1)}M
-            `);
-        })
-        .on("mouseout", function() {
-          d3.select(this).attr("r", 4).attr("stroke-width", 1);
-          d3.select("#tooltip").style("opacity", 0);
-        });
-      
-      // Add dots for wages
-      svg.selectAll(".wages-dot")
-        .data(data.filter(d => d.wages !== null))
-        .enter()
-        .append("circle")
-        .attr("class", "wages-dot")
-        .attr("cx", d => x(d.year_display) + x.bandwidth() / 2)
-        .attr("cy", d => y1(d.wages))
-        .attr("r", 4)
-        .attr("fill", "#FF9500")
-        .attr("stroke", "white")
-        .attr("stroke-width", 1)
-        .on("mouseover", function(event, d) {
-          d3.select(this)
-            .attr("r", 6)
-            .attr("stroke-width", 2);
-          
-          d3.select("#tooltip")
-            .style("opacity", 1)
-            .style("left", (event.pageX + 10) + "px")
-            .style("top", (event.pageY - 15) + "px")
-            .html(`
-              <strong>Wages (${d.year_display})</strong><br>
-              £${(d.wages/1000000).toFixed(1)}M
-            `);
-        })
-        .on("mouseout", function() {
-          d3.select(this).attr("r", 4).attr("stroke-width", 1);
-          d3.select("#tooltip").style("opacity", 0);
-        });
-      
-      // Add dots for profit
-      svg.selectAll(".profit-dot")
-        .data(data.filter(d => d.profit !== null))
-        .enter()
-        .append("circle")
-        .attr("class", "profit-dot")
-        .attr("cx", d => x(d.year_display) + x.bandwidth() / 2)
-        .attr("cy", d => y2(d.profit))
-        .attr("r", 4)
-        .attr("fill", d => d.profit >= 0 ? "#4CD964" : "#FF3B30")
-        .attr("stroke", "white")
-        .attr("stroke-width", 1)
-        .on("mouseover", function(event, d) {
-          d3.select(this).attr("r", 6).attr("stroke-width", 2);
-          
-          d3.select("#tooltip")
-            .style("opacity", 1)
-            .style("left", (event.pageX + 10) + "px")
-            .style("top", (event.pageY - 15) + "px")
-            .html(`
-              <strong>Operating ${d.profit >= 0 ? 'Profit' : 'Loss'} (${d.year_display})</strong><br>
-              £${(Math.abs(d.profit)/1000000).toFixed(1)}M
-            `);
-        })
-        .on("mouseout", function() {
-          d3.select(this).attr("r", 4).attr("stroke-width", 1);
-          d3.select("#tooltip").style("opacity", 0);
-        });
-      
-      // Add legend
-      const legend = svg.append("g")
-        .attr("transform", `translate(${innerWidth/2 - 100}, 0)`);
-      
-      // Revenue legend item
-      legend.append("line")
-        .attr("x1", 0)
-        .attr("y1", 0)
-        .attr("x2", 20)
-        .attr("y2", 0)
-        .attr("stroke", "#05D4BE")
-        .attr("stroke-width", 2);
-      
-      legend.append("text")
-        .attr("x", 25)
-        .attr("y", 4)
-        .text("Revenue")
         .attr("fill", "white")
         .style("font-size", "10px");
       
-      // Wages legend item
-      legend.append("line")
-        .attr("x1", 90)
-        .attr("y1", 0)
-        .attr("x2", 110)
-        .attr("y2", 0)
-        .attr("stroke", "#FF9500")
-        .attr("stroke-width", 2);
+      // Style the axes
+      svg.selectAll(".tick line")
+        .attr("stroke", "rgba(255, 255, 255, 0.1)");
       
-      legend.append("text")
-        .attr("x", 115)
-        .attr("y", 4)
-        .text("Wages")
-        .attr("fill", "white")
-        .style("font-size", "10px");
-      
-      // Profit legend item
-      legend.append("line")
-        .attr("x1", 170)
-        .attr("y1", 0)
-        .attr("x2", 190)
-        .attr("y2", 0)
-        .attr("stroke", "#4CD964")
-        .attr("stroke-width", 2)
-        .attr("stroke-dasharray", "3,3");
-      
-      legend.append("text")
-        .attr("x", 195)
-        .attr("y", 4)
-        .text("Profit/Loss")
-        .attr("fill", "white")
-        .style("font-size", "10px");
+      svg.selectAll("path.domain")
+        .attr("stroke", "rgba(255, 255, 255, 0.3)");
     }
     
-    // Initialize everything
+    // Initialize charts when page loads
     document.addEventListener('DOMContentLoaded', function() {
       createRevenueChart();
-      createTrendsChart();
+      createTrendCharts();
+      
+      // Add event listener for debug data on double-click
+      document.addEventListener('dblclick', function() {
+        console.log('Club Data:', clubData);
+        console.log('Historical Data:', historicalData);
+        console.log('League Averages:', leagueAverages);
+      });
     });
-    
-    // Add event listener for debug function
-    document.getElementById('trendsChart').addEventListener('dblclick', function() {
-      console.log('Club Data:', clubData);
-      console.log('Historical Data:', historicalData);
-      console.log('League Averages:', leagueAverages);
-    });
-    
   </script>
 </body>
 </html>
-    
