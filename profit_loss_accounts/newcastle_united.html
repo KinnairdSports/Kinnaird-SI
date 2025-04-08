@@ -1,0 +1,269 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Newcastle United - Profit and Loss Account</title>
+  <link rel="stylesheet" href="https://use.typekit.net/xxs6huv.css">
+  <style>
+    body {
+      background-color: #000000;
+      color: white;
+      font-family: 'aglet-sans', sans-serif;
+      padding: 20px;
+      margin: 0;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #000000;
+      overflow-x: auto;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      border-bottom: 1px solid rgba(5, 212, 190, 0.3);
+      padding-bottom: 10px;
+    }
+    .club-info {
+      display: flex;
+      flex-direction: column;
+    }
+    .club-name {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #05D4BE;
+    }
+    .league-info {
+      font-size: 1.2rem;
+      color: #cccccc;
+    }
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin-top: 20px;
+      overflow: hidden;
+      table-layout: fixed;
+    }
+    th, td {
+      padding: 10px;
+      text-align: right;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    th {
+      background-color: rgba(5, 212, 190, 0.2);
+      color: #05D4BE;
+      font-weight: bold;
+    }
+    th:first-child, td:first-child {
+      width: 250px;
+      text-align: left;
+    }
+    tr:hover {
+      background-color: rgba(5, 212, 190, 0.1);
+    }
+    .category-header {
+      text-align: left;
+      font-weight: bold;
+      color: #05D4BE;
+      background-color: rgba(5, 212, 190, 0.05);
+    }
+    .subcategory {
+      text-align: left;
+      padding-left: 30px;
+      color: #cccccc;
+    }
+    .total-row {
+      font-weight: bold;
+      background-color: rgba(5, 212, 190, 0.1);
+    }
+    .spacer-row {
+      height: 20px;
+      border-bottom: none;
+    }
+    .spacer-row:hover {
+      background-color: transparent;
+    }
+    .negative {
+      color: #FF3B30;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 30px;
+      font-size: 0.8rem;
+      color: #666;
+    }
+    @media print {
+      body {
+        background-color: white;
+        color: black;
+      }
+      .container {
+        background-color: white;
+      }
+      th {
+        background-color: #f0f0f0;
+        color: #333;
+      }
+      .category-header {
+        color: #333;
+        background-color: #f0f0f0;
+      }
+      .negative {
+        color: red;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- No header content -->
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th style="text-align: left;">Financial Item</th>
+            <th data-tooltip="Premier League 13th">2020<br>£000</th><th data-tooltip="Premier League 12th">2021<br>£000</th><th data-tooltip="Premier League 11th">2022<br>£000</th><th data-tooltip="Premier League 4th">2023<br>£000</th><th data-tooltip="Premier League 7th">2024<br>£000</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Turnover Section -->
+          <tr class="category-header">
+            <td>Turnover</td>
+            <td></td><td></td><td></td><td></td><td></td>
+          </tr>
+          <tr class="subcategory">
+            <td>Matchday</td>
+            <td>17,443</td><td>176</td><td>27,529</td><td>37,914</td><td>50,095</td>
+          </tr>
+          <tr class="subcategory">
+            <td>Broadcast</td>
+            <td>106,103</td><td>119,262</td><td>124,111</td><td>165,485</td><td>183,785</td>
+          </tr>
+          <tr class="subcategory">
+            <td>Commercial</td>
+            <td>25,850</td><td>17,577</td><td>26,545</td><td>43,915</td><td>83,573</td>
+          </tr>
+          <tr class="total-row">
+            <td>Turnover</td>
+            <td>149,396</td><td>137,015</td><td>178,185</td><td>247,314</td><td>317,453</td>
+          </tr>
+          
+          <!-- Other Operating Income -->
+          <tr class="subcategory">
+            <td>Other operating income</td>
+            <td>3,230</td><td>3,177</td><td>1,801</td><td>2,951</td><td>2,860</td>
+          </tr>
+          
+          <!-- Spacer Row -->
+          <tr class="spacer-row">
+            <td colspan="6">&nbsp;</td>
+          </tr>
+          
+          <!-- Operating Expenses Section -->
+          <tr class="category-header">
+            <td>Operating expenses</td>
+            <td></td><td></td><td></td><td></td><td></td>
+          </tr>
+          <tr class="subcategory">
+            <td>Wages</td>
+            <td>121,146</td><td>106,829</td><td>170,204</td><td>186,679</td><td>218,738</td>
+          </tr>
+          <tr class="subcategory">
+            <td>Other costs</td>
+            <td>50,124</td><td>14,299</td><td>32,221</td><td>40,111</td><td>67,671</td>
+          </tr>
+          <tr class="total-row">
+            <td>EBITDA</td>
+            <td><span class="negative">(18,644)</span></td><td>19,064</td><td><span class="negative">(22,439)</span></td><td>23,475</td><td>33,904</td>
+          </tr>
+          
+          <!-- Spacer Row -->
+          <tr class="spacer-row">
+            <td colspan="6">&nbsp;</td>
+          </tr>
+          
+          <!-- Non-cash Expenses Section -->
+          <tr class="category-header">
+            <td>Non-cash expenses</td>
+            <td></td><td></td><td></td><td></td><td></td>
+          </tr>
+          <tr class="subcategory">
+            <td>Player amortisation</td>
+            <td>47,561</td><td>32,277</td><td>51,139</td><td>86,811</td><td>96,744</td>
+          </tr>
+          <tr class="subcategory">
+            <td>Depreciation</td>
+            <td>2,970</td><td>2,205</td><td>2,518</td><td>3,425</td><td>4,962</td>
+          </tr>
+          <tr class="total-row">
+            <td>EBIT</td>
+            <td><span class="negative">(69,175)</span></td><td><span class="negative">(15,418)</span></td><td><span class="negative">(76,096)</span></td><td><span class="negative">(66,761)</span></td><td><span class="negative">(67,802)</span></td>
+          </tr>
+          
+          <!-- Spacer Row -->
+          <tr class="spacer-row">
+            <td colspan="6">&nbsp;</td>
+          </tr>
+          
+          <!-- Exceptional Items Section -->
+          <tr class="category-header">
+            <td>Exceptional items</td>
+            <td></td><td></td><td></td><td></td><td></td>
+          </tr>
+          <tr class="subcategory">
+            <td>Player impairment</td>
+            <td>11,135</td><td>—</td><td>1,400</td><td>2,532</td><td>801</td>
+          </tr>
+          <tr class="subcategory">
+            <td>Non-recurring income (costs)</td>
+            <td>—</td><td>—</td><td>—</td><td>—</td><td>—</td>
+          </tr>
+          <tr class="subcategory">
+            <td>Player sale profits</td>
+            <td>26,288</td><td>1,701</td><td>5,832</td><td>2,836</td><td>69,816</td>
+          </tr>
+          
+          <!-- Spacer Row -->
+          <tr class="spacer-row">
+            <td colspan="6">&nbsp;</td>
+          </tr>
+          
+          <!-- Profit/Loss Section -->
+          <tr class="total-row">
+            <td>Operating profit/(loss)</td>
+            <td><span class="negative">(54,022)</span></td><td><span class="negative">(13,717)</span></td><td><span class="negative">(71,664)</span></td><td><span class="negative">(66,457)</span></td><td>1,213</td>
+          </tr>
+          <tr class="subcategory">
+            <td>Net interest paid</td>
+            <td>28,050</td><td>95</td><td><span class="negative">(1,203)</span></td><td><span class="negative">(6,873)</span></td><td><span class="negative">(12,292)</span></td>
+          </tr>
+          <tr class="total-row">
+            <td>Profit before tax</td>
+            <td><span class="negative">(25,972)</span></td><td><span class="negative">(13,622)</span></td><td><span class="negative">(72,867)</span></td><td><span class="negative">(73,330)</span></td><td><span class="negative">(11,079)</span></td>
+          </tr>
+          <tr class="subcategory">
+            <td>Tax</td>
+            <td><span class="negative">(3,432)</span></td><td><span class="negative">(1,430)</span></td><td><span class="negative">(2,217)</span></td><td>91</td><td>18</td>
+          </tr>
+          <tr class="total-row">
+            <td>Profit after tax</td>
+            <td><span class="negative">(22,540)</span></td><td><span class="negative">(12,192)</span></td><td><span class="negative">(70,650)</span></td><td><span class="negative">(73,421)</span></td><td><span class="negative">(11,097)</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="footer">
+      <div>Data sourced from Companies House. Some figures may differ due to accounting methods used.</div>
+    </div>
+  </div>
+</body>
+</html>
+    

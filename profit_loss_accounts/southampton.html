@@ -1,0 +1,269 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Southampton - Profit and Loss Account</title>
+  <link rel="stylesheet" href="https://use.typekit.net/xxs6huv.css">
+  <style>
+    body {
+      background-color: #000000;
+      color: white;
+      font-family: 'aglet-sans', sans-serif;
+      padding: 20px;
+      margin: 0;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #000000;
+      overflow-x: auto;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      border-bottom: 1px solid rgba(5, 212, 190, 0.3);
+      padding-bottom: 10px;
+    }
+    .club-info {
+      display: flex;
+      flex-direction: column;
+    }
+    .club-name {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #05D4BE;
+    }
+    .league-info {
+      font-size: 1.2rem;
+      color: #cccccc;
+    }
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin-top: 20px;
+      overflow: hidden;
+      table-layout: fixed;
+    }
+    th, td {
+      padding: 10px;
+      text-align: right;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    th {
+      background-color: rgba(5, 212, 190, 0.2);
+      color: #05D4BE;
+      font-weight: bold;
+    }
+    th:first-child, td:first-child {
+      width: 250px;
+      text-align: left;
+    }
+    tr:hover {
+      background-color: rgba(5, 212, 190, 0.1);
+    }
+    .category-header {
+      text-align: left;
+      font-weight: bold;
+      color: #05D4BE;
+      background-color: rgba(5, 212, 190, 0.05);
+    }
+    .subcategory {
+      text-align: left;
+      padding-left: 30px;
+      color: #cccccc;
+    }
+    .total-row {
+      font-weight: bold;
+      background-color: rgba(5, 212, 190, 0.1);
+    }
+    .spacer-row {
+      height: 20px;
+      border-bottom: none;
+    }
+    .spacer-row:hover {
+      background-color: transparent;
+    }
+    .negative {
+      color: #FF3B30;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 30px;
+      font-size: 0.8rem;
+      color: #666;
+    }
+    @media print {
+      body {
+        background-color: white;
+        color: black;
+      }
+      .container {
+        background-color: white;
+      }
+      th {
+        background-color: #f0f0f0;
+        color: #333;
+      }
+      .category-header {
+        color: #333;
+        background-color: #f0f0f0;
+      }
+      .negative {
+        color: red;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- No header content -->
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th style="text-align: left;">Financial Item</th>
+            <th data-tooltip="Premier League 11th">2020<br>£000</th><th data-tooltip="Premier League 15th">2021<br>£000</th><th data-tooltip="Premier League 15th">2022<br>£000</th><th data-tooltip="Premier League 20th">2023<br>£000</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Turnover Section -->
+          <tr class="category-header">
+            <td>Turnover</td>
+            <td></td><td></td><td></td><td></td>
+          </tr>
+          <tr class="subcategory">
+            <td>Matchday</td>
+            <td>14,466</td><td>625</td><td>17,368</td><td>19,182</td>
+          </tr>
+          <tr class="subcategory">
+            <td>Broadcast</td>
+            <td>93,458</td><td>136,006</td><td>115,192</td><td>107,959</td>
+          </tr>
+          <tr class="subcategory">
+            <td>Commercial</td>
+            <td>18,712</td><td>20,614</td><td>18,068</td><td>18,398</td>
+          </tr>
+          <tr class="total-row">
+            <td>Turnover</td>
+            <td>126,636</td><td>157,245</td><td>150,628</td><td>145,539</td>
+          </tr>
+          
+          <!-- Other Operating Income -->
+          <tr class="subcategory">
+            <td>Other operating income</td>
+            <td>418</td><td>2,603</td><td>99</td><td>28</td>
+          </tr>
+          
+          <!-- Spacer Row -->
+          <tr class="spacer-row">
+            <td colspan="5">&nbsp;</td>
+          </tr>
+          
+          <!-- Operating Expenses Section -->
+          <tr class="category-header">
+            <td>Operating expenses</td>
+            <td></td><td></td><td></td><td></td>
+          </tr>
+          <tr class="subcategory">
+            <td>Wages</td>
+            <td>114,368</td><td>113,426</td><td>113,449</td><td>122,492</td>
+          </tr>
+          <tr class="subcategory">
+            <td>Other costs</td>
+            <td>51,747</td><td>40,994</td><td><span class="negative">(1,548)</span></td><td>55,312</td>
+          </tr>
+          <tr class="total-row">
+            <td>EBITDA</td>
+            <td><span class="negative">(39,061)</span></td><td>5,428</td><td>38,826</td><td><span class="negative">(32,237)</span></td>
+          </tr>
+          
+          <!-- Spacer Row -->
+          <tr class="spacer-row">
+            <td colspan="5">&nbsp;</td>
+          </tr>
+          
+          <!-- Non-cash Expenses Section -->
+          <tr class="category-header">
+            <td>Non-cash expenses</td>
+            <td></td><td></td><td></td><td></td>
+          </tr>
+          <tr class="subcategory">
+            <td>Player amortisation</td>
+            <td>56,674</td><td>47,350</td><td>35,134</td><td>51,993</td>
+          </tr>
+          <tr class="subcategory">
+            <td>Depreciation</td>
+            <td>3,485</td><td>3,677</td><td>3,760</td><td>3,616</td>
+          </tr>
+          <tr class="total-row">
+            <td>EBIT</td>
+            <td><span class="negative">(99,220)</span></td><td><span class="negative">(45,599)</span></td><td><span class="negative">(68)</span></td><td><span class="negative">(87,846)</span></td>
+          </tr>
+          
+          <!-- Spacer Row -->
+          <tr class="spacer-row">
+            <td colspan="5">&nbsp;</td>
+          </tr>
+          
+          <!-- Exceptional Items Section -->
+          <tr class="category-header">
+            <td>Exceptional items</td>
+            <td></td><td></td><td></td><td></td>
+          </tr>
+          <tr class="subcategory">
+            <td>Player impairment</td>
+            <td>6,397</td><td>—</td><td>—</td><td>799</td>
+          </tr>
+          <tr class="subcategory">
+            <td>Non-recurring income (costs)</td>
+            <td>4,395</td><td>—</td><td>—</td><td>3,319</td>
+          </tr>
+          <tr class="subcategory">
+            <td>Player sale profits</td>
+            <td>13,933</td><td>16,034</td><td>31</td><td>7,443</td>
+          </tr>
+          
+          <!-- Spacer Row -->
+          <tr class="spacer-row">
+            <td colspan="5">&nbsp;</td>
+          </tr>
+          
+          <!-- Profit/Loss Section -->
+          <tr class="total-row">
+            <td>Operating profit/(loss)</td>
+            <td><span class="negative">(87,289)</span></td><td><span class="negative">(29,565)</span></td><td><span class="negative">(37)</span></td><td><span class="negative">(77,883)</span></td>
+          </tr>
+          <tr class="subcategory">
+            <td>Net interest paid</td>
+            <td>11,169</td><td>6,788</td><td>22</td><td><span class="negative">(9,160)</span></td>
+          </tr>
+          <tr class="total-row">
+            <td>Profit before tax</td>
+            <td><span class="negative">(76,120)</span></td><td><span class="negative">(22,777)</span></td><td><span class="negative">(15)</span></td><td><span class="negative">(87,043)</span></td>
+          </tr>
+          <tr class="subcategory">
+            <td>Tax</td>
+            <td><span class="negative">(13,692)</span></td><td><span class="negative">(8,015)</span></td><td><span class="negative">(2)</span></td><td>6,487</td>
+          </tr>
+          <tr class="total-row">
+            <td>Profit after tax</td>
+            <td><span class="negative">(62,428)</span></td><td><span class="negative">(14,762)</span></td><td><span class="negative">(13)</span></td><td><span class="negative">(93,530)</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="footer">
+      <div>Data sourced from Companies House. Some figures may differ due to accounting methods used.</div>
+    </div>
+  </div>
+</body>
+</html>
+    
