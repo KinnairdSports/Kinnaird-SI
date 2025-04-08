@@ -478,20 +478,20 @@
     
     <script>
       // Data for the chart
-      const financialYears = [2020, 2021, 2022, 2023];
+      const financialYears = [2020, 2021, 2022, 2023, 2024];
       
       // Profitability metrics data
       const metricsData = {
-          ebitda: [146251325, -81110515, 53184000, 186687000],
-          ebit: [-73675, -81256464, -98614000, 5746000],
-          operating_profit_loss: [-58278.0, -62325000.0, 40061000.0, NaN],
-          profit_loss_before_interest_tax: [-67724.0, NaN, NaN, NaN],
-          profit_loss_before_tax: [-67724.0, -80189000.0, -63949000.0, NaN],
-          profit_loss_after_tax: [-63916.0, -83801000.0, -50117000.0, NaN]
+          ebitda: [146251325.0, -81110515.0, 53184000.0, 186687000.0, NaN],
+          ebit: [-73675.0, -81256464.0, -98614000.0, 5746000.0, NaN],
+          operating_profit_loss: [-58278.0, -62325000.0, 40061000.0, NaN, NaN],
+          profit_loss_before_interest_tax: [-67724.0, NaN, NaN, NaN, NaN],
+          profit_loss_before_tax: [-67724.0, -80189000.0, -63949000.0, NaN, NaN],
+          profit_loss_after_tax: [-63916.0, -83801000.0, -50117000.0, NaN, NaN]
       };
       
-      const positionData = ["6th", "7th", "4th", "8th"];
-      const leagueData = ["Premier League", "Premier League", "Premier League", "Premier League"];
+      const positionData = ["6th", "7th", "4th", "8th", null];
+      const leagueData = ["Premier League", "Premier League", "Premier League", "Premier League", null];
       
       // Metrics settings
       const metricsConfig = {

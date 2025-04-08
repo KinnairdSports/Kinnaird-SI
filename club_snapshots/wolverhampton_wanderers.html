@@ -34,11 +34,6 @@
       display: flex;
       flex-direction: column;
     }
-    .club-name {
-      font-size: 2rem;
-      font-weight: bold;
-      color: #05D4BE;
-    }
     .financial-year {
       font-size: 1.2rem;
       color: #cccccc;
@@ -196,7 +191,6 @@
   <div class="container">
     <div class="header">
       <div class="club-info">
-        <div class="club-name">Wolverhampton Wanderers</div>
         <div class="financial-year">Financial Year: 2024</div>
         <div class="team-performance">Team Performance: 14th in Premier League</div>
       </div>
@@ -206,19 +200,19 @@
       <div class="metric-card">
         <div class="metric-title">Total Revenue</div>
         <div class="metric-value">£177.7M</div>
-        <div class="metric-change">0% of league average</div>
+        <div class="metric-change"><span class="positive-change">+5.4% vs prev. year</span></div>
       </div>
       
       <div class="metric-card">
         <div class="metric-title">Wage Bill</div>
         <div class="metric-value">£141.9M</div>
-        <div class="metric-change negative">79.9% of revenue</div>
+        <div class="metric-change"><span class="positive-change">+0.2% vs prev. year</span></div>
       </div>
       
       <div class="metric-card">
         <div class="metric-title">Operating Result</div>
         <div class="metric-value negative">£-73.3M</div>
-        <div class="metric-change">0% of revenue</div>
+        <div class="metric-change"><span class="negative-change">+27.2% vs prev. year</span></div>
       </div>
     </div>
     
@@ -265,13 +259,6 @@
         <div class="metric-row">
           <span class="metric-label">Pre-Tax Profit/Loss</span>
           <span class="metric-value negative">£-14.3M</span>
-        </div>
-        <div class="metric-row">
-          <span class="metric-label">Wages to Revenue Ratio</span>
-          <span class="metric-value negative">79.9%</span>
-        </div>
-        <div class="progress-bar">
-          <div class="progress-fill negative" style="width: 79.9%;"></div>
         </div>
       </div>
       
@@ -323,6 +310,10 @@
           <span class="metric-label">Transfer Debtors</span>
           <span class="metric-value positive">?</span>
         </div>
+        <div class="metric-row">
+          <span class="metric-label">Wages to Revenue Ratio</span>
+          <span class="metric-value negative">79.9%</span>
+        </div>
       </div>
       
       <div class="chart-wrapper">
@@ -356,7 +347,7 @@
     </div>
     
     <div class="footer">
-      Data last updated: 2025-04-08 12:29:54 | Source: Published Club Accounts & Premier League Financial Records
+      Data last updated: 2025-04-08 13:04:25 | Source: Published Club Accounts & Premier League Financial Records
       <div><small>Double-click on chart area to view data details</small></div>
     </div>
   </div>
