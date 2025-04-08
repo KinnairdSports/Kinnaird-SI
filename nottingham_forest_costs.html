@@ -478,10 +478,7 @@
                                 <input type="checkbox" id="player_impairment" style="flex: 0 0 18px;">
                                 <label for="player_impairment" style="flex: 1; text-align: left; padding-left: 8px;">Player Impairment</label>
                             </div>
-                            <div class="cost-checkbox" style="display: flex; width: 215px; white-space: nowrap;">
-                                <input type="checkbox" id="exceptional_items" style="flex: 0 0 18px;">
-                                <label for="exceptional_items" style="flex: 1; text-align: left; padding-left: 8px;">Exceptional Expenses</label>
-                            </div>
+                            <!-- Exceptional Expenses checkbox removed -->
                         </div>
                     </div>
                 </div>
@@ -505,38 +502,35 @@
     <script>
       // Data for the chart
       const financialYears = [2020, 2021, 2022, 2023, 2024];
-      const costData = {"staff_costs": [38122000.0, 37196000.0, 58565000.0, 144912000.0, 166399000.0], "operating_expenses": [0.0, 46765000.0, 73684000.0, 0.0, 0.0], "player_amortisation": [5961000.0, 5101000.0, 7310000.0, 40766000.0, 61685000.0], "depreciation": [627000.0, 585000.0, 424000.0, 618000.0, 1159000.0], "player_impairment": [367000.0, 367000.0, 0.0, 0.0, 0.0], "exceptional_items": [0.0, 0.0, 0.0, 0.0, 0.0]};
+      const costData = {"staff_costs": [38122000, 37196000, 58565000, 144912000, 166399000], "operating_expenses": [850000, -24820892, 8833000, 25406000, -66967000], "player_amortisation": [5961000, 5101000, 7310000, 40766000, 61685000], "depreciation": [627000, 585000, 424000, 618000, 1159000], "player_impairment": [367000.0, 367000.0, 0.0, 0.0, 0.0]};
       const positionData = [null, null, null, "16th", "17th"];
       const leagueData = [null, null, null, "Premier League", "Premier League"];
       
-      // Cost categories (keys remain the same)
+      // Cost categories (exceptional_items removed)
       const costCategories = [
         'staff_costs', 
         'operating_expenses', 
         'player_amortisation', 
         'depreciation', 
-        'player_impairment', 
-        'exceptional_items'
+        'player_impairment'
       ];
       
-      // Mapping for display labels
+      // Mapping for display labels (exceptional_items removed)
       const displayLabels = {
           staff_costs: "Staff Costs",
           operating_expenses: "Other OpEx",
           player_amortisation: "Player Amortisation",
           depreciation: "Depreciation",
-          player_impairment: "Player Impairment",
-          exceptional_items: "Exceptional Expenses"
+          player_impairment: "Player Impairment"
       };
       
-      // Enhanced color palette with better contrast and aligned to Kinnaird theme
+      // Enhanced color palette with better contrast (removed the last color for exceptional_items)
       const colorPalette = [
         '#05D4BE',  // Staff Costs (primary teal)
         '#5F84FB',  // Other Operating Expenses (secondary blue)
         '#FF9500',  // Player Amortisation (accent orange)
         '#4CD964',  // Depreciation (green)
-        '#FF3B30',  // Player Impairment (red)
-        '#E83E8C'   // Exceptional Items (pink - changed from purple)
+        '#FF3B30'   // Player Impairment (red)
       ];
       
       // Active dataset and selected cost categories for stacking
@@ -824,8 +818,7 @@
               operating_expenses: "Day-to-day costs like stadium maintenance, match day operations, travel, training facilities, and administrative expenses excluding staff wages. These are essential for the club's regular operations.",
               player_amortisation: "The systematic allocation of player transfer fees over the length of their contracts. This is a non-operating accounting expense that doesn't reflect immediate cash outflows.",
               depreciation: "The systematic allocation of costs for physical assets like stadiums and facilities over their useful life. This is a non-cash accounting expense.",
-              player_impairment: "Write-downs in player values when their recoverable value falls below their book value, often due to injuries or performance decline. This is a non-operating expense.",
-              exceptional_items: "One-time costs that are unusual or infrequent, such as management restructuring, stadium relocation, or legal settlements. These are not part of normal operations."
+              player_impairment: "Write-downs in player values when their recoverable value falls below their book value, often due to injuries or performance decline. This is a non-operating expense."
           };
           
           costCategories.forEach((category, index) => {
