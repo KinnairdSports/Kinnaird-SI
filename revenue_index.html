@@ -1,203 +1,310 @@
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="utf-8" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Football Club Revenue Analysis</title>
-    <!-- Load Aglet Sans from Typekit -->
     <link href="https://use.typekit.net/xxs6huv.css" rel="stylesheet">
     <style>
-      :root {
-        --background: #11242B;
-        --text: #FFFFFF;
-        --muted-text: #CCCCCC;
-        --primary: #05D4BE;
-      }
-      
-      body {
-          font-family: 'aglet-sans', sans-serif !important;
-          background-color: var(--background);
-          color: var(--text);
-          margin: 0;
-          padding: 0;
-      }
-      
-      .container {
-          max-width: 1200px;
-          margin: 0 auto;
-          padding: 20px;
-      }
-      
-      .header {
-          text-align: center;
-          margin-bottom: 30px;
-          padding-bottom: 20px;
-          border-bottom: 1px solid var(--primary);
-      }
-      
-      .main-title {
-          font-size: 2.5rem;
-          font-weight: bold;
-          color: var(--primary);
-          margin-bottom: 5px;
-      }
-      
-      .club-list {
-          list-style-type: none;
-          padding: 0;
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-          gap: 15px;
-      }
-      
-      .club-list li {
-          background: linear-gradient(135deg, rgba(5, 212, 190, 0.1), rgba(95, 132, 251, 0.1));
-          border-radius: 8px;
-          border: 1px solid rgba(5, 212, 190, 0.3);
-          transition: transform 0.3s ease, box-shadow 0.3s ease;
-          text-align: center;
-      }
-      
-      .club-list li:hover {
-          transform: translateY(-3px);
-          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-      }
-      
-      .club-list a {
-          display: block;
-          padding: 15px;
-          color: var(--text);
-          text-decoration: none;
-          font-weight: bold;
-      }
+        body {
+            background-color: #000000;
+            color: white;
+            font-family: 'aglet-sans', sans-serif;
+            padding: 20px;
+            margin: 0;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background-color: #000000;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid rgba(5, 212, 190, 0.3);
+        }
+        .main-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #05D4BE;
+            margin-bottom: 15px;
+        }
+        .subtitle {
+            font-size: 1.2rem;
+            color: #cccccc;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .league-section {
+            margin-bottom: 50px;
+        }
+        .league-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #05D4BE;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(5, 212, 190, 0.3);
+            display: inline-block;
+        }
+        .club-list {
+            list-style-type: none;
+            padding: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .club-card {
+            background-color: rgba(5, 212, 190, 0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(5, 212, 190, 0.2);
+            transition: all 0.3s ease;
+            padding: 20px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .club-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            border-color: #05D4BE;
+            background-color: rgba(5, 212, 190, 0.1);
+        }
+        .club-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-align: center;
+        }
+        .club-list a {
+            color: white;
+            text-decoration: none;
+            height: 100%;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 0.8rem;
+            color: #666;
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 15px;
+            }
+            .main-title {
+                font-size: 2rem;
+            }
+            .league-title {
+                font-size: 1.5rem;
+            }
+            .club-list {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 15px;
+            }
+        }
+        @media (max-width: 480px) {
+            .club-list {
+                grid-template-columns: 1fr;
+            }
+            .main-title {
+                font-size: 1.8rem;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <div class="main-title">Football Club Revenue Analysis</div>
+            <div class="subtitle">
+                Explore detailed revenue breakdowns across football clubs, with insights into
+                matchday, broadcast, and commercial income streams.
+            </div>
         </div>
         
-        <ul class="club-list">
+        
+        <div class="league-section">
+            <h2 class="league-title">Premier League</h2>
+            <ul class="club-list">
+                
+            <li>
+                <a href="afc_bournemouth_revenue.html">
+                    <div class="club-card">
+                        <div class="club-name">AFC Bournemouth</div>
+                    </div>
+                </a>
+            </li>
             
-        <li>
-            <a href="arsenal_revenue.html">Arsenal</a>
-        </li>
+            <li>
+                <a href="arsenal_revenue.html">
+                    <div class="club-card">
+                        <div class="club-name">Arsenal</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="aston_villa_revenue.html">
+                    <div class="club-card">
+                        <div class="club-name">Aston Villa</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="brentford_revenue.html">
+                    <div class="club-card">
+                        <div class="club-name">Brentford</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="brighton_and_hove_albion_revenue.html">
+                    <div class="club-card">
+                        <div class="club-name">Brighton and Hove Albion</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="chelsea_revenue.html">
+                    <div class="club-card">
+                        <div class="club-name">Chelsea</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="crystal_palace_revenue.html">
+                    <div class="club-card">
+                        <div class="club-name">Crystal Palace</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="everton_revenue.html">
+                    <div class="club-card">
+                        <div class="club-name">Everton</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="fulham_revenue.html">
+                    <div class="club-card">
+                        <div class="club-name">Fulham</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="liverpool_revenue.html">
+                    <div class="club-card">
+                        <div class="club-name">Liverpool</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="manchester_city_revenue.html">
+                    <div class="club-card">
+                        <div class="club-name">Manchester City</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="manchester_united_revenue.html">
+                    <div class="club-card">
+                        <div class="club-name">Manchester United</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="newcastle_united_revenue.html">
+                    <div class="club-card">
+                        <div class="club-name">Newcastle United</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="nottingham_forest_revenue.html">
+                    <div class="club-card">
+                        <div class="club-name">Nottingham Forest</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="southampton_revenue.html">
+                    <div class="club-card">
+                        <div class="club-name">Southampton</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="tottenham_hotspur_revenue.html">
+                    <div class="club-card">
+                        <div class="club-name">Tottenham Hotspur</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="west_ham_united_revenue.html">
+                    <div class="club-card">
+                        <div class="club-name">West Ham United</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="wolverhampton_wanderers_revenue.html">
+                    <div class="club-card">
+                        <div class="club-name">Wolverhampton Wanderers</div>
+                    </div>
+                </a>
+            </li>
+            
+            </ul>
+        </div>
         
-        <li>
-            <a href="aston_villa_revenue.html">Aston Villa</a>
-        </li>
+        <div class="league-section">
+            <h2 class="league-title">Unknown</h2>
+            <ul class="club-list">
+                
+            <li>
+                <a href="ipswich_town_revenue.html">
+                    <div class="club-card">
+                        <div class="club-name">Ipswich Town</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="leicester_city_revenue.html">
+                    <div class="club-card">
+                        <div class="club-name">Leicester City</div>
+                    </div>
+                </a>
+            </li>
+            
+            </ul>
+        </div>
         
-        <li>
-            <a href="blackburn_revenue.html">Blackburn</a>
-        </li>
         
-        <li>
-            <a href="bournemouth_revenue.html">Bournemouth</a>
-        </li>
-        
-        <li>
-            <a href="brentford_revenue.html">Brentford</a>
-        </li>
-        
-        <li>
-            <a href="brighton_revenue.html">Brighton</a>
-        </li>
-        
-        <li>
-            <a href="bristol_city_revenue.html">Bristol City</a>
-        </li>
-        
-        <li>
-            <a href="burnley_revenue.html">Burnley</a>
-        </li>
-        
-        <li>
-            <a href="cardiff_revenue.html">Cardiff</a>
-        </li>
-        
-        <li>
-            <a href="chelsea_revenue.html">Chelsea</a>
-        </li>
-        
-        <li>
-            <a href="coventry_revenue.html">Coventry</a>
-        </li>
-        
-        <li>
-            <a href="crystal_palace_revenue.html">Crystal Palace</a>
-        </li>
-        
-        <li>
-            <a href="derby_revenue.html">Derby</a>
-        </li>
-        
-        <li>
-            <a href="everton_revenue.html">Everton</a>
-        </li>
-        
-        <li>
-            <a href="fulham_revenue.html">Fulham</a>
-        </li>
-        
-        <li>
-            <a href="hull_city_revenue.html">Hull City</a>
-        </li>
-        
-        <li>
-            <a href="ipswich_revenue.html">Ipswich</a>
-        </li>
-        
-        <li>
-            <a href="leeds_revenue.html">Leeds</a>
-        </li>
-        
-        <li>
-            <a href="leicester_revenue.html">Leicester</a>
-        </li>
-        
-        <li>
-            <a href="liverpool_revenue.html">Liverpool</a>
-        </li>
-        
-        <li>
-            <a href="luton_town_revenue.html">Luton Town</a>
-        </li>
-        
-        <li>
-            <a href="manchester_city_revenue.html">Manchester City</a>
-        </li>
-        
-        <li>
-            <a href="manchester_united_revenue.html">Manchester United</a>
-        </li>
-        
-        <li>
-            <a href="newcastle_revenue.html">Newcastle</a>
-        </li>
-        
-        <li>
-            <a href="nottingham_forest_revenue.html">Nottingham Forest</a>
-        </li>
-        
-        <li>
-            <a href="southampton_revenue.html">Southampton</a>
-        </li>
-        
-        <li>
-            <a href="tottenham_revenue.html">Tottenham</a>
-        </li>
-        
-        <li>
-            <a href="west_ham_revenue.html">West Ham</a>
-        </li>
-        
-        <li>
-            <a href="wolves_revenue.html">Wolves</a>
-        </li>
-        
-        </ul>
+        <div class="footer">
+            Source: Published Club Accounts
+        </div>
     </div>
 </body>
 </html>
-    

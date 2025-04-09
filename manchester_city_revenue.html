@@ -1,922 +1,877 @@
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <title>Revenue Analysis</title>
-    <!-- Load Aglet Sans from Typekit -->
-    <link href="https://use.typekit.net/xxs6huv.css" rel="stylesheet">
-    <!-- Add Open Sans as fallback from Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-    <style>
-      :root {
-        /* Updated color scheme with black background */
-        --background: #000000;
-        --text: #FFFFFF;
-        --muted-text: #CCCCCC;
-        --primary: #05D4BE;
-        --primary-light: rgba(5, 212, 190, 0.2);
-        --primary-dark: #04A599;
-        --matchday: #05D4BE;
-        --broadcast: #4D7AFF;
-        --commercial: #07887B;
-        --total: #9C68F5; /* Purple color for total revenue - fits better with cool tones */
-        --grid: rgba(255, 255, 255, 0.25); /* Brighter grid lines */
-        --line: rgba(255, 255, 255, 0.3);
-        --tooltip-bg: #111111;
-        --card-bg: rgba(20, 20, 20, 0.7);
-        --highlight: rgba(5, 212, 190, 0.1);
-      }
-      
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
-      
-      body {
-          font-family: 'aglet-sans', 'Open Sans', sans-serif;
-          background-color: var(--background);
-          color: var(--text);
-          margin: 0;
-          padding: 0;
-          line-height: 1.5;
-          font-size: 16px;
-      }
-      
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Manchester City - Revenue Analysis</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <link rel="stylesheet" href="https://use.typekit.net/xxs6huv.css">
+  <style>
+    body {
+      background-color: #000000;
+      color: white;
+      font-family: 'aglet-sans', sans-serif;
+      padding: 20px;
+      margin: 0;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #000000;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      border-bottom: 1px solid rgba(5, 212, 190, 0.3);
+      padding-bottom: 10px;
+    }
+    .club-info {
+      display: flex;
+      flex-direction: column;
+    }
+    .revenue-title {
+      font-size: 1.2rem;
+      color: #cccccc;
+      font-weight: normal;
+    }
+    .team-performance {
+      font-size: 1rem;
+      color: #cccccc;
+      margin-top: 5px;
+    }
+    .metrics-cards {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    .metric-card {
+      background: linear-gradient(135deg, rgba(5, 212, 190, 0.2), rgba(95, 132, 251, 0.2));
+      border-radius: 8px;
+      padding: 15px;
+      flex: 1;
+      min-width: 180px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(5, 212, 190, 0.3);
+      text-align: center;
+    }
+    .metric-title { 
+      font-size: 1rem; 
+      color: #cccccc; 
+    }
+    .metric-value { 
+      font-size: 2rem; 
+      font-weight: bold; 
+      margin: 10px 0; 
+      color: #05D4BE; 
+    }
+    .metric-subtitle {
+      font-size: 0.9rem;
+      color: #cccccc;
+    }
+    .metric-change {
+      font-size: 0.9rem;
+    }
+    .positive-change {
+      color: #4CD964;
+    }
+    .negative-change {
+      color: #FF3B30;
+    }
+    .neutral {
+      color: #05D4BE;
+    }
+    /* Original control styles with club snapshot theming */
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      background-color: rgba(5, 212, 190, 0.05);
+      border-radius: 8px;
+      padding: 15px;
+      border: 1px solid rgba(5, 212, 190, 0.2);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      margin-bottom: 20px;
+    }
+    select {
+      padding: 10px 15px;
+      border-radius: 8px;
+      background-color: rgba(255, 255, 255, 0.1);
+      color: white;
+      border: 1px solid #05D4BE;
+      font-family: 'aglet-sans', sans-serif;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    select:hover {
+      background-color: rgba(255, 255, 255, 0.15);
+      border-color: #04A599;
+    }
+    select:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(5, 212, 190, 0.2);
+    }
+    select option {
+      background-color: #000000;
+      color: white;
+      padding: 10px;
+    }
+    .chart-wrapper {
+      background-color: rgba(5, 212, 190, 0.05);
+      border-radius: 8px;
+      padding: 15px;
+      border: 1px solid rgba(5, 212, 190, 0.2);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      margin-bottom: 20px;
+      position: relative;
+    }
+    .panel-title {
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+      color: #05D4BE;
+      border-bottom: 1px solid rgba(5, 212, 190, 0.3);
+      padding-bottom: 5px;
+    }
+    .metric-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+    }
+    .metric-label {
+      color: #cccccc;
+    }
+    .metric-row .metric-value {
+      font-size: inherit;
+      font-weight: bold;
+      color: white;
+      margin: 0;
+    }
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    /* Modified hover instruction styling with club snapshot theme */
+    .hover-instruction {
+      position: relative;
+      text-align: right;
+      background-color: transparent;
+      color: #05D4BE;
+      padding: 8px 12px;
+      font-size: 0.8rem;
+      opacity: 0.7;
+      transition: opacity 0.3s;
+      margin-bottom: 10px;
+    }
+    .hover-instruction:hover {
+      opacity: 1;
+    }
+    /* Original tooltip styling with club snapshot color scheme */
+    .tooltip {
+      position: absolute;
+      padding: 12px 15px;
+      background: #111111;
+      color: #FFFFFF;
+      border: 1px solid #05D4BE;
+      border-radius: 8px;
+      pointer-events: none;
+      font-family: 'aglet-sans', sans-serif;
+      font-size: 14px;
+      opacity: 0;
+      transition: all 0.3s;
+      z-index: 10;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      max-width: 300px;
+      backdrop-filter: blur(4px);
+    }
+    .tooltip-header {
+      margin-bottom: 5px;
+    }
+    .tooltip-title {
+      font-weight: bold;
+      color: #05D4BE;
+      margin-bottom: 4px;
+      font-size: 16px;
+    }
+    .tooltip-subtitle {
+      color: #cccccc;
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+    .tooltip-divider {
+      height: 1px;
+      background-color: rgba(255, 255, 255, 0.2);
+      margin: 8px 0;
+      width: 100%;
+    }
+    .tooltip-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+    .tooltip-item-value {
+      font-weight: bold;
+      margin-left: 15px;
+    }
+    .tooltip-total {
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+    }
+    .tooltip-total-value {
+      color: #9C68F5;
+    }
+    /* Original legend styling with club snapshot theme */
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 20px;
+      padding: 15px;
+      background-color: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      justify-content: center;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: help;
+      padding: 6px 12px;
+      border-radius: 6px;
+      transition: all 0.2s;
+      user-select: none;
+      position: relative;
+    }
+    .legend-item:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      transform: translateY(-2px);
+    }
+    .legend-tooltip {
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      min-width: 200px;
+      max-width: 250px;
+      background-color: #111111;
+      color: white;
+      padding: 10px 12px;
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      border: 1px solid #05D4BE;
+      z-index: 100;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+    }
+    .legend-tooltip::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -8px;
+      border-width: 8px;
+      border-style: solid;
+      border-color: #05D4BE transparent transparent transparent;
+    }
+    .legend-item:hover .legend-tooltip {
+      opacity: 1;
+      visibility: visible;
+    }
+    .legend-tooltip-title {
+      font-weight: bold;
+      color: #05D4BE;
+      margin-bottom: 5px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      padding-bottom: 3px;
+    }
+    .legend-color {
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    }
+    /* Original chart styling */
+    .vertical-guide {
+      pointer-events: none;
+      stroke: #05D4BE;
+      stroke-width: 1.5;
+      stroke-dasharray: 5,3;
+    }
+    .guide-circle {
+      pointer-events: none;
+      fill: #05D4BE;
+      stroke: white;
+      stroke-width: 1.5;
+    }
+    .area {
+      transition: opacity 0.3s;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 30px;
+      font-size: 0.8rem;
+      color: #666;
+    }
+    
+    /* Original chart colors */
+    :root {
+      --matchday: #05D4BE;
+      --broadcast: #4D7AFF;
+      --commercial: #07887B;
+      --total: #9C68F5;
+      --grid: rgba(255, 255, 255, 0.25);
+      --line: rgba(255, 255, 255, 0.3);
+    }
+    
+    @media (max-width: 768px) {
       .container {
-          max-width: 1200px;
-          margin: 0 auto;
-          padding: 30px 20px;
+        padding: 15px 10px;
       }
-      
+      .metrics-grid, .metrics-cards {
+        grid-template-columns: 1fr;
+      }
+      .metric-card { min-width: 100%; }
       .controls {
-          display: flex;
-          flex-direction: column;
-          gap: 15px;
-          margin-bottom: 30px;
-          padding: 20px;
-          background-color: var(--card-bg);
-          border-radius: 12px;
-          border: 1px solid rgba(5, 212, 190, 0.2);
-          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        flex-direction: column;
+        padding: 15px;
       }
-      
-      .control-group {
-          display: flex;
-          align-items: center;
-          gap: 15px;
-          flex-wrap: wrap;
-      }
-      
-      .toggle-switch {
-          position: relative;
-          display: inline-block;
-          width: 48px;
-          height: 24px;
-      }
-      
-      .toggle-switch input {
-          opacity: 0;
-          width: 0;
-          height: 0;
-      }
-      
-      .slider {
-          position: absolute;
-          cursor: pointer;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background-color: rgba(255, 255, 255, 0.3);
-          transition: .4s;
-          border-radius: 24px;
-      }
-      
-      .slider:before {
-          position: absolute;
-          content: "";
-          height: 16px;
-          width: 16px;
-          left: 4px;
-          bottom: 4px;
-          background-color: white;
-          transition: .4s;
-          border-radius: 50%;
-      }
-      
-      input:checked + .slider {
-          background-color: var(--primary);
-      }
-      
-      input:checked + .slider:before {
-          transform: translateX(24px);
-      }
-      
-      select {
-          padding: 10px 15px;
-          border-radius: 8px;
-          background-color: rgba(255, 255, 255, 0.1);
-          color: var(--text);
-          border: 1px solid var(--primary);
-          font-family: 'aglet-sans', 'Open Sans', sans-serif;
-          font-size: 14px;
-          cursor: pointer;
-          transition: all 0.2s;
-      }
-      
-      select:hover {
-          background-color: rgba(255, 255, 255, 0.15);
-          border-color: var(--primary-dark);
-      }
-      
-      select:focus {
-          outline: none;
-          box-shadow: 0 0 0 2px var(--primary-light);
-      }
-      
-      select option {
-          background-color: var(--background);
-          color: var(--text);
-          padding: 10px;
-      }
-      
       .chart-wrapper {
-          background-color: var(--card-bg);
-          border-radius: 12px;
-          padding: 25px;
-          box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-          border: 1px solid rgba(5, 212, 190, 0.3);
-          margin-bottom: 30px;
-          transition: transform 0.3s, box-shadow 0.3s;
-          position: relative;
+        padding: 15px;
       }
-      
-      .chart-wrapper:hover {
-          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+      .panel-title {
+        font-size: 1.2rem;
       }
-      
-      .chart-title {
-          font-size: 1.4rem;
-          margin-bottom: 15px;
-          color: var(--primary);
-          border-bottom: 1px solid rgba(5, 212, 190, 0.3);
-          padding-bottom: 10px;
-          font-weight: 600;
-      }
-      
-      .hover-instruction {
-          position: absolute;
-          top: 20px;
-          right: 20px;
-          background-color: rgba(0, 0, 0, 0.7);
-          color: var(--primary);
-          padding: 8px 12px;
-          border-radius: 6px;
-          font-size: 0.8rem;
-          opacity: 0.7;
-          border: 1px solid var(--primary-light);
-          transition: opacity 0.3s;
-      }
-      
-      .hover-instruction:hover {
-          opacity: 1;
-      }
-      
-      svg text {
-          font-family: 'aglet-sans', 'Open Sans', sans-serif;
-          fill: var(--text);
-      }
-      
-      .axis-x path, .axis-y path {
-          stroke: var(--line);
-          stroke-width: 1.5;
-      }
-      
-      .axis-x .tick line, .axis-y .tick line {
-          stroke: var(--grid);
-          stroke-dasharray: 2,2;
-      }
-      
-      .axis-x text, .axis-y text {
-          fill: var(--text);
-          font-size: 12px;
-          font-weight: 500;
-      }
-      
-      .tooltip {
-          position: absolute;
-          padding: 12px 15px;
-          background: var(--tooltip-bg);
-          color: var(--text);
-          border: 1px solid var(--primary);
-          border-radius: 8px;
-          pointer-events: none;
-          font-family: 'aglet-sans', 'Open Sans', sans-serif;
-          font-size: 14px;
-          opacity: 0;
-          transition: all 0.3s;
-          z-index: 10;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-          max-width: 300px;
-          backdrop-filter: blur(4px);
-      }
-      
-      .tooltip-header {
-          margin-bottom: 5px;
-      }
-      
-      .tooltip-title {
-          font-weight: bold;
-          color: var(--primary);
-          margin-bottom: 4px;
-          font-size: 16px;
-      }
-      
-      .tooltip-subtitle {
-          color: var(--muted-text);
-          font-size: 13px;
-          margin-bottom: 8px;
-      }
-      
-      .tooltip-divider {
-          height: 1px;
-          background-color: rgba(255, 255, 255, 0.2);
-          margin: 8px 0;
-          width: 100%;
-      }
-      
-      .tooltip-item {
-          display: flex;
-          justify-content: space-between;
-          margin-bottom: 4px;
-      }
-      
-      .tooltip-item-value {
-          font-weight: bold;
-          margin-left: 15px;
-      }
-      
-      .tooltip-total {
-          margin-top: 8px;
-          padding-top: 8px;
-          border-top: 1px solid rgba(255, 255, 255, 0.2);
-          font-weight: bold;
-          display: flex;
-          justify-content: space-between;
-      }
-      
-      .tooltip-total-value {
-          color: var(--total);
-      }
-      
-      .legend {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 12px;
-          margin-top: 20px;
-          padding: 15px;
-          background-color: rgba(0, 0, 0, 0.2);
-          border-radius: 8px;
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          justify-content: center;
-      }
-      
-      .legend-item {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          cursor: help;
-          padding: 6px 12px;
-          border-radius: 6px;
-          transition: all 0.2s;
-          user-select: none;
-          position: relative;
-      }
-      
-      .legend-item:hover {
-          background-color: rgba(255, 255, 255, 0.1);
-          transform: translateY(-2px);
-      }
-      
-      .legend-tooltip {
-          position: absolute;
-          bottom: 100%;
-          left: 50%;
-          transform: translateX(-50%);
-          min-width: 200px;
-          max-width: 250px;
-          background-color: var(--tooltip-bg);
-          color: var(--text);
-          padding: 10px 12px;
-          border-radius: 6px;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-          border: 1px solid var(--primary);
-          z-index: 100;
-          opacity: 0;
-          visibility: hidden;
-          transition: all 0.3s;
-          font-size: 0.9rem;
-          margin-bottom: 10px;
-      }
-      
-      .legend-tooltip::after {
-          content: "";
-          position: absolute;
-          top: 100%;
-          left: 50%;
-          margin-left: -8px;
-          border-width: 8px;
-          border-style: solid;
-          border-color: var(--primary) transparent transparent transparent;
-      }
-      
-      .legend-item:hover .legend-tooltip {
-          opacity: 1;
-          visibility: visible;
-      }
-      
-      .legend-tooltip-title {
-          font-weight: bold;
-          color: var(--primary);
-          margin-bottom: 5px;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-          padding-bottom: 3px;
-      }
-      
-      .legend-color {
-          width: 16px;
-          height: 16px;
-          border-radius: 4px;
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-      }
-      
-      /* Add responsive design */
-      @media (max-width: 768px) {
-          .container {
-              padding: 15px 10px;
-          }
-          
-          .financial-details {
-              font-size: 1rem;
-          }
-          
-          .controls {
-              flex-direction: column;
-              padding: 15px;
-          }
-          
-          .chart-wrapper {
-              padding: 15px;
-          }
-          
-          .chart-title {
-              font-size: 1.2rem;
-          }
-      }
-      
-      /* CSS for interactive vertical guide */
-      .vertical-guide {
-          pointer-events: none;
-          stroke: var(--primary);
-          stroke-width: 1.5;
-          stroke-dasharray: 5,3;
-      }
-      
-      .guide-circle {
-          pointer-events: none;
-          fill: var(--primary);
-          stroke: white;
-          stroke-width: 1.5;
-      }
-      
-      /* Add smooth transitions */
-      .area {
-          transition: opacity 0.3s;
-      }
-      
-      /* Add footer styling */
-      .footer {
-          text-align: center;
-          margin-top: 40px;
-          padding-top: 20px;
-          border-top: 1px solid rgba(255, 255, 255, 0.1);
-          color: var(--muted-text);
-          font-size: 0.9rem;
-      }
-      
-      .footer a {
-          color: var(--primary);
-          text-decoration: none;
-      }
-      
-      .footer a:hover {
-          text-decoration: underline;
-      }
-    </style>
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="controls">
-            <div class="control-group">
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <span>View: </span>
-                    <select id="viewSelector">
-                        <option value="stacked">Total Revenue (Stacked)</option>
-                        <option value="matchday">Matchday Only</option>
-                        <option value="broadcast">Broadcast Only</option>
-                        <option value="commercial">Commercial Only</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-        
-        <div class="chart-wrapper">
-            <div class="chart-title">Revenue Breakdown Over Time</div>
-            <div class="hover-instruction">Hover over data points for details</div>
-            <div id="mainChart" style="width: 100%; height: 500px;"></div>
-            <div class="legend">
-                <div class="legend-item">
-                    <div class="legend-color" style="background-color: var(--matchday);"></div>
-                    <span>Matchday</span>
-                    <div class="legend-tooltip">
-                        <div class="legend-tooltip-title">Matchday Revenue</div>
-                        <div>Income earned from fans attending matches, including gate receipts from all competitive home matches (league, cups, international competitions), premium seating and hospitality packages, and revenue from season tickets and memberships.</div>
-                    </div>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background-color: var(--broadcast);"></div>
-                    <span>Broadcast</span>
-                    <div class="legend-tooltip">
-                        <div class="legend-tooltip-title">Broadcasting Revenue</div>
-                        <div>Externally distributed income linked to competition participation and TV rights deals, including distributions from domestic leagues, revenue from international competitions, distributions from national cup competitions, and other broadcast agreements including overseas deals.</div>
-                    </div>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background-color: var(--commercial);"></div>
-                    <span>Commercial</span>
-                    <div class="legend-tooltip">
-                        <div class="legend-tooltip-title">Commercial Revenue</div>
-                        <div>Income generated from a club's own commercial activities and relationships, including sponsorships (shirt, sleeve, training kit), merchandising and retail operations, stadium tours, and non-matchday events held at the stadium such as concerts.</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="footer">
-            <p>Data sourced from Companies House | Visualisation by Kinnaird Analytics</p>
-        </div>
+  <div class="container">
+    <div class="header">
+      <div class="club-info">
+        <div class="revenue-title">Revenue</div>
+      </div>
     </div>
     
-    <div id="tooltip" class="tooltip"></div>
+    <div class="metrics-cards">
+      <div class="metric-card">
+        <div class="metric-title">Matchday Income</div>
+        <div class="metric-value">£75.6M</div>
+        <div class="metric-subtitle">+38.6% vs Premier League avg</div>
+      </div>
+      
+      <div class="metric-card">
+        <div class="metric-title">Broadcasting Income</div>
+        <div class="metric-value">£294.7M</div>
+        <div class="metric-subtitle">+67.7% vs Premier League avg</div>
+      </div>
+      
+      <div class="metric-card">
+        <div class="metric-title">Commercial Income</div>
+        <div class="metric-value">£344.7M</div>
+        <div class="metric-subtitle">+170.8% vs Premier League avg</div>
+      </div>
+    </div>
     
-    <script>
-      // Data for the chart
-      const financialYears = [2020, 2021, 2022, 2023, 2024];
+    <div class="controls">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <span>View: </span>
+        <select id="viewSelector">
+          <option value="stacked">Total Revenue (Stacked)</option>
+          <option value="matchday">Matchday Only</option>
+          <option value="broadcast">Broadcast Only</option>
+          <option value="commercial">Commercial Only</option>
+        </select>
+      </div>
+    </div>
+    
+    <div class="chart-wrapper">
+      <div class="panel-title">Revenue Breakdown Over Time</div>
+      <div id="mainChart" style="width: 100%; height: 500px;"></div>
+      <div class="hover-instruction">Hover over data points for details</div>
+      <div class="legend">
+        <div class="legend-item">
+          <div class="legend-color" style="background-color: var(--matchday);"></div>
+          <span>Matchday</span>
+          <div class="legend-tooltip">
+            <div class="legend-tooltip-title">Matchday Revenue</div>
+            <div>Income earned from fans attending matches, including gate receipts from all competitive home matches (league, cups, international competitions), premium seating and hospitality packages, and revenue from season tickets and memberships.</div>
+          </div>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color" style="background-color: var(--broadcast);"></div>
+          <span>Broadcast</span>
+          <div class="legend-tooltip">
+            <div class="legend-tooltip-title">Broadcasting Revenue</div>
+            <div>Externally distributed income linked to competition participation and TV rights deals, including distributions from domestic leagues, revenue from international competitions, distributions from national cup competitions, and other broadcast agreements including overseas deals.</div>
+          </div>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color" style="background-color: var(--commercial);"></div>
+          <span>Commercial</span>
+          <div class="legend-tooltip">
+            <div class="legend-tooltip-title">Commercial Revenue</div>
+            <div>Income generated from a club's own commercial activities and relationships, including sponsorships (shirt, sleeve, training kit), merchandising and retail operations, stadium tours, and non-matchday events held at the stadium such as concerts.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="chart-wrapper">
+      <div class="panel-title">Revenue Composition Analysis</div>
+      <div class="metrics-grid">
+        <div>
+          <div class="metric-row">
+            <span class="metric-label">Year-on-Year Change</span>
+            <span class="metric-value">0.3%</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">5 Year Revenue Growth</span>
+            <span class="metric-value">49.5%</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Highest Revenue Year</span>
+            <span class="metric-value">2024 (£715.0M)</span>
+          </div>
+        </div>
+        <div>
+          <div class="metric-row">
+            <span class="metric-label">Matchday Dependency</span>
+            <span class="metric-value">Low</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Broadcast Dependency</span>
+            <span class="metric-value">Moderate</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Commercial Dependency</span>
+            <span class="metric-value">High</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+  <div id="tooltip" class="tooltip"></div>
+  
+  <script>
+    // Data for the chart
+    const financialYears = [2020, 2021, 2022, 2023, 2024];
+    
+    // Revenue data
+    const matchdayData = [41694000, 732000, 54482000, 71914000, 75607000];
+    const broadcastData = [190324000, 297448000, 249060000, 299410000, 294731000];
+    const commercialData = [246341000, 271669000, 309472000, 341444000, 344681000];
+    const totalData = [478359000, 569849000, 613014000, 712768000, 715019000];
+    const positionData = ["2nd", "1st", "1st", "1st", "1st"];
+    const leagueData = ["Premier League", "Premier League", "Premier League", "Premier League", "Premier League"];
+    
+    // Active data sets
+    let activeMatchdayData = matchdayData;
+    let activeBroadcastData = broadcastData;
+    let activeCommercialData = commercialData;
+    let activeTotalData = totalData;
+    let activeViewMode = "stacked";
+    
+    // Chart rendering function - preserving original functionality with club snapshot styling
+    function renderChart() {
+  // Clear previous chart if any
+  d3.select("#mainChart").html("");
+  
+  // Set up dimensions
+  const margin = {top: 40, right: 50, bottom: 70, left: 90};
+  const width = document.getElementById('mainChart').clientWidth - margin.left - margin.right;
+  const height = document.getElementById('mainChart').clientHeight - margin.top - margin.bottom;
+  
+  // Create SVG container
+  const svg = d3.select("#mainChart")
+    .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", `translate(${margin.left}, ${margin.top})`);
+  
+  // Add chart background for better visibility
+  svg.append("rect")
+    .attr("width", width)
+    .attr("height", height)
+    .attr("fill", "rgba(0, 0, 0, 0.5)")
+    .attr("rx", 8)
+    .attr("ry", 8);
+  
+  // Prepare stacked data
+  const stackData = financialYears.map((year, i) => {
+    return {
+      year,
+      matchday: activeMatchdayData[i] || 0,
+      broadcast: activeBroadcastData[i] || 0,
+      commercial: activeCommercialData[i] || 0,
+      total: activeTotalData[i] || 0,
+      position: positionData[i],
+      league: leagueData[i]
+    };
+  });
+  
+  // Set up scales
+  const x = d3.scaleLinear()
+    .domain([d3.min(financialYears), d3.max(financialYears) + 0.5])
+    .range([0, width]);
+  
+  // Determine y domain based on view mode
+  let yMax = 0;
+  if (activeViewMode === "stacked") {
+    yMax = d3.max(activeTotalData.filter(v => !isNaN(v))) * 1.1 || 1;
+  } else if (activeViewMode === "matchday") {
+    yMax = d3.max(activeMatchdayData.filter(v => !isNaN(v))) * 1.1 || 1;
+  } else if (activeViewMode === "broadcast") {
+    yMax = d3.max(activeBroadcastData.filter(v => !isNaN(v))) * 1.1 || 1;
+  } else if (activeViewMode === "commercial") {
+    yMax = d3.max(activeCommercialData.filter(v => !isNaN(v))) * 1.1 || 1;
+  }
+  
+  // Ensure yMax is at least 1 to avoid scaling issues
+  yMax = Math.max(yMax, 1);
+  
+  const y = d3.scaleLinear()
+    .domain([0, yMax])
+    .range([height, 0]);
+  
+  // Improve grid lines - make them much more visible
+  svg.selectAll("line.horizontal-grid")
+    .data(y.ticks(10))
+    .enter()
+    .append("line")
+    .attr("class", "horizontal-grid")
+    .attr("x1", 0)
+    .attr("x2", width)
+    .attr("y1", d => y(d))
+    .attr("y2", d => y(d))
+    .style("stroke", "var(--grid)")
+    .style("stroke-width", "1px")
+    .style("stroke-opacity", "0.8")
+    .style("stroke-dasharray", "2,3");
+  
+  // Add vertical grid lines with better visibility
+  svg.selectAll("line.vertical-grid")
+    .data(financialYears)
+    .enter()
+    .append("line")
+    .attr("class", "vertical-grid")
+    .attr("x1", d => x(d))
+    .attr("x2", d => x(d))
+    .attr("y1", 0)
+    .attr("y2", height)
+    .style("stroke", "var(--grid)")
+    .style("stroke-width", "1px")
+    .style("stroke-opacity", "0.8")
+    .style("stroke-dasharray", "2,3");
+  
+  // Style grid lines
+  svg.selectAll(".grid line")
+    .style("stroke", "var(--grid)")
+    .style("stroke-opacity", "0.8")
+    .style("stroke-dasharray", "3,3")
+    .style("stroke-width", "1px")
+    .style("shape-rendering", "crispEdges");
+  
+  svg.selectAll(".grid path")
+    .style("stroke-width", "0");
+  
+  // Add X axis
+  svg.append("g")
+    .attr("class", "axis-x")
+    .attr("transform", `translate(0, ${height})`)
+    .call(d3.axisBottom(x)
+      .tickFormat(d3.format("d"))
+      .ticks(financialYears.length)
+      .tickValues(financialYears))
+    .selectAll("text")
+      .style("font-weight", "bold")
+      .style("font-size", "12px");
+  
+  // Add Y axis
+  svg.append("g")
+    .attr("class", "axis-y")
+    .call(d3.axisLeft(y)
+      .tickFormat(d => `£${(d/1000000).toFixed(0)}M`)
+      .ticks(10))
+    .selectAll("text")
+      .style("font-weight", "bold")
+      .style("font-size", "12px");
+  
+  // FIXED: Use D3's built-in stack function for stacked areas
+  if (activeViewMode === "stacked") {
+            // Setup the stack generator 
+    // Make sure to use all three revenue streams in the stack
+    const stack = d3.stack()
+      .keys(["matchday", "broadcast", "commercial"])
+      .order(d3.stackOrderNone)
+      .offset(d3.stackOffsetNone);
+    
+    // Get the stacked data
+    const stackedData = stack(stackData);
+    
+    // Define color scale
+    const colorScale = d3.scaleOrdinal()
+      .domain(["matchday", "broadcast", "commercial"])
+      .range(["#05D4BE", "#4D7AFF", "#07887B"]);
       
-      // Revenue data
-      const matchdayData = [41694000, 732000, 54482000, 71914000, 75607000];
-      const broadcastData = [190324000, 297448000, 249060000, 299410000, 294731000];
-      const commercialData = [246341000, 271669000, 309472000, 341444000, 344681000];
-      const totalData = [478359000, 569849000, 613014000, 712768000, 715019000];
-      const positionData = ["2nd", "1st", "1st", "1st", "1st"];
-      const leagueData = ["Premier League", "Premier League", "Premier League", "Premier League", "Premier League"];
+    // Create area generator
+    const area = d3.area()
+      .x(d => x(d.data.year))
+      .y0(d => y(d[0]))
+      .y1(d => y(d[1]))
+      .curve(d3.curveCatmullRom.alpha(0.5));
       
-      // Active data sets
-      let activeMatchdayData = matchdayData;
-      let activeBroadcastData = broadcastData;
-      let activeCommercialData = commercialData;
-      let activeTotalData = totalData;
-      let activeViewMode = "stacked";
+    // Draw each stacked area with appropriate color
+    svg.selectAll(".stacked-area")
+      .data(stackedData)
+      .join("path")
+      .attr("class", d => `stacked-area ${d.key}-area`)
+      .attr("d", area)
+      .attr("fill", d => colorScale(d.key))
+      .attr("fill-opacity", 0.85)
+      .attr("stroke", d => {
+        if (d.key === "matchday") return "#04A599";
+        if (d.key === "broadcast") return "#3A5CCF";
+        return "#056B60"; // commercial
+      })
+      .attr("stroke-width", 1.5)
+      .attr("stroke-linejoin", "round");
+  } else {
+    // Add line only for individual view (no area fill)
+    const singleLine = d3.line()
+      .x(d => x(d.year))
+      .y(d => {
+        if (activeViewMode === "matchday") return y(d.matchday || 0);
+        if (activeViewMode === "broadcast") return y(d.broadcast || 0);
+        if (activeViewMode === "commercial") return y(d.commercial || 0);
+        return y(0);
+      })
+      .curve(d3.curveCatmullRom.alpha(0.5));
       
-      // Chart rendering function
-      function renderChart() {
-          // Clear previous chart if any
-          d3.select("#mainChart").html("");
-          
-          // Set up dimensions
-          const margin = {top: 40, right: 50, bottom: 70, left: 90};
-          const width = document.getElementById('mainChart').clientWidth - margin.left - margin.right;
-          const height = document.getElementById('mainChart').clientHeight - margin.top - margin.bottom;
-          
-          // Create SVG container
-          const svg = d3.select("#mainChart")
-              .append("svg")
-              .attr("width", width + margin.left + margin.right)
-              .attr("height", height + margin.top + margin.bottom)
-              .append("g")
-              .attr("transform", `translate(${margin.left}, ${margin.top})`);
-          
-          // Add chart background for better visibility
-          svg.append("rect")
-              .attr("width", width)
-              .attr("height", height)
-              .attr("fill", "rgba(0, 0, 0, 0.5)")
-              .attr("rx", 8)
-              .attr("ry", 8);
-          
-          // Prepare stacked data
-          const stackData = financialYears.map((year, i) => {
-              return {
-                  year,
-                  matchday: activeMatchdayData[i],
-                  broadcast: activeBroadcastData[i],
-                  commercial: activeCommercialData[i],
-                  total: activeTotalData[i],
-                  position: positionData[i],
-                  league: leagueData[i]
-              };
-          });
-          
-          // Set up scales
-          const x = d3.scaleLinear()
-              .domain([d3.min(financialYears), d3.max(financialYears) + 0.5])
-              .range([0, width]);
-          
-          // Determine y domain based on view mode
-          let yMax = 0;
-          if (activeViewMode === "stacked") {
-              yMax = d3.max(activeTotalData) * 1.1;
-          } else if (activeViewMode === "matchday") {
-              yMax = d3.max(activeMatchdayData) * 1.1;
-          } else if (activeViewMode === "broadcast") {
-              yMax = d3.max(activeBroadcastData) * 1.1;
-          } else if (activeViewMode === "commercial") {
-              yMax = d3.max(activeCommercialData) * 1.1;
-          }
-          
-          const y = d3.scaleLinear()
-              .domain([0, yMax])
-              .range([height, 0]);
-          
-          // Improve grid lines - make them much more visible
-          svg.selectAll("line.horizontal-grid")
-              .data(y.ticks(10))
-              .enter()
-              .append("line")
-              .attr("class", "horizontal-grid")
-              .attr("x1", 0)
-              .attr("x2", width)
-              .attr("y1", d => y(d))
-              .attr("y2", d => y(d))
-              .style("stroke", "var(--grid)")
-              .style("stroke-width", "1px")
-              .style("stroke-opacity", "0.8")
-              .style("stroke-dasharray", "2,3");
-          
-          // Add vertical grid lines with better visibility
-          svg.selectAll("line.vertical-grid")
-              .data(financialYears)
-              .enter()
-              .append("line")
-              .attr("class", "vertical-grid")
-              .attr("x1", d => x(d))
-              .attr("x2", d => x(d))
-              .attr("y1", 0)
-              .attr("y2", height)
-              .style("stroke", "var(--grid)")
-              .style("stroke-width", "1px")
-              .style("stroke-opacity", "0.8")
-              .style("stroke-dasharray", "2,3");
-              
-          // Style grid lines
-          svg.selectAll(".grid line")
-              .style("stroke", "var(--grid)")
-              .style("stroke-opacity", "0.8")
-              .style("stroke-dasharray", "3,3")
-              .style("stroke-width", "1px")
-              .style("shape-rendering", "crispEdges");
-          
-          svg.selectAll(".grid path")
-              .style("stroke-width", "0");
-          
-          // Add X axis
-          svg.append("g")
-              .attr("class", "axis-x")
-              .attr("transform", `translate(0, ${height})`)
-              .call(d3.axisBottom(x)
-                  .tickFormat(d3.format("d"))
-                  .ticks(financialYears.length)
-                  .tickValues(financialYears))
-              .selectAll("text")
-                  .style("font-weight", "bold")
-                  .style("font-size", "12px");
-          
-          // Add Y axis
-          svg.append("g")
-              .attr("class", "axis-y")
-              .call(d3.axisLeft(y)
-                  .tickFormat(d => `£${(d/1000000).toFixed(0)}M`)
-                  .ticks(10))
-              .selectAll("text")
-                  .style("font-weight", "bold")
-                  .style("font-size", "12px");
-          
-          // Create arrays for cumulative values
-          const cumulativeData = stackData.map(d => {
-              const matchday = d.matchday;
-              const broadcast = matchday + d.broadcast;
-              const commercial = broadcast + d.commercial;
-              return {
-                  year: d.year,
-                  matchday0: 0,
-                  matchday1: matchday,
-                  broadcast0: matchday,
-                  broadcast1: broadcast,
-                  commercial0: broadcast,
-                  commercial1: commercial,
-                  total: d.total,
-                  position: d.position,
-                  league: d.league
-              };
-          });
-          
-          // Add the appropriate areas based on view mode
-          if (activeViewMode === "stacked") {
-              // Create area generators for each revenue stream (for stacked view)
-              const matchdayArea = d3.area()
-                  .x(d => x(d.year))
-                  .y0(d => y(d.matchday0))
-                  .y1(d => y(d.matchday1))
-                  .curve(d3.curveCatmullRom.alpha(0.5));
-              
-              const broadcastArea = d3.area()
-                  .x(d => x(d.year))
-                  .y0(d => y(d.broadcast0))
-                  .y1(d => y(d.broadcast1))
-                  .curve(d3.curveCatmullRom.alpha(0.5));
-              
-              const commercialArea = d3.area()
-                  .x(d => x(d.year))
-                  .y0(d => y(d.commercial0))
-                  .y1(d => y(d.commercial1))
-                  .curve(d3.curveCatmullRom.alpha(0.5));
-                  
-              // Add the stacked areas
-              svg.append("path")
-                  .datum(cumulativeData)
-                  .attr("class", "area matchday-area")
-                  .attr("d", matchdayArea)
-                  .attr("fill", "var(--matchday)")
-                  .attr("fill-opacity", 0.85)
-                  .attr("stroke", "#04A599")
-                  .attr("stroke-width", 1.5)
-                  .attr("stroke-linejoin", "round");
-              
-              svg.append("path")
-                  .datum(cumulativeData)
-                  .attr("class", "area broadcast-area")
-                  .attr("d", broadcastArea)
-                  .attr("fill", "var(--broadcast)")
-                  .attr("fill-opacity", 0.85)
-                  .attr("stroke", "#3A5CCF")
-                  .attr("stroke-width", 1.5)
-                  .attr("stroke-linejoin", "round");
-              
-              svg.append("path")
-                  .datum(cumulativeData)
-                  .attr("class", "area commercial-area")
-                  .attr("d", commercialArea)
-                  .attr("fill", "var(--commercial)")
-                  .attr("fill-opacity", 0.85)
-                  .attr("stroke", "#056B60")
-                  .attr("stroke-width", 1.5)
-                  .attr("stroke-linejoin", "round");
-              
-              // Removed circles at top of stacked columns
-          } else {
-              // Add line only for individual view (no area fill)
-              const singleLine = d3.line()
-                  .x(d => x(d.year))
-                  .y(d => {
-                      if (activeViewMode === "matchday") return y(d.matchday);
-                      if (activeViewMode === "broadcast") return y(d.broadcast);
-                      if (activeViewMode === "commercial") return y(d.commercial);
-                      return 0;
-                  })
-                  .curve(d3.curveCatmullRom.alpha(0.5));
-                  
-              // Add the line for the single stream
-              svg.append("path")
-                  .datum(stackData)
-                  .attr("class", "line")
-                  .attr("d", singleLine)
-                  .attr("stroke", activeViewMode === "matchday" ? "var(--matchday)" : 
-                               activeViewMode === "broadcast" ? "var(--broadcast)" : 
-                               "var(--commercial)")
-                  .attr("stroke-width", 3)
-                  .attr("fill", "none");
-                  
-              // Add data points as circles
-              svg.selectAll(".data-point")
-                  .data(stackData)
-                  .enter()
-                  .append("circle")
-                  .attr("class", "data-point")
-                  .attr("cx", d => x(d.year))
-                  .attr("cy", d => {
-                      if (activeViewMode === "matchday") return y(d.matchday);
-                      if (activeViewMode === "broadcast") return y(d.broadcast);
-                      if (activeViewMode === "commercial") return y(d.commercial);
-                      return 0;
-                  })
-                  .attr("r", 6)
-                  .attr("fill", activeViewMode === "matchday" ? "var(--matchday)" : 
-                              activeViewMode === "broadcast" ? "var(--broadcast)" : 
-                              "var(--commercial)")
-                  .attr("stroke", "white")
-                  .attr("stroke-width", 1.5);
-          }
-          
-          // Add vertical line guide (initially hidden)
-          const verticalGuide = svg.append("line")
-              .attr("class", "vertical-guide")
-              .attr("y1", 0)
-              .attr("y2", height)
-              .style("opacity", 0);
-              
-          // Add axis labels with better styling
-          svg.append("text")
-              .attr("class", "axis-title")
-              .attr("x", width / 2)
-              .attr("y", height + margin.bottom - 15)
-              .attr("text-anchor", "middle")
-              .style("fill", "var(--text)")
-              .style("font-size", "14px")
-              .style("font-weight", "bold")
-              .text("Financial Year");
-          
-          svg.append("text")
-              .attr("class", "axis-title")
-              .attr("transform", "rotate(-90)")
-              .attr("x", -height / 2)
-              .attr("y", -margin.left + 20)
-              .attr("text-anchor", "middle")
-              .style("fill", "var(--text)")
-              .style("font-size", "14px")
-              .style("font-weight", "bold")
-              .text("Revenue (GBP)");
-          
-          // Add invisible overlay for tooltip
-          svg.append("rect")
-              .attr("class", "overlay")
-              .attr("width", width)
-              .attr("height", height)
-              .style("fill", "transparent")
-              .style("pointer-events", "all")
-              .on("mousemove", function(event) {
-                  const mouseX = d3.pointer(event)[0];
-                  const x0 = x.invert(mouseX);
-                  
-                  // Find the closest year
-                  const i = d3.bisector(d => d.year).left(cumulativeData, x0);
-                  let d0 = cumulativeData[Math.max(0, i-1)];
-                  let d1 = cumulativeData[Math.min(cumulativeData.length-1, i)];
-                  let d = (x0 - d0.year) < (d1.year - x0) ? d0 : d1;
-                  
-                  // Show vertical guide
-                  verticalGuide
-                      .attr("x1", x(d.year))
-                      .attr("x2", x(d.year))
-                      .style("opacity", 1);
-                  
-                  // Show data point and guide line for stacked view
-                  if (activeViewMode === "stacked") {
-                      const yearIndex = financialYears.indexOf(d.year);
-                      // No need to highlight data points as they've been removed
-                  }
-                  
-                  // Format tooltip content with improved styling
-                  let tooltipContent = "";
-                  
-                  if (activeViewMode === "stacked") {
-                      tooltipContent = `
-                          <div class="tooltip-header">
-                              <div class="tooltip-title">Financial Year: ${d.year}</div>
-                              ${d.position && d.league ? `<div class="tooltip-subtitle">${d.position} in ${d.league}</div>` : ''}
-                          </div>
-                          <div class="tooltip-divider"></div>
-                          <div class="tooltip-item">
-                              <span>Matchday:</span>
-                              <span class="tooltip-item-value" style="color: var(--matchday);">£${(d.matchday1/1000000).toFixed(1)}M</span>
-                          </div>
-                          <div class="tooltip-item">
-                              <span>Broadcast:</span>
-                              <span class="tooltip-item-value" style="color: var(--broadcast);">£${((d.broadcast1 - d.broadcast0)/1000000).toFixed(1)}M</span>
-                          </div>
-                          <div class="tooltip-item">
-                              <span>Commercial:</span>
-                              <span class="tooltip-item-value" style="color: var(--commercial);">£${((d.commercial1 - d.commercial0)/1000000).toFixed(1)}M</span>
-                          </div>
-                          <div class="tooltip-total">
-                              <span>Total:</span>
-                              <span class="tooltip-total-value" style="color: var(--total);">£${(d.total/1000000).toFixed(1)}M</span>
-                          </div>
-                      `;
-                  } else if (activeViewMode === "matchday") {
-                      tooltipContent = `
-                          <div class="tooltip-header">
-                              <div class="tooltip-title">Financial Year: ${d.year}</div>
-                              ${d.position && d.league ? `<div class="tooltip-subtitle">${d.position} in ${d.league}</div>` : ''}
-                          </div>
-                          <div class="tooltip-divider"></div>
-                          <div class="tooltip-item">
-                              <span>Matchday:</span>
-                              <span class="tooltip-item-value" style="color: var(--matchday);">£${(d.matchday1/1000000).toFixed(1)}M</span>
-                          </div>
-                          <div class="tooltip-item">
-                              <span>% of total:</span>
-                              <span class="tooltip-item-value">${((d.matchday1/d.total)*100).toFixed(1)}%</span>
-                          </div>
-                      `;
-                  } else if (activeViewMode === "broadcast") {
-                      tooltipContent = `
-                          <div class="tooltip-header">
-                              <div class="tooltip-title">Financial Year: ${d.year}</div>
-                              ${d.position && d.league ? `<div class="tooltip-subtitle">${d.position} in ${d.league}</div>` : ''}
-                          </div>
-                          <div class="tooltip-divider"></div>
-                          <div class="tooltip-item">
-                              <span>Broadcast:</span>
-                              <span class="tooltip-item-value" style="color: var(--broadcast);">£${((d.broadcast1 - d.broadcast0)/1000000).toFixed(1)}M</span>
-                          </div>
-                          <div class="tooltip-item">
-                              <span>% of total:</span>
-                              <span class="tooltip-item-value">${(((d.broadcast1 - d.broadcast0)/d.total)*100).toFixed(1)}%</span>
-                          </div>
-                      `;
-                  } else if (activeViewMode === "commercial") {
-                      tooltipContent = `
-                          <div class="tooltip-header">
-                              <div class="tooltip-title">Financial Year: ${d.year}</div>
-                              ${d.position && d.league ? `<div class="tooltip-subtitle">${d.position} in ${d.league}</div>` : ''}
-                          </div>
-                          <div class="tooltip-divider"></div>
-                          <div class="tooltip-item">
-                              <span>Commercial:</span>
-                              <span class="tooltip-item-value" style="color: var(--commercial);">£${((d.commercial1 - d.commercial0)/1000000).toFixed(1)}M</span>
-                          </div>
-                          <div class="tooltip-item">
-                              <span>% of total:</span>
-                              <span class="tooltip-item-value">${(((d.commercial1 - d.commercial0)/d.total)*100).toFixed(1)}%</span>
-                          </div>
-                      `;
-                  }
-                  
-                  // Position and show the tooltip
-                  d3.select("#tooltip")
-                      .style("opacity", 1)
-                      .style("left", (event.pageX + 15) + "px")
-                      .style("top", (event.pageY - 20) + "px")
-                      .html(tooltipContent);
-              })
-              .on("mouseout", function() {
-                  // Hide tooltip and guide
-                  d3.select("#tooltip").style("opacity", 0);
-                  verticalGuide.style("opacity", 0);
-                  
-                  // Reset stacked data points
-                  if (activeViewMode === "stacked") {
-                      // No stacked data points to reset now
-                  }
-              });
+    // Add the line for the single stream
+    svg.append("path")
+      .datum(stackData)
+      .attr("class", "line")
+      .attr("d", singleLine)
+      .attr("stroke", activeViewMode === "matchday" ? "var(--matchday)" : 
+                   activeViewMode === "broadcast" ? "var(--broadcast)" : 
+                   "var(--commercial)")
+      .attr("stroke-width", 3)
+      .attr("fill", "none");
+      
+    // Add data points as circles
+    svg.selectAll(".data-point")
+      .data(stackData)
+      .enter()
+      .append("circle")
+      .attr("class", "data-point")
+      .attr("cx", d => x(d.year))
+      .attr("cy", d => {
+        if (activeViewMode === "matchday") return y(d.matchday || 0);
+        if (activeViewMode === "broadcast") return y(d.broadcast || 0);
+        if (activeViewMode === "commercial") return y(d.commercial || 0);
+        return y(0);
+      })
+      .attr("r", 6)
+      .attr("fill", activeViewMode === "matchday" ? "var(--matchday)" : 
+                  activeViewMode === "broadcast" ? "var(--broadcast)" : 
+                  "var(--commercial)")
+      .attr("stroke", "white")
+      .attr("stroke-width", 1.5);
+  }
+  
+  // Add vertical line guide (initially hidden)
+  const verticalGuide = svg.append("line")
+    .attr("class", "vertical-guide")
+    .attr("y1", 0)
+    .attr("y2", height)
+    .style("opacity", 0);
+    
+  // Add axis labels with better styling
+  svg.append("text")
+    .attr("class", "axis-title")
+    .attr("x", width / 2)
+    .attr("y", height + margin.bottom - 15)
+    .attr("text-anchor", "middle")
+    .style("fill", "white")
+    .style("font-size", "14px")
+    .style("font-weight", "bold")
+    .text("Financial Year");
+  
+  svg.append("text")
+    .attr("class", "axis-title")
+    .attr("transform", "rotate(-90)")
+    .attr("x", -height / 2)
+    .attr("y", -margin.left + 20)
+    .attr("text-anchor", "middle")
+    .style("fill", "white")
+    .style("font-size", "14px")
+    .style("font-weight", "bold")
+    .text("Revenue (GBP)");
+  
+  // Add invisible overlay for tooltip
+  svg.append("rect")
+    .attr("class", "overlay")
+    .attr("width", width)
+    .attr("height", height)
+    .style("fill", "transparent")
+    .style("pointer-events", "all")
+    .on("mousemove", function(event) {
+      const mouseX = d3.pointer(event)[0];
+      const x0 = x.invert(mouseX);
+      
+      // Find the closest year
+      const i = d3.bisector(d => d.year).left(stackData, x0);
+      let d0 = stackData[Math.max(0, i-1)];
+      let d1 = stackData[Math.min(stackData.length-1, i)];
+      let d = (x0 - d0.year) < (d1.year - x0) ? d0 : d1;
+      
+      // Show vertical guide
+      verticalGuide
+        .attr("x1", x(d.year))
+        .attr("x2", x(d.year))
+        .style("opacity", 1);
+      
+      // Format tooltip content with improved styling - preserving original format
+      let tooltipContent = "";
+      
+      if (activeViewMode === "stacked") {
+        tooltipContent = `
+          <div class="tooltip-header">
+            <div class="tooltip-title">Financial Year: ${d.year}</div>
+            ${d.position && d.league ? `<div class="tooltip-subtitle">${d.position} in ${d.league}</div>` : ''}
+          </div>
+          <div class="tooltip-divider"></div>
+          <div class="tooltip-item">
+            <span>Matchday:</span>
+            <span class="tooltip-item-value" style="color: var(--matchday);">£${(d.matchday/1000000).toFixed(1)}M</span>
+          </div>
+          <div class="tooltip-item">
+            <span>Broadcast:</span>
+            <span class="tooltip-item-value" style="color: var(--broadcast);">£${(d.broadcast/1000000).toFixed(1)}M</span>
+          </div>
+          <div class="tooltip-item">
+            <span>Commercial:</span>
+            <span class="tooltip-item-value" style="color: var(--commercial);">£${(d.commercial/1000000).toFixed(1)}M</span>
+          </div>
+          <div class="tooltip-total">
+            <span>Total:</span>
+            <span class="tooltip-total-value">£${(d.total/1000000).toFixed(1)}M</span>
+          </div>
+        `;
+      } else if (activeViewMode === "matchday") {
+        tooltipContent = `
+          <div class="tooltip-header">
+            <div class="tooltip-title">Financial Year: ${d.year}</div>
+            ${d.position && d.league ? `<div class="tooltip-subtitle">${d.position} in ${d.league}</div>` : ''}
+          </div>
+          <div class="tooltip-divider"></div>
+          <div class="tooltip-item">
+            <span>Matchday:</span>
+            <span class="tooltip-item-value" style="color: var(--matchday);">£${(d.matchday/1000000).toFixed(1)}M</span>
+          </div>
+          <div class="tooltip-item">
+            <span>% of total:</span>
+            <span class="tooltip-item-value">${d.total > 0 ? ((d.matchday/d.total)*100).toFixed(1) : 0}%</span>
+          </div>
+        `;
+      } else if (activeViewMode === "broadcast") {
+        tooltipContent = `
+          <div class="tooltip-header">
+            <div class="tooltip-title">Financial Year: ${d.year}</div>
+            ${d.position && d.league ? `<div class="tooltip-subtitle">${d.position} in ${d.league}</div>` : ''}
+          </div>
+          <div class="tooltip-divider"></div>
+          <div class="tooltip-item">
+            <span>Broadcast:</span>
+            <span class="tooltip-item-value" style="color: var(--broadcast);">£${(d.broadcast/1000000).toFixed(1)}M</span>
+          </div>
+          <div class="tooltip-item">
+            <span>% of total:</span>
+            <span class="tooltip-item-value">${d.total > 0 ? ((d.broadcast/d.total)*100).toFixed(1) : 0}%</span>
+          </div>
+        `;
+      } else if (activeViewMode === "commercial") {
+        tooltipContent = `
+          <div class="tooltip-header">
+            <div class="tooltip-title">Financial Year: ${d.year}</div>
+            ${d.position && d.league ? `<div class="tooltip-subtitle">${d.position} in ${d.league}</div>` : ''}
+          </div>
+          <div class="tooltip-divider"></div>
+          <div class="tooltip-item">
+            <span>Commercial:</span>
+            <span class="tooltip-item-value" style="color: var(--commercial);">£${(d.commercial/1000000).toFixed(1)}M</span>
+          </div>
+          <div class="tooltip-item">
+            <span>% of total:</span>
+            <span class="tooltip-item-value">${d.total > 0 ? ((d.commercial/d.total)*100).toFixed(1) : 0}%</span>
+          </div>
+        `;
       }
       
-      // Initialize chart on load and handle window resize with debounce
-      let resizeTimer;
-      function handleResize() {
-          clearTimeout(resizeTimer);
-          resizeTimer = setTimeout(renderChart, 250);
+      // Position and show the tooltip
+      d3.select("#tooltip")
+        .style("opacity", 1)
+        .style("left", (event.pageX + 15) + "px")
+        .style("top", (event.pageY - 20) + "px")
+        .html(tooltipContent);
+    })
+    .on("mouseout", function() {
+      // Hide tooltip and guide
+      d3.select("#tooltip").style("opacity", 0);
+      verticalGuide.style("opacity", 0);
+    });
+}
+
+    // Initialize chart on load and handle window resize with debounce
+    let resizeTimer;
+    function handleResize() {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(renderChart, 250);
+    }
+    
+    // View selector
+    document.getElementById("viewSelector").addEventListener("change", function() {
+      activeViewMode = this.value;
+      
+      // Update legend visibility
+      if (activeViewMode === "stacked") {
+        document.querySelectorAll(".legend-item").forEach(item => {
+          item.style.display = "flex";
+        });
+      } else {
+        document.querySelectorAll(".legend-item").forEach(item => {
+          const itemText = item.querySelector("span").textContent.toLowerCase();
+          item.style.display = itemText === activeViewMode ? "flex" : "none";
+        });
       }
       
-      // View selector
-      document.getElementById("viewSelector").addEventListener("change", function() {
-          activeViewMode = this.value;
-          
-          // Update legend visibility
-          if (activeViewMode === "stacked") {
-              document.querySelectorAll(".legend-item").forEach(item => {
-                  item.style.display = "flex";
-              });
-          } else {
-              document.querySelectorAll(".legend-item").forEach(item => {
-                  const itemText = item.querySelector("span").textContent.toLowerCase();
-                  item.style.display = itemText === activeViewMode ? "flex" : "none";
-              });
-          }
-          
-          // Re-render chart with new view mode
-          renderChart();
-      });
-      
-      // Initialize when window is loaded to ensure all elements have dimensions
-      window.onload = function() {
-          renderChart();
-      };
-      
-      window.addEventListener("resize", handleResize);
-    </script>
+      // Re-render chart with new view mode
+      renderChart();
+    });
+    
+    // Initialize when window is loaded to ensure all elements have dimensions
+    window.onload = function() {
+      renderChart();
+    };
+    
+    window.addEventListener("resize", handleResize);
+  </script>
 </body>
 </html>
