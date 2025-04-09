@@ -1,473 +1,648 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>AFC Bournemouth - Financial Snapshot</title>
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-    <link rel="stylesheet" href="https://use.typekit.net/xxs6huv.css" />
-    <style>
-      body {
-        background-color: #000;
-        color: white;
-        font-family: 'aglet-sans', sans-serif;
-        padding: 20px;
-        margin: 0;
-        min-height: 100vh;
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AFC Bournemouth - Financial Snapshot</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <link rel="stylesheet" href="https://use.typekit.net/xxs6huv.css">
+  <style>
+    body {
+      background-color: #000000;
+      color: white;
+      font-family: 'aglet-sans', sans-serif;
+      padding: 20px;
+      margin: 0;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #000000;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      border-bottom: 1px solid rgba(5, 212, 190, 0.3);
+      padding-bottom: 10px;
+    }
+    .club-info {
+      display: flex;
+      flex-direction: column;
+    }
+    .financial-year {
+      font-size: 1.2rem;
+      color: #cccccc;
+    }
+    .team-performance {
+      font-size: 1rem;
+      color: #cccccc;
+      margin-top: 5px;
+    }
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    .chart-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    .metrics-cards {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    .chart-wrapper {
+      background-color: rgba(5, 212, 190, 0.05);
+      border-radius: 8px;
+      padding: 15px;
+      border: 1px solid rgba(5, 212, 190, 0.2);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    .metric-card {
+      background: linear-gradient(135deg, rgba(5, 212, 190, 0.2), rgba(95, 132, 251, 0.2));
+      border-radius: 8px;
+      padding: 15px;
+      flex: 1;
+      min-width: 180px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(5, 212, 190, 0.3);
+      text-align: center;
+    }
+    .panel-title {
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+      color: #05D4BE;
+      border-bottom: 1px solid rgba(5, 212, 190, 0.3);
+      padding-bottom: 5px;
+    }
+    .metric-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+    }
+    .metric-label {
+      color: #cccccc;
+    }
+    .metric-value {
+      font-weight: bold;
+      color: white;
+    }
+    .metric-card .metric-value { 
+      font-size: 2rem; 
+      font-weight: bold; 
+      margin: 10px 0; 
+      color: #05D4BE; 
+    }
+    .metric-title { 
+      font-size: 1rem; 
+      color: #cccccc; 
+    }
+    .metric-subtitle {
+      font-size: 0.9rem;
+      color: #cccccc;
+    }
+    .metric-change { 
+      font-size: 0.9rem; 
+    }
+    .positive-change { 
+      color: #4CD964; 
+    }
+    .negative-change { 
+      color: #FF3B30; 
+    }
+    .positive {
+      color: #4CD964;
+    }
+    .negative {
+      color: #FF3B30;
+    }
+    .neutral {
+      color: #05D4BE;
+    }
+    .warning {
+      color: #FF9500;
+    }
+    .progress-bar {
+      height: 6px;
+      width: 100%;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      margin-top: 5px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background-color: #05D4BE;
+    }
+    .progress-fill.warning {
+      background-color: #FF9500;
+    }
+    .progress-fill.danger {
+      background-color: #FF3B30;
+    }
+    .tooltip {
+      position: absolute;
+      padding: 10px;
+      background: #1D3B48;
+      color: white;
+      border: 1px solid #05D4BE;
+      border-radius: 5px;
+      pointer-events: none;
+      font-family: 'aglet-sans', sans-serif;
+      font-size: 14px;
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: 10;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 30px;
+      font-size: 0.8rem;
+      color: #666;
+    }
+    .bar { transition: all 0.3s ease; }
+    .bar:hover { filter: brightness(1.2); }
+    .axis-x path, .axis-y path { stroke: rgba(255, 255, 255, 0.3); }
+    .axis-x .tick line, .axis-y .tick line { stroke: rgba(128, 128, 128, 0.2); }
+    .axis-x text, .axis-y text { fill: white; font-size: 12px; font-family: 'aglet-sans', sans-serif; }
+    .chart-title { fill: white; font-size: 18px; font-weight: bold; font-family: 'aglet-sans', sans-serif; text-anchor: middle; }
+    
+    @media (max-width: 768px) {
+      .metrics-grid, .chart-container {
+        grid-template-columns: 1fr;
       }
-      .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 20px;
-        background-color: #000;
-      }
-      .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 15px;
-        border-bottom: 1px solid rgba(5, 212, 190, 0.3);
-        padding-bottom: 10px;
-      }
-      .club-info {
-        display: flex;
-        flex-direction: column;
-      }
-      .financial-year {
-        font-size: 1.2rem;
-        color: #ccc;
-      }
-      .team-performance {
-        font-size: 1rem;
-        color: #ccc;
-        margin-top: 5px;
-      }
-      .metrics-cards {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 20px;
-        flex-wrap: wrap;
-        gap: 15px;
-      }
-      .metric-card {
-        background: linear-gradient(135deg, rgba(5, 212, 190, 0.2), rgba(95, 132, 251, 0.2));
-        border-radius: 8px;
-        padding: 15px;
-        flex: 1;
-        min-width: 180px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        border: 1px solid rgba(5, 212, 190, 0.3);
-        text-align: center;
-      }
-      .metric-title {
-        font-size: 1rem;
-        color: #ccc;
-      }
-      .metric-value {
-        font-size: 2rem;
-        font-weight: bold;
-        margin: 10px 0;
-        color: #05d4be;
-      }
-      .metric-change {
-        font-size: 0.9rem;
-      }
-      .positive-change {
-        color: #4cd964;
-      }
-      .negative-change {
-        color: #ff3b30;
-      }
-      .chart-wrapper {
-        background-color: rgba(5, 212, 190, 0.05);
-        border-radius: 8px;
-        padding: 15px;
-        border: 1px solid rgba(5, 212, 190, 0.2);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        margin-bottom: 20px;
-      }
-      .panel-title {
-        font-size: 1.1rem;
-        margin-bottom: 10px;
-        color: #05d4be;
-        border-bottom: 1px solid rgba(5, 212, 190, 0.3);
-        padding-bottom: 5px;
-      }
-      .metrics-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 15px;
-        margin-bottom: 20px;
-      }
-      .chart-container {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 15px;
-        margin-bottom: 20px;
-      }
-      .metric-row {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 8px;
-        font-size: 0.9rem;
-      }
-      .metric-label {
-        color: #ccc;
-      }
-      .tooltip {
-        position: absolute;
-        padding: 10px;
-        background: #1d3b48;
-        color: white;
-        border: 1px solid #05d4be;
-        border-radius: 5px;
-        pointer-events: none;
-        font-family: 'aglet-sans', sans-serif;
-        font-size: 14px;
-        opacity: 0;
-        transition: opacity 0.3s;
-        z-index: 10;
-      }
-      .footer {
-        text-align: center;
-        margin-top: 30px;
-        font-size: 0.8rem;
-        color: #666;
-      }
-      @media (max-width: 768px) {
-        .metrics-grid, .chart-container {
-          grid-template-columns: 1fr;
-        }
-        .metric-card {
-          min-width: 100%;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <div class="header">
-        <div class="club-info">
-          <div class="financial-year">Financial Year: 2024</div>
-          <div class="team-performance">Team Performance: 12th in Premier League</div>
-        </div>
-      </div>
-
-      <div class="metrics-cards">
-        <div class="metric-card">
-          <div class="metric-title">Total Revenue</div>
-          <div class="metric-value">£169.0M</div>
-          <div class="metric-change"><span class="positive-change">+5.0% vs prev. year</span></div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-title">Wage Bill</div>
-          <div class="metric-value">£136.2M</div>
-          <div class="metric-change"><span class="negative-change">-2.0% vs prev. year</span></div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-title">Operating Result</div>
-          <div class="metric-value">£-55.8M</div>
-          <div class="metric-change"><span class="positive-change">+10.0% vs prev. year</span></div>
-        </div>
-      </div>
-
-      <div class="chart-wrapper" style="margin-bottom: 20px;">
-        <div class="panel-title">Revenue Breakdown</div>
-        <div class="metrics-grid">
-          <div>
-            <div class="metric-row">
-              <span class="metric-label">Matchday</span>
-              <span class="metric-value">£6.5M (50%)</span>
-            </div>
-            <div class="metric-row">
-              <span class="metric-label">Broadcasting</span>
-              <span class="metric-value">£135.6M (25%)</span>
-            </div>
-            <div class="metric-row">
-              <span class="metric-label">Commercial</span>
-              <span class="metric-value">£26.9M (25%)</span>
-            </div>
-          </div>
-          <div id="revenueChart" style="height: 180px;"></div>
-        </div>
-      </div>
-
-      <div class="chart-container">
-        <div class="chart-wrapper">
-          <div class="panel-title">Revenue Trend</div>
-          <div id="revenueTrendChart" style="height: 200px;"></div>
-        </div>
-        <div class="chart-wrapper">
-          <div class="panel-title">Wages Trend</div>
-          <div id="wagesTrendChart" style="height: 200px;"></div>
-        </div>
-      </div>
-      <div class="chart-wrapper">
-        <div class="panel-title">Operating Profit/Loss Trend</div>
-        <div id="profitTrendChart" style="height: 200px;"></div>
-      </div>
-
-      <div class="footer">
-        Data last updated: 2025-04-09 11:15:57 | Source: Club Accounts &amp; Premier League Financial Records
-        <div><small>Double-click on chart area to view data details</small></div>
+      .metric-card { min-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="club-info">
+        <!-- Team name title removed as requested -->
+        <div class="financial-year">Financial Year: 2024</div>
+        <div class="team-performance">Team Performance: 12th in Premier League</div>
       </div>
     </div>
+    
+    <div class="metrics-cards">
+      <div class="metric-card">
+        <div class="metric-title">Total Revenue</div>
+        <div class="metric-value">£169.0M</div>
+        <div class="metric-change"><span class="positive-change">+18.2% vs prev. year</span></div>
+      </div>
+      
+      <div class="metric-card">
+        <div class="metric-title">Wage Bill</div>
+        <div class="metric-value">£136.2M</div>
+        <div class="metric-change"><span class="negative-change">+36.0% vs prev. year</span></div>
+      </div>
+      
+      <div class="metric-card">
+        <div class="metric-title">Operating Result</div>
+        <div class="metric-value">£-55.8M</div>
+        <div class="metric-change"><span class="negative-change">£-107.9M vs prev. year</span></div>
+      </div>
+    </div>
+    
+    <div class="chart-wrapper" style="margin-bottom: 20px;">
+      <div class="panel-title">Revenue Breakdown</div>
+      <div class="metrics-grid">
+        <div>
+          <div class="metric-row">
+            <span class="metric-label">Matchday</span>
+            <span class="metric-value">£6.5M (3.9%)</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Broadcasting</span>
+            <span class="metric-value">£135.6M (80.2%)</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Commercial</span>
+            <span class="metric-value">£26.9M (15.9%)</span>
+          </div>
+        </div>
+        <div id="revenueChart" style="height: 180px;"></div>
+      </div>
+    </div>
+    
+    <div class="chart-container">
+      <div class="chart-wrapper">
+        <div class="panel-title">Costs & Profitability</div>
+        <div class="metric-row">
+          <span class="metric-label">Wages</span>
+          <span class="metric-value">£136.2M</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Other Operating Costs</span>
+          <span class="metric-value">£26.0M</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Player Amortisation</span>
+          <span class="metric-value">£61.6M</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Operating Profit/Loss</span>
+          <span class="metric-value">£-55.8M</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Pre-Tax Profit/Loss</span>
+          <span class="metric-value">£-66.2M</span>
+        </div>
+      </div>
+      
+      <div class="chart-wrapper">
+        <div class="panel-title">Transfer Activity</div>
+        <div class="metric-row">
+          <span class="metric-label">Player Signings</span>
+          <span class="metric-value">£141.0M</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Player Sales</span>
+          <span class="metric-value">£1.5M</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Net Transfer Spend</span>
+          <span class="metric-value">£139.5M</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Gross Squad Cost</span>
+          <span class="metric-value">?</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Avg Weekly Wage</span>
+          <span class="metric-value">?</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="chart-container">
+      <div class="chart-wrapper">
+        <div class="panel-title">Financial Health</div>
+        <div class="metric-row">
+          <span class="metric-label">Cash</span>
+          <span class="metric-value">£7.1M</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Borrowings</span>
+          <span class="metric-value">£122.8M</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Net Debt</span>
+          <span class="metric-value">?</span>
+        </div>
 
-    <div id="tooltip" class="tooltip"></div>
-
-    <script>
-      // Data passed from Python
-      const clubData = {"team_name": "AFC Bournemouth", "financial_year": 2024, "league": "Premier League", "position_finished": "12th", "matchday_income": 6531000, "broadcast_income": 135631000, "commercial_income": 26887000, "total_income": 169049000, "other_income": 568000, "staff_costs": 136170000, "operating_expenses": 26026000, "player_amortisation": 61616000, "depreciation": 1896000, "player_impairment": null, "exceptional_items": null, "operating_profit_loss": -55840000, "profit_on_player_sales": 251000, "profit_loss_before_interest_tax": null, "profit_loss_before_tax": -66151000, "profit_loss_after_tax": -66151000, "player_signings": 140953000, "player_sales": 1491000, "net_spend": 139462000, "gross_squad_cost": null, "transfer_debtors": null, "transfer_creditors": null, "cash": 7104000, "borrowing": 122779000, "net_debt": null, "wages_income_percentage": null, "director_pay": null, "total_player_cost": null, "average_weekly_wage": null};
-      const historicalData = [{"financial_year": 2024, "total_income": 169049000, "staff_costs": 136170000, "operating_profit_loss": -55840000, "net_debt": null}, {"financial_year": 2023, "total_income": 142997000, "staff_costs": 100109000, "operating_profit_loss": 52070000, "net_debt": null}, {"financial_year": 2022, "total_income": 53307000, "staff_costs": 61381000, "operating_profit_loss": -48749000, "net_debt": null}, {"financial_year": 2021, "total_income": 73526000, "staff_costs": 57376000, "operating_profit_loss": 23583000, "net_debt": null}, {"financial_year": 2020, "total_income": 101072000, "staff_costs": 107871000, "operating_profit_loss": -51883000, "net_debt": null}];
-      const leagueAverages = {"avg_income": 357535562.5, "avg_wages": 207832856.9375, "avg_amortisation": 89762586.5, "avg_debt": null, "avg_wages_ratio": 63.925000000000004};
-
-      // Format helpers
-      function formatCurrency(value) {
-        if (value === null || isNaN(value)) return '?';
-        return '£' + (value / 1000000).toFixed(1) + 'M';
-      }
-
-      function formatPercentage(value) {
-        if (isNaN(value)) return '-';
-        return (value > 0 ? '+' : '') + value.toFixed(1) + '%';
-      }
-
-      // Create Revenue Breakdown Chart
-      function createRevenueChart() {
-        const container = document.getElementById("revenueChart");
-        const width = container.clientWidth;
-        const height = container.clientHeight;
-        const margin = { top: 10, right: 10, bottom: 20, left: 40 };
-        const innerWidth = width - margin.left - margin.right;
-        const innerHeight = height - margin.top - margin.bottom;
-
-        const svg = d3
-          .select("#revenueChart")
-          .append("svg")
-          .attr("width", width)
-          .attr("height", height)
-          .append("g")
-          .attr("transform", `translate(${margin.left}, ${margin.top})`);
-
-        const revenueData = [
-          { category: "Matchday", value: clubData.matchday_income },
-          { category: "Broadcast", value: clubData.broadcast_income },
-          { category: "Commercial", value: clubData.commercial_income }
-        ];
-
-        const filteredData = revenueData.filter((d) => d.value !== null);
-
-        const color = d3
-          .scaleOrdinal()
-          .domain(filteredData.map((d) => d.category))
-          .range(["#5F84FB", "#05D4BE", "#FF9500"]);
-
-        const x = d3.scaleBand().domain(filteredData.map((d) => d.category)).range([0, innerWidth]).padding(0.3);
-        const y = d3.scaleLinear().domain([0, d3.max(filteredData, (d) => d.value) * 1.1 || 1]).range([innerHeight, 0]);
-
-        svg
-          .selectAll(".bar")
-          .data(filteredData)
-          .enter()
-          .append("rect")
-          .attr("class", "bar")
-          .attr("x", (d) => x(d.category))
-          .attr("y", (d) => y(d.value))
-          .attr("width", x.bandwidth())
-          .attr("height", (d) => innerHeight - y(d.value))
-          .attr("fill", (d) => color(d.category))
-          .attr("rx", 3)
-          .attr("ry", 3)
-          .attr("stroke", "rgba(255, 255, 255, 0.5)")
-          .attr("stroke-width", 1)
-          .on("mouseover", function(event, d) {
-            d3.select(this).attr("stroke-width", 2);
-            const percentage = (d.value / clubData.total_income * 100).toFixed(1);
-            d3.select("#tooltip")
-              .style("opacity", 1)
-              .style("left", event.pageX + 10 + "px")
-              .style("top", event.pageY - 15 + "px")
-              .html(
-                `<strong>$ {d.category}</strong><br>£$ {(d.value/1000000).toFixed(1)}M<br>$ {percentage}% of total revenue`
-              );
-          })
-          .on("mouseout", function() {
-            d3.select(this).attr("stroke-width", 1);
-            d3.select("#tooltip").style("opacity", 0);
-          });
-
-        svg
-          .append("g")
-          .attr("transform", `translate(0, ${innerHeight})`)
-          .call(d3.axisBottom(x))
-          .selectAll("text")
-          .attr("fill", "white")
-          .style("font-size", "9px");
-
-        svg
-          .append("g")
-          .call(
-            d3
-              .axisLeft(y)
-              .ticks(5)
-              .tickFormat((d) => "£" + (d / 1000000) + "M")
-          )
-          .selectAll("text")
-          .attr("fill", "white")
-          .style("font-size", "9px");
-
-        svg.selectAll(".tick line").attr("stroke", "rgba(255, 255, 255, 0.1)");
-        svg.selectAll("path.domain").attr("stroke", "rgba(255, 255, 255, 0.3)");
-      }
-
-      // Create Trend Charts (Revenue, Wages, Profit)
-      function createTrendCharts() {
-        if (!historicalData || historicalData.length <= 1) {
-          ["revenueTrendChart", "wagesTrendChart", "profitTrendChart"].forEach((id) => {
-            d3.select(`#${id}`)
-              .append("div")
-              .style("text-align", "center")
-              .style("padding", "40px")
-              .style("color", "rgba(255, 255, 255, 0.5)")
-              .text("Not enough historical data available");
-          });
-          return;
-        }
-
-        createTrendChart("revenueTrendChart", "total_income", "#05D4BE", "£");
-        createTrendChart("wagesTrendChart", "staff_costs", "#FF9500", "£");
-        createTrendChart("profitTrendChart", "operating_profit_loss", "#4CD964", "£", true);
-      }
-
-      function createTrendChart(elementId, dataKey, color, prefix, allowNegative = false) {
-        const container = document.getElementById(elementId);
-        const width = container.clientWidth;
-        const height = container.clientHeight;
-        const margin = { top: 20, right: 30, bottom: 40, left: 60 };
-        const innerWidth = width - margin.left - margin.right;
-        const innerHeight = height - margin.top - margin.bottom;
-
-        const svg = d3
-          .select(`#${elementId}`)
-          .append("svg")
-          .attr("width", width)
-          .attr("height", height)
-          .append("g")
-          .attr("transform", `translate(${margin.left}, ${margin.top})`);
-
-        const filteredData = historicalData.filter((d) => d[dataKey] !== null);
-
-        if (filteredData.length <= 1) {
-          svg
-            .append("text")
-            .attr("x", innerWidth / 2)
-            .attr("y", innerHeight / 2)
-            .attr("text-anchor", "middle")
-            .attr("fill", "rgba(255, 255, 255, 0.5)")
+        <div class="metric-row">
+          <span class="metric-label">Wages to Revenue Ratio</span>
+          <span class="metric-value">None%</span>
+        </div>
+      </div>
+      
+      <div class="chart-wrapper">
+        <div class="panel-title">League Comparison</div>
+        <div class="metric-row">
+          <span class="metric-label">Revenue vs. Avg</span>
+          <span class="metric-value">53% below average</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Wages vs. Avg</span>
+          <span class="metric-value">34% below average</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Amortisation vs. Avg</span>
+          <span class="metric-value">31% below average</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Net Debt vs. Avg</span>
+          <span class="metric-value">?</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Wages/Revenue vs. Avg</span>
+          <span class="metric-value">?</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="chart-container">
+      <div class="chart-wrapper">
+        <div class="panel-title">Revenue Trend</div>
+        <div id="revenueTrendChart" style="height: 200px;"></div>
+      </div>
+      
+      <div class="chart-wrapper">
+        <div class="panel-title">Wages Trend</div>
+        <div id="wagesTrendChart" style="height: 200px;"></div>
+      </div>
+    </div>
+    
+    <div class="chart-wrapper">
+      <div class="panel-title">Operating Profit/Loss Trend</div>
+      <div id="profitTrendChart" style="height: 200px;"></div>
+    </div>
+    
+    <div class="footer">
+      Data last updated: 2025-04-09 11:17:45 | Source: Published Club Accounts & Premier League Financial Records
+      <div><small>Double-click on chart area to view data details</small></div>
+    </div>
+  </div>
+  
+  <div id="tooltip" class="tooltip"></div>
+  
+  <script>
+    // Club data
+    const clubData = {"team_name": "AFC Bournemouth", "financial_year": 2024, "league": "Premier League", "position_finished": "12th", "matchday_income": 6531000, "broadcast_income": 135631000, "commercial_income": 26887000, "total_income": 169049000, "other_income": 568000, "staff_costs": 136170000, "operating_expenses": 26026000, "player_amortisation": 61616000, "depreciation": 1896000, "player_impairment": null, "exceptional_items": null, "operating_profit_loss": -55840000, "profit_on_player_sales": 251000, "profit_loss_before_interest_tax": null, "profit_loss_before_tax": -66151000, "profit_loss_after_tax": -66151000, "player_signings": 140953000, "player_sales": 1491000, "net_spend": 139462000, "gross_squad_cost": null, "transfer_debtors": null, "transfer_creditors": null, "cash": 7104000, "borrowing": 122779000, "net_debt": null, "wages_income_percentage": null, "director_pay": null, "total_player_cost": null, "average_weekly_wage": null};
+    
+    // Historical data for trends
+    const historicalData = [{"financial_year": 2020, "total_income": 101072000, "staff_costs": 107871000, "operating_profit_loss": -51883000, "net_debt": null, "year_display": "2020"}, {"financial_year": 2021, "total_income": 73526000, "staff_costs": 57376000, "operating_profit_loss": 23583000, "net_debt": null, "year_display": "2021"}, {"financial_year": 2022, "total_income": 53307000, "staff_costs": 61381000, "operating_profit_loss": -48749000, "net_debt": null, "year_display": "2022"}, {"financial_year": 2023, "total_income": 142997000, "staff_costs": 100109000, "operating_profit_loss": 52070000, "net_debt": null, "year_display": "2023"}, {"financial_year": 2024, "total_income": 169049000, "staff_costs": 136170000, "operating_profit_loss": -55840000, "net_debt": null, "year_display": "2024"}];
+    
+    // League averages
+    const leagueAverages = {"avg_income": 357535562.5, "avg_wages": 207832856.9375, "avg_amortisation": 89762586.5, "avg_debt": null, "avg_wages_ratio": 63.925000000000004};
+    
+    // Format helpers
+    function formatCurrency(value) {
+      if (value === null || isNaN(value)) return '?';
+      return '£' + (value / 1000000).toFixed(1) + 'M';
+    }
+    
+    function formatPercentage(value) { 
+      if (isNaN(value)) return '-';
+      return (value > 0 ? '+' : '') + value.toFixed(1) + '%';
+    }
+    
+    // Create Revenue Breakdown Chart
+    function createRevenueChart() {
+      const width = document.getElementById('revenueChart').clientWidth;
+      const height = document.getElementById('revenueChart').clientHeight;
+      const margin = {top: 10, right: 10, bottom: 20, left: 40};
+      const innerWidth = width - margin.left - margin.right;
+      const innerHeight = height - margin.top - margin.bottom;
+      
+      const svg = d3.select("#revenueChart")
+        .append("svg")
+        .attr("width", width)
+        .attr("height", height)
+        .append("g")
+        .attr("transform", `translate(${margin.left}, ${margin.top})`);
+      
+      const revenueData = [
+        {category: "Matchday", value: clubData.matchday_income},
+        {category: "Broadcast", value: clubData.broadcast_income},
+        {category: "Commercial", value: clubData.commercial_income}
+      ];
+      
+      // Filter out null values
+      const filteredData = revenueData.filter(d => d.value !== null);
+      
+      const color = d3.scaleOrdinal()
+        .domain(filteredData.map(d => d.category))
+        .range(["#5F84FB", "#05D4BE", "#FF9500"]);
+      
+      const x = d3.scaleBand()
+        .domain(filteredData.map(d => d.category))
+        .range([0, innerWidth])
+        .padding(0.3);
+      
+      const y = d3.scaleLinear()
+        .domain([0, d3.max(filteredData, d => d.value) * 1.1 || 1])
+        .range([innerHeight, 0]);
+      
+      // Create the bars
+      svg.selectAll(".bar")
+        .data(filteredData)
+        .enter()
+        .append("rect")
+        .attr("class", "bar")
+        .attr("x", d => x(d.category))
+        .attr("y", d => y(d.value))
+        .attr("width", x.bandwidth())
+        .attr("height", d => innerHeight - y(d.value))
+        .attr("fill", d => color(d.category))
+        .attr("rx", 3) // Rounded corners
+        .attr("ry", 3)
+        .attr("stroke", "rgba(255, 255, 255, 0.5)")
+        .attr("stroke-width", 1)
+        .on("mouseover", function(event, d) {
+          // Highlight bar
+          d3.select(this)
+            .attr("stroke-width", 2);
+            
+          const percentage = (d.value / clubData.total_income * 100).toFixed(1);
+          
+          d3.select("#tooltip")
+            .style("opacity", 1)
+            .style("left", (event.pageX + 10) + "px")
+            .style("top", (event.pageY - 15) + "px")
+            .html(`
+              <strong>${d.category}</strong><br>
+              £${(d.value/1000000).toFixed(1)}M<br>
+              ${percentage}% of total revenue
+            `);
+        })
+        .on("mouseout", function() {
+          // Restore bar style
+          d3.select(this)
+            .attr("stroke-width", 1);
+            
+          d3.select("#tooltip")
+            .style("opacity", 0);
+        });
+      
+      // Add X axis
+      svg.append("g")
+        .attr("transform", `translate(0, ${innerHeight})`)
+        .call(d3.axisBottom(x))
+        .selectAll("text")
+        .attr("fill", "white")
+        .style("font-size", "9px");
+      
+      // Add Y axis
+      svg.append("g")
+        .call(d3.axisLeft(y)
+          .ticks(5)
+          .tickFormat(d => "£" + (d/1000000) + "M"))
+        .selectAll("text")
+        .attr("fill", "white")
+        .style("font-size", "9px");
+      
+      // Style the axes
+      svg.selectAll(".tick line")
+        .attr("stroke", "rgba(255, 255, 255, 0.1)");
+      
+      svg.selectAll("path.domain")
+        .attr("stroke", "rgba(255, 255, 255, 0.3)");
+    }
+    
+    // Create trend charts
+    function createTrendCharts() {
+      if (!historicalData || historicalData.length <= 1) {
+        // Not enough historical data, display a message
+        ["revenueTrendChart", "wagesTrendChart", "profitTrendChart"].forEach(id => {
+          d3.select(`#${id}`)
+            .append("div")
+            .style("text-align", "center")
+            .style("padding", "40px")
+            .style("color", "rgba(255, 255, 255, 0.5)")
             .text("Not enough historical data available");
-          return;
-        }
-
-        const x = d3.scaleBand().domain(filteredData.map((d) => d.financial_year)).range([0, innerWidth]).padding(0.3);
-        let yMin, yMax;
-        if (allowNegative) {
-          yMin = Math.min(0, d3.min(filteredData, (d) => d[dataKey]) * 1.1);
-          yMax = Math.max(0, d3.max(filteredData, (d) => d[dataKey]) * 1.1);
-        } else {
-          yMin = 0;
-          yMax = d3.max(filteredData, (d) => d[dataKey]) * 1.1 || 1;
-        }
-        const y = d3.scaleLinear().domain([yMin, yMax]).range([innerHeight, 0]);
-
-        svg
-          .selectAll(".bar")
-          .data(filteredData)
-          .enter()
-          .append("rect")
-          .attr("class", "bar")
-          .attr("x", (d) => x(d.financial_year))
-          .attr("y", (d) => (d[dataKey] >= 0 ? y(d[dataKey]) : y(0)))
-          .attr("width", x.bandwidth())
-          .attr("height", (d) => Math.abs(y(d[dataKey]) - y(0)))
-          .attr("fill", (d) => (allowNegative && d[dataKey] < 0 ? "#FF3B30" : color))
-          .attr("rx", 3)
-          .attr("ry", 3)
+        });
+        return;
+      }
+      
+      // Create Revenue Trend Chart
+      createTrendChart('revenueTrendChart', 'total_income', '#05D4BE', '£');
+      
+      // Create Wages Trend Chart
+      createTrendChart('wagesTrendChart', 'staff_costs', '#FF9500', '£');
+      
+      // Create Profit Trend Chart
+      createTrendChart('profitTrendChart', 'operating_profit_loss', '#4CD964', '£', true);
+    }
+    
+    function createTrendChart(elementId, dataKey, color, prefix, allowNegative = false) {
+      const width = document.getElementById(elementId).clientWidth;
+      const height = document.getElementById(elementId).clientHeight;
+      const margin = {top: 20, right: 30, bottom: 40, left: 60};
+      const innerWidth = width - margin.left - margin.right;
+      const innerHeight = height - margin.top - margin.bottom;
+      
+      const svg = d3.select(`#${elementId}`)
+        .append("svg")
+        .attr("width", width)
+        .attr("height", height)
+        .append("g")
+        .attr("transform", `translate(${margin.left}, ${margin.top})`);
+      
+      // Filter out entries with null values
+      const filteredData = historicalData.filter(d => d[dataKey] !== null);
+      
+      if (filteredData.length <= 1) {
+        svg.append("text")
+          .attr("x", innerWidth / 2)
+          .attr("y", innerHeight / 2)
+          .attr("text-anchor", "middle")
+          .attr("fill", "rgba(255, 255, 255, 0.5)")
+          .text("Not enough historical data available");
+        return;
+      }
+      
+      // Set up scales
+      const x = d3.scaleBand()
+        .domain(filteredData.map(d => d.financial_year))
+        .range([0, innerWidth])
+        .padding(0.3);
+      
+      // For y scale, handle negative values if allowed
+      let yMin, yMax;
+      
+      if (allowNegative) {
+        yMin = Math.min(0, d3.min(filteredData, d => d[dataKey]) * 1.1);
+        yMax = Math.max(0, d3.max(filteredData, d => d[dataKey]) * 1.1);
+      } else {
+        yMin = 0;
+        yMax = d3.max(filteredData, d => d[dataKey]) * 1.1 || 1;
+      }
+      
+      const y = d3.scaleLinear()
+        .domain([yMin, yMax])
+        .range([innerHeight, 0]);
+      
+      // Create bars
+      svg.selectAll(".bar")
+        .data(filteredData)
+        .enter()
+        .append("rect")
+        .attr("class", "bar")
+        .attr("x", d => x(d.financial_year))
+        .attr("y", d => d[dataKey] >= 0 ? y(d[dataKey]) : y(0))
+        .attr("width", x.bandwidth())
+        .attr("height", d => Math.abs(y(d[dataKey]) - y(0)))
+        .attr("fill", d => allowNegative && d[dataKey] < 0 ? "#FF3B30" : color)
+        .attr("rx", 3) // Rounded corners
+        .attr("ry", 3)
+        .attr("stroke", "rgba(255, 255, 255, 0.5)")
+        .attr("stroke-width", 1)
+        .on("mouseover", function(event, d) {
+          // Highlight bar
+          d3.select(this)
+            .attr("stroke-width", 2);
+          
+          d3.select("#tooltip")
+            .style("opacity", 1)
+            .style("left", (event.pageX + 10) + "px")
+            .style("top", (event.pageY - 15) + "px")
+            .html(`
+              <strong>Year: ${d.financial_year}</strong><br>
+              ${prefix}${(d[dataKey]/1000000).toFixed(1)}M
+            `);
+        })
+        .on("mouseout", function() {
+          // Restore bar style
+          d3.select(this)
+            .attr("stroke-width", 1);
+            
+          d3.select("#tooltip")
+            .style("opacity", 0);
+        });
+      
+      // Add a zero line if we allow negative values
+      if (allowNegative) {
+        svg.append("line")
+          .attr("x1", 0)
+          .attr("y1", y(0))
+          .attr("x2", innerWidth)
+          .attr("y2", y(0))
           .attr("stroke", "rgba(255, 255, 255, 0.5)")
           .attr("stroke-width", 1)
-          .on("mouseover", function(event, d) {
-            d3.select(this).attr("stroke-width", 2);
-            d3.select("#tooltip")
-              .style("opacity", 1)
-              .style("left", event.pageX + 10 + "px")
-              .style("top", event.pageY - 15 + "px")
-              .html(
-                `<strong>$ {d.financial_year}</strong><br>$ {prefix}$ {(d[dataKey] / 1000000).toFixed(1)}M`
-              );
-          })
-          .on("mouseout", function() {
-            d3.select(this).attr("stroke-width", 1);
-            d3.select("#tooltip").style("opacity", 0);
-          });
-
-        if (allowNegative) {
-          svg
-            .append("line")
-            .attr("x1", 0)
-            .attr("y1", y(0))
-            .attr("x2", innerWidth)
-            .attr("y2", y(0))
-            .attr("stroke", "rgba(255, 255, 255, 0.5)")
-            .attr("stroke-width", 1)
-            .attr("stroke-dasharray", "5,5");
-        }
-
-        svg
-          .append("g")
-          .attr("transform", `translate(0, ${y(0)})`)
-          .call(d3.axisBottom(x))
-          .selectAll("text")
-          .attr("fill", "white")
-          .style("font-size", "10px");
-
-        svg
-          .append("g")
-          .call(
-            d3
-              .axisLeft(y)
-              .ticks(5)
-              .tickFormat((d) => `${prefix}${(d / 1000000).toFixed(0)}M`)
-          )
-          .selectAll("text")
-          .attr("fill", "white")
-          .style("font-size", "10px");
-
-        svg.selectAll(".tick line").attr("stroke", "rgba(255, 255, 255, 0.1)");
-        svg.selectAll("path.domain").attr("stroke", "rgba(255, 255, 255, 0.3)");
+          .attr("stroke-dasharray", "5,5");
       }
-
-      // Redraw charts when resizing the window
-      function redrawCharts() {
-        d3.selectAll("svg").remove();
-        createRevenueChart();
-        createTrendCharts();
-      }
-
-      document.addEventListener("DOMContentLoaded", function () {
-        createRevenueChart();
-        createTrendCharts();
-
-        let resizeTimeout;
-        window.addEventListener("resize", function () {
-          clearTimeout(resizeTimeout);
-          resizeTimeout = setTimeout(redrawCharts, 150);
-        });
-
-        document.addEventListener("dblclick", function () {
-          console.log("Club Data:", clubData);
-          console.log("Historical Data:", historicalData);
-          console.log("League Averages:", leagueAverages);
-        });
+      
+      // Add X axis
+      svg.append("g")
+        .attr("transform", `translate(0, ${y(0)})`)
+        .call(d3.axisBottom(x))
+        .selectAll("text")
+        .attr("fill", "white")
+        .style("font-size", "10px");
+      
+      // Add Y axis
+      svg.append("g")
+        .call(d3.axisLeft(y)
+          .ticks(5)
+          .tickFormat(d => `${prefix}${(d/1000000).toFixed(0)}M`))
+        .selectAll("text")
+        .attr("fill", "white")
+        .style("font-size", "10px");
+      
+      // Style the axes
+      svg.selectAll(".tick line")
+        .attr("stroke", "rgba(255, 255, 255, 0.1)");
+      
+      svg.selectAll("path.domain")
+        .attr("stroke", "rgba(255, 255, 255, 0.3)");
+    }
+    
+    // Initialize charts when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      createRevenueChart();
+      createTrendCharts();
+      
+      // Add event listener for debug data on double-click
+      document.addEventListener('dblclick', function() {
+        console.log('Club Data:', clubData);
+        console.log('Historical Data:', historicalData);
+        console.log('League Averages:', leagueAverages);
       });
-    </script>
-  </body>
+    });
+  </script>
+</body>
 </html>
