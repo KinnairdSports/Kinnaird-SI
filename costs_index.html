@@ -1,174 +1,121 @@
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="utf-8" />
+    <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Football Club Financial Analysis</title>
-    <!-- Load Aglet Sans from Typekit -->
+    <title>Football Club Cost Analysis</title>
     <link href="https://use.typekit.net/xxs6huv.css" rel="stylesheet">
-    <!-- Add Open Sans as fallback from Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-      :root {
-        /* Updated color scheme with black background */
-        --background: #000000;
-        --text: #FFFFFF;
-        --muted-text: #CCCCCC;
-        --primary: #05D4BE;
-        --primary-light: rgba(5, 212, 190, 0.2);
-        --primary-dark: #04A599;
-        --secondary: #5F84FB;
-        --secondary-light: rgba(95, 132, 251, 0.2);
-        --accent: #FF9500;
-        --accent-light: rgba(255, 149, 0, 0.2);
-        --card-bg: rgba(20, 20, 20, 0.7);
-      }
-      
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
-      
-      body {
-          font-family: 'aglet-sans', 'Open Sans', sans-serif;
-          background-color: var(--background);
-          color: var(--text);
-          margin: 0;
-          padding: 0;
-          line-height: 1.5;
-          font-size: 16px;
-      }
-      
-      .container {
-          max-width: 1200px;
-          margin: 0 auto;
-          padding: 40px 20px;
-      }
-      
-      .header {
-          text-align: center;
-          margin-bottom: 50px;
-          padding-bottom: 30px;
-          border-bottom: 2px solid var(--primary);
-          animation: fadeIn 0.8s ease-out;
-      }
-      
-      .main-title {
-          font-size: 3rem;
-          font-weight: bold;
-          color: var(--primary);
-          margin-bottom: 15px;
-          letter-spacing: -0.5px;
-      }
-      
-      .subtitle {
-          font-size: 1.2rem;
-          color: var(--muted-text);
-          max-width: 800px;
-          margin: 0 auto;
-      }
-      
-      .league-section {
-          margin-bottom: 50px;
-          animation: fadeIn 1s ease-out;
-      }
-      
-      .league-title {
-          font-size: 1.8rem;
-          font-weight: bold;
-          color: var(--primary);
-          margin-bottom: 20px;
-          padding-bottom: 10px;
-          border-bottom: 1px solid rgba(5, 212, 190, 0.3);
-          display: inline-block;
-      }
-      
-      .club-list {
-          list-style-type: none;
-          padding: 0;
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-          gap: 20px;
-      }
-      
-      .club-card {
-          background: linear-gradient(135deg, rgba(5, 212, 190, 0.1), rgba(95, 132, 251, 0.1));
-          border-radius: 12px;
-          border: 1px solid rgba(5, 212, 190, 0.3);
-          transition: all 0.3s ease;
-          padding: 20px;
-          height: 100%;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      }
-      
-      .club-card:hover {
-          transform: translateY(-5px);
-          box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-          border-color: var(--primary);
-          background: linear-gradient(135deg, rgba(5, 212, 190, 0.2), rgba(95, 132, 251, 0.2));
-      }
-      
-      .club-name {
-          font-size: 1.2rem;
-          font-weight: bold;
-          text-align: center;
-      }
-      
-      .club-list a {
-          color: var(--text);
-          text-decoration: none;
-          height: 100%;
-      }
-      
-      .footer {
-          text-align: center;
-          margin-top: 60px;
-          padding-top: 30px;
-          border-top: 1px solid rgba(255, 255, 255, 0.1);
-          color: var(--muted-text);
-          font-size: 0.9rem;
-      }
-      
-      /* Animations */
-      @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
-      }
-      
-      /* Responsive adjustments */
-      @media (max-width: 768px) {
-          .container {
-              padding: 20px 15px;
-          }
-          
-          .main-title {
-              font-size: 2rem;
-          }
-          
-          .league-title {
-              font-size: 1.5rem;
-          }
-          
-          .club-list {
-              grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-              gap: 15px;
-          }
-      }
-      
-      @media (max-width: 480px) {
-          .club-list {
-              grid-template-columns: 1fr;
-          }
-          
-          .main-title {
-              font-size: 1.8rem;
-          }
-      }
+        body {
+            background-color: #000000;
+            color: white;
+            font-family: 'aglet-sans', sans-serif;
+            padding: 20px;
+            margin: 0;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background-color: #000000;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid rgba(5, 212, 190, 0.3);
+        }
+        .main-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #05D4BE;
+            margin-bottom: 15px;
+        }
+        .subtitle {
+            font-size: 1.2rem;
+            color: #cccccc;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .league-section {
+            margin-bottom: 50px;
+        }
+        .league-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #05D4BE;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(5, 212, 190, 0.3);
+            display: inline-block;
+        }
+        .club-list {
+            list-style-type: none;
+            padding: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .club-card {
+            background-color: rgba(5, 212, 190, 0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(5, 212, 190, 0.2);
+            transition: all 0.3s ease;
+            padding: 20px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .club-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            border-color: #05D4BE;
+            background-color: rgba(5, 212, 190, 0.1);
+        }
+        .club-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-align: center;
+        }
+        .club-list a {
+            color: white;
+            text-decoration: none;
+            height: 100%;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #666;
+            font-size: 0.9rem;
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 15px;
+            }
+            .main-title {
+                font-size: 2rem;
+            }
+            .league-title {
+                font-size: 1.5rem;
+            }
+            .club-list {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 15px;
+            }
+        }
+        @media (max-width: 480px) {
+            .club-list {
+                grid-template-columns: 1fr;
+            }
+            .main-title {
+                font-size: 1.8rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -177,33 +124,10 @@
             <div class="main-title">Football Club Cost Analysis</div>
             <div class="subtitle">
                 Explore detailed financial cost structures of football clubs across different leagues,
-                with options to analyze breakdowns of various expense categories.
+                with options to analyze breakdowns of various operating and non-operating expenses.
             </div>
         </div>
         
-        
-        <div class="league-section">
-            <h2 class="league-title">Other Leagues</h2>
-            <ul class="club-list">
-                
-            <li>
-                <a href="ipswich_town_costs.html">
-                    <div class="club-card">
-                        <div class="club-name">Ipswich Town</div>
-                    </div>
-                </a>
-            </li>
-            
-            <li>
-                <a href="leicester_city_costs.html">
-                    <div class="club-card">
-                        <div class="club-name">Leicester City</div>
-                    </div>
-                </a>
-            </li>
-            
-            </ul>
-        </div>
         
         <div class="league-section">
             <h2 class="league-title">Premier League</h2>
@@ -356,6 +280,29 @@
             </ul>
         </div>
         
+        <div class="league-section">
+            <h2 class="league-title">Unknown</h2>
+            <ul class="club-list">
+                
+            <li>
+                <a href="ipswich_town_costs.html">
+                    <div class="club-card">
+                        <div class="club-name">Ipswich Town</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="leicester_city_costs.html">
+                    <div class="club-card">
+                        <div class="club-name">Leicester City</div>
+                    </div>
+                </a>
+            </li>
+            
+            </ul>
+        </div>
+        
         
         <div class="footer">
             <p>Data sourced from Companies House | Visualisation by Kinnaird Analytics</p>
@@ -364,4 +311,3 @@
     </div>
 </body>
 </html>
-    
