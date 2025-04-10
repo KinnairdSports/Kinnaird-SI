@@ -404,7 +404,7 @@
       <div class="metric-card">
         <div class="metric-title">Other Operating Expenses</div>
         <div class="metric-value">£129.0M</div>
-        <div class="metric-subtitle">+53.7% vs Premier League avg</div>
+        <div class="metric-subtitle">+54.2% vs Premier League avg</div>
       </div>
       
       <div class="metric-card">
@@ -480,7 +480,7 @@
         <div>
           <div class="metric-row">
             <span class="metric-label">Year-on-Year Change</span>
-            <span class="metric-value">Data unavailable</span>
+            <span class="metric-value"><span class="negative-change">+56.2%</span></span>
           </div>
           <div class="metric-row">
             <span class="metric-label">Staff Cost to Revenue Ratio</span>
@@ -512,12 +512,12 @@
   
   <script>
     // Data for the chart
-    const financialYears = [2023];
+    const financialYears = [2021, 2022, 2023];
     
     // Cost data
-    const costData = {"staff_costs": [160442805.60000002], "operating_expenses": [128997243.10000001], "player_amortisation": [88988928.60000001], "depreciation": [5092345.5], "player_impairment": [22382094.900000002]};
-    const positionData = ["19th"];
-    const leagueData = ["Premier League"];
+    const costData = {"staff_costs": [129903214.8, 139616415.85, 160442805.60000002], "operating_expenses": [37136794.8, 49194696.55, 128997243.10000001], "player_amortisation": [45352742.4, 66144351.05, 88988928.60000001], "depreciation": [3148881.6, 4849311.949999999, 5092345.5], "player_impairment": [0.0, 0.0, 22382094.900000002]};
+    const positionData = [null, null, "19th"];
+    const leagueData = [null, null, "Premier League"];
     
     // Cost categories
     const costCategories = [

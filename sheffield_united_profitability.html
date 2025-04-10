@@ -478,20 +478,20 @@
     
     <script>
       // Data for the chart
-      const financialYears = [2021, 2024];
+      const financialYears = [2020, 2021, 2024];
       
       // Profitability metrics data
       const metricsData = {
-          ebitda: [40312429, -3397921],
-          ebit: [11676000, -26796114],
-          operating_profit_loss: [12810000, -7445396],
-          profit_loss_before_interest_tax: [12810000.0, 11905322.0],
-          profit_loss_before_tax: [10326000, 3896787],
-          profit_loss_after_tax: [9564000, 2418532]
+          ebitda: [20093265, 40312429, -3397921],
+          ebit: [826886, 11676000, -26796114],
+          operating_profit_loss: [19788313, 12810000, -7445396],
+          profit_loss_before_interest_tax: [NaN, 12810000.0, 11905322.0],
+          profit_loss_before_tax: [18979871, 10326000, 3896787],
+          profit_loss_after_tax: [17668142, 9564000, 2418532]
       };
       
-      const positionData = ["20th", "20th"];
-      const leagueData = ["Premier League", "Premier League"];
+      const positionData = [null, "20th", "20th"];
+      const leagueData = [null, "Premier League", "Premier League"];
       
       // Metrics settings
       const metricsConfig = {

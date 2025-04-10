@@ -397,20 +397,20 @@
     <div class="metrics-cards">
       <div class="metric-card">
         <div class="metric-title">Staff Costs</div>
-        <div class="metric-value">£108.7M</div>
-        <div class="metric-subtitle">-51.0% vs Premier League avg</div>
+        <div class="metric-value">£114.4M</div>
+        <div class="metric-subtitle">No league average data</div>
       </div>
       
       <div class="metric-card">
         <div class="metric-title">Other Operating Expenses</div>
-        <div class="metric-value">£39.8M</div>
-        <div class="metric-subtitle">-52.6% vs Premier League avg</div>
+        <div class="metric-value">£42.5M</div>
+        <div class="metric-subtitle">No league average data</div>
       </div>
       
       <div class="metric-card">
         <div class="metric-title">Player Amortisation</div>
-        <div class="metric-value">£34.0M</div>
-        <div class="metric-subtitle">-64.0% vs Premier League avg</div>
+        <div class="metric-value">£35.6M</div>
+        <div class="metric-subtitle">No league average data</div>
       </div>
     </div>
     
@@ -480,25 +480,25 @@
         <div>
           <div class="metric-row">
             <span class="metric-label">Year-on-Year Change</span>
-            <span class="metric-value"><span class="negative-change">+33.9%</span></span>
+            <span class="metric-value"><span class="negative-change">+10.4%</span></span>
           </div>
           <div class="metric-row">
             <span class="metric-label">Staff Cost to Revenue Ratio</span>
-            <span class="metric-value">64.3%</span>
+            <span class="metric-value">68.7%</span>
           </div>
           <div class="metric-row">
             <span class="metric-label">Highest Cost Year</span>
-            <span class="metric-value">2023 (£188.3M)</span>
+            <span class="metric-value">2024 (£201.2M)</span>
           </div>
         </div>
         <div>
           <div class="metric-row">
             <span class="metric-label">Operating Cost %</span>
-            <span class="metric-value">78.8%</span>
+            <span class="metric-value">78.0%</span>
           </div>
           <div class="metric-row">
             <span class="metric-label">Non-Operating Cost %</span>
-            <span class="metric-value">21.2%</span>
+            <span class="metric-value">22.0%</span>
           </div>
           <div class="metric-row">
             <span class="metric-label">Amortisation to Staff Ratio</span>
@@ -512,12 +512,12 @@
   
   <script>
     // Data for the chart
-    const financialYears = [2020, 2021, 2022, 2023];
+    const financialYears = [2020, 2021, 2022, 2023, 2024];
     
     // Cost data
-    const costData = {"staff_costs": [32327393.75, 49729393.199999996, 78374800.0, 108680000.00000001], "operating_expenses": [13992505.0, 69566613.6, 31846949.999999996, 39822200.0], "player_amortisation": [14319283.75, 16011326.399999999, 26278649.999999996, 33993300.0], "depreciation": [622917.5, 3369640.8, 4131949.9999999995, 5848700.000000001], "player_impairment": [0.0, 0.0, 0.0, 0.0]};
-    const positionData = ["3rd", "3rd", "13th", "9th"];
-    const leagueData = ["Championship", "Championship", "Premier League", "Premier League"];
+    const costData = {"staff_costs": [32327393.75, 49729393.199999996, 78374800.0, 108680000.00000001, 114371000.0], "operating_expenses": [13935832.5, 16455962.399999999, 25478249.999999996, 33621500.0, 42459000.0], "player_amortisation": [14319283.75, 16011326.399999999, 26278649.999999996, 33993300.0, 35631000.0], "depreciation": [622917.5, 3369640.8, 4131949.9999999995, 5848700.000000001, 8694000.0], "player_impairment": [0.0, 0.0, 0.0, 0.0, 0.0]};
+    const positionData = ["3rd", "3rd", "13th", "9th", null];
+    const leagueData = ["Championship", "Championship", "Premier League", "Premier League", null];
     
     // Cost categories
     const costCategories = [
