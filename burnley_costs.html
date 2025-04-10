@@ -284,27 +284,28 @@
       background-color: rgba(255, 255, 255, 0.1);
       transform: translateY(-2px);
     }
-    .legend-tooltip {
+    /* Add a separate definition for the legend tooltip to ensure visibility */
+    .legend-tooltip-always-visible {
+      background-color: #111111;
+      border: 1px solid #05D4BE;
       position: absolute;
       bottom: 100%;
       left: 50%;
       transform: translateX(-50%);
       min-width: 200px;
       max-width: 250px;
-      background-color: #111111;
+      z-index: 10000;
       color: white;
       padding: 10px 12px;
       border-radius: 6px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-      border: 1px solid #05D4BE;
-      z-index: 100;
-      opacity: 0;
       visibility: hidden;
-      transition: visibility 0.1s, opacity 0.1s; /* Faster transition */
       font-size: 0.9rem;
       margin-bottom: 10px;
+      opacity: 1;
     }
-    .legend-tooltip::after {
+    
+    .legend-tooltip-always-visible::after {
       content: "";
       position: absolute;
       top: 100%;
@@ -314,8 +315,8 @@
       border-style: solid;
       border-color: #05D4BE transparent transparent transparent;
     }
-    .legend-item:hover .legend-tooltip {
-      opacity: 1 !important; /* Force full opacity with !important */
+    
+    .legend-item:hover .legend-tooltip-always-visible {
       visibility: visible;
     }
     .legend-tooltip-title {
@@ -397,20 +398,20 @@
     <div class="metrics-cards">
       <div class="metric-card">
         <div class="metric-title">Staff Costs</div>
-        <div class="metric-value">£105.9M</div>
-        <div class="metric-subtitle">-48.4% vs Premier League avg</div>
+        <div class="metric-value">£0.0M</div>
+        <div class="metric-subtitle">-100.0% vs Premier League avg</div>
       </div>
       
       <div class="metric-card">
         <div class="metric-title">Other Operating Expenses</div>
-        <div class="metric-value">£58.7M</div>
-        <div class="metric-subtitle">-19.4% vs Premier League avg</div>
+        <div class="metric-value">£0.0M</div>
+        <div class="metric-subtitle">-100.0% vs Premier League avg</div>
       </div>
       
       <div class="metric-card">
-        <div class="metric-title">Player Amortisation</div>
-        <div class="metric-value">£26.1M</div>
-        <div class="metric-subtitle">-67.5% vs Premier League avg</div>
+        <div class="metric-title">Amortisation</div>
+        <div class="metric-value">£0.0M</div>
+        <div class="metric-subtitle">-100.0% vs Premier League avg</div>
       </div>
     </div>
     
@@ -442,7 +443,7 @@
             <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 15px;">
               <div class="cost-checkbox">
                 <input type="checkbox" id="player_amortisation">
-                <label for="player_amortisation">Player Amortisation</label>
+                <label for="player_amortisation">Amortisation</label>
               </div>
               
               <div class="cost-checkbox">
@@ -480,11 +481,11 @@
         <div>
           <div class="metric-row">
             <span class="metric-label">Year-on-Year Change</span>
-            <span class="metric-value"><span class="negative-change">+32.0%</span></span>
+            <span class="metric-value"><span class="positive-change">-100.0%</span></span>
           </div>
           <div class="metric-row">
-            <span class="metric-label">Staff Cost to Revenue Ratio</span>
-            <span class="metric-value">85.8%</span>
+            <span class="metric-label">5 Year Wage Growth</span>
+            <span class="metric-value">Insufficient data</span>
           </div>
           <div class="metric-row">
             <span class="metric-label">Highest Cost Year</span>
@@ -494,15 +495,15 @@
         <div>
           <div class="metric-row">
             <span class="metric-label">Operating Cost %</span>
-            <span class="metric-value">85.1%</span>
+            <span class="metric-value">0.0%</span>
           </div>
           <div class="metric-row">
             <span class="metric-label">Non-Operating Cost %</span>
-            <span class="metric-value">14.9%</span>
+            <span class="metric-value">0.0%</span>
           </div>
           <div class="metric-row">
-            <span class="metric-label">Amortisation to Staff Ratio</span>
-            <span class="metric-value">0.25x</span>
+            <span class="metric-label">Staff Costs to Revenue Ratio</span>
+            <span class="metric-value">0.0%</span>
           </div>
         </div>
       </div>
@@ -512,12 +513,12 @@
   
   <script>
     // Data for the chart
-    const financialYears = [2020, 2021, 2022];
+    const financialYears = [2020, 2021, 2022, 2024];
     
     // Cost data
-    const costData = {"staff_costs": [125117500.0, 103120800.0, 105937999.99999999], "operating_expenses": [19321250.0, 15607200.0, 58654599.99999999], "player_amortisation": [40393750.0, 25693200.0, 26108449.999999996], "depreciation": [2437500.0, 2149200.0, 2725500.0], "player_impairment": [0.0, 0.0, 0.0]};
-    const positionData = [null, null, "18th"];
-    const leagueData = [null, null, "Premier League"];
+    const costData = {"staff_costs": [125117500.0, 103120800.0, 105937999.99999999, 0.0], "operating_expenses": [19321250.0, 15607200.0, 58654599.99999999, 0.0], "player_amortisation": [40393750.0, 25693200.0, 26108449.999999996, 0.0], "depreciation": [2437500.0, 2149200.0, 2725500.0, 0.0], "player_impairment": [0.0, 0.0, 0.0, 0.0]};
+    const positionData = ["10th", "17th", "18th", "19th"];
+    const leagueData = ["Premier League", "Premier League", "Premier League", "Premier League"];
     
     // Cost categories
     const costCategories = [
@@ -532,7 +533,7 @@
     const displayLabels = {
       staff_costs: "Staff Costs",
       operating_expenses: "Other OpEx",
-      player_amortisation: "Player Amortisation",
+      player_amortisation: "Amortisation",
       depreciation: "Depreciation",
       player_impairment: "Player Impairment"
     };
@@ -802,7 +803,7 @@
       const categoryDefinitions = {
         staff_costs: "The total compensation paid to players, coaches, and all club staff including wages, salaries, bonuses, and pension contributions. This is a core operating expense.",
         operating_expenses: "Day-to-day costs like stadium maintenance, match day operations, travel, training facilities, and administrative expenses excluding staff wages. These are essential for the club's regular operations.",
-        player_amortisation: "The systematic allocation of player transfer fees over the length of their contracts. This is a non-operating accounting expense that doesn't reflect immediate cash outflows.",
+        player_amortisation: "The systematic allocation of costs over the useful life of intangible assets, primarily player transfer fees but also including goodwill, software, and other intangibles. This is a non-cash accounting expense.",
         depreciation: "The systematic allocation of costs for physical assets like stadiums and facilities over their useful life. This is a non-cash accounting expense.",
         player_impairment: "Write-downs in player values when their recoverable value falls below their book value, often due to injuries or performance decline. This is a non-operating expense."
       };
@@ -824,11 +825,9 @@
           .attr("class", "legend-label")
           .text(displayLabels[category]);
           
-        // Add tooltip with definition - ensure it has full opacity regardless of selection
+        // Add tooltip with definition - using completely separate class for visibility
         const tooltip = legendItem.append("div")
-          .attr("class", "legend-tooltip")
-          .style("background-color", "#111111") // Ensure solid background
-          .style("opacity", "0")
+          .attr("class", "legend-tooltip-always-visible")
           .html(`
             <div class="legend-tooltip-title">${displayLabels[category]}</div>
             <div>${categoryDefinitions[category]}</div>
