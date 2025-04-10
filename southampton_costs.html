@@ -86,24 +86,6 @@
     .neutral {
       color: #05D4BE;
     }
-    .controls {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      background-color: rgba(5, 212, 190, 0.05);
-      border-radius: 8px;
-      padding: 15px;
-      border: 1px solid rgba(5, 212, 190, 0.2);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-      margin-bottom: 20px;
-    }
-    .checkbox-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      width: 100%;
-      margin-top: 5px;
-    }
     .control-group {
       display: flex;
       flex-wrap: wrap;
@@ -113,6 +95,7 @@
       padding: 15px;
       background-color: rgba(0, 0, 0, 0.1);
       border-radius: 8px;
+      width: 100%;
     }
     .group-title {
       font-size: 1rem;
@@ -202,15 +185,18 @@
       margin-bottom: 20px;
     }
     .hover-instruction {
-      position: relative;
-      text-align: right;
-      background-color: transparent;
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: rgba(0, 0, 0, 0.7);
       color: #05D4BE;
       padding: 8px 12px;
+      border-radius: 6px;
       font-size: 0.8rem;
       opacity: 0.7;
       transition: opacity 0.3s;
-      margin-bottom: 10px;
+      z-index: 10;
+      border: 1px solid rgba(5, 212, 190, 0.3);
     }
     .hover-instruction:hover {
       opacity: 1;
@@ -314,7 +300,7 @@
       z-index: 100;
       opacity: 0;
       visibility: hidden;
-      transition: all 0.3s;
+      transition: visibility 0.1s, opacity 0.1s; /* Faster transition */
       font-size: 0.9rem;
       margin-bottom: 10px;
     }
@@ -329,7 +315,7 @@
       border-color: #05D4BE transparent transparent transparent;
     }
     .legend-item:hover .legend-tooltip {
-      opacity: 1;
+      opacity: 1 !important; /* Force full opacity with !important */
       visibility: visible;
     }
     .legend-tooltip-title {
@@ -357,11 +343,8 @@
       stroke: white;
       stroke-width: 1.5;
     }
-    .area {
-      transition: opacity 0.3s;
-    }
-    .layer {
-      transition: opacity 0.3s;
+    .cost-bar {
+      transition: opacity 0.3s, stroke-width 0.2s;
     }
     .footer {
       text-align: center;
@@ -370,14 +353,14 @@
       color: #666;
     }
     
-    /* Color variables for the cost categories */
+    /* Color variables for the cost categories - Colorblind-friendly palette with better differentiation */
     :root {
-      --staff-costs: #05D4BE;
-      --operating-expenses: #4D7AFF;
-      --player-amortisation: #FF9500;
-      --depreciation: #4CD964;
-      --player-impairment: #FF3B30;
-      --total: #9C68F5;
+      --staff-costs: #05D4BE;        /* Original teal - kept as requested */
+      --operating-expenses: #4D7AFF;  /* Original blue - kept as requested */
+      --player-amortisation: #2166AC; /* Darker blue - good contrast with other colors */
+      --depreciation: #7D95B6;        /* Lighter blue-gray - more distinct from impairment */
+      --player-impairment: #243447;   /* Much darker navy - clear contrast from depreciation */
+      --total: #9C68F5;               /* Original purple for totals */
       --grid: rgba(255, 255, 255, 0.25);
       --line: rgba(255, 255, 255, 0.3);
     }
@@ -431,56 +414,63 @@
       </div>
     </div>
     
-    <div class="controls">
-      <div class="control-group" id="costSelections">
-        <div style="display: flex; justify-content: space-between; width: 100%;">
-          <div style="width: 48%;">
-            <div class="category-group">
-              <div class="group-title">Operating Expenses</div>
-            </div>
-            <div class="checkbox-container">
-              <div class="cost-checkbox" style="display: flex; width: 215px; white-space: nowrap;">
-                <input type="checkbox" id="staff_costs" checked style="flex: 0 0 18px;">
-                <label for="staff_costs" style="flex: 1; text-align: left; padding-left: 8px;">Staff Costs</label>
+    <div class="chart-wrapper">
+      <div class="panel-title">Cost Structure Evolution</div>
+      
+      <!-- Integrated controls inside chart wrapper -->
+      <div style="margin-bottom: 20px; background-color: rgba(0, 0, 0, 0.2); border-radius: 8px; padding: 15px;">
+        <div style="display: flex; flex-wrap: wrap; width: 100%; gap: 30px; justify-content: space-between;">
+          <!-- Operating Expenses Section -->
+          <div style="min-width: 250px;">
+            <div class="group-title">Operating Expenses</div>
+            <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 15px;">
+              <div class="cost-checkbox">
+                <input type="checkbox" id="staff_costs" checked>
+                <label for="staff_costs">Staff Costs</label>
               </div>
-            </div>
-            <div class="checkbox-container" style="margin-top: 8px;">
-              <div class="cost-checkbox" style="display: flex; width: 215px; white-space: nowrap;">
-                <input type="checkbox" id="operating_expenses" checked style="flex: 0 0 18px;">
-                <label for="operating_expenses" style="flex: 1; text-align: left; padding-left: 8px;">Other OpEx</label>
+              
+              <div class="cost-checkbox">
+                <input type="checkbox" id="operating_expenses" checked>
+                <label for="operating_expenses">Other OpEx</label>
               </div>
             </div>
           </div>
           
-          <div style="width: 48%;">
-            <div class="category-group">
-              <div class="group-title">Non-Operating Expenses</div>
-            </div>
-            <div class="checkbox-container">
-              <div class="cost-checkbox" style="display: flex; width: 215px; white-space: nowrap;">
-                <input type="checkbox" id="player_amortisation" style="flex: 0 0 18px;">
-                <label for="player_amortisation" style="flex: 1; text-align: left; padding-left: 8px;">Player Amortisation</label>
+          <!-- Non-Cash Expenses Section -->
+          <div style="min-width: 250px;">
+            <div class="group-title">Non-Cash Expenses</div>
+            <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 15px;">
+              <div class="cost-checkbox">
+                <input type="checkbox" id="player_amortisation">
+                <label for="player_amortisation">Player Amortisation</label>
               </div>
-              <div class="cost-checkbox" style="display: flex; width: 215px; white-space: nowrap;">
-                <input type="checkbox" id="depreciation" style="flex: 0 0 18px;">
-                <label for="depreciation" style="flex: 1; text-align: left; padding-left: 8px;">Depreciation</label>
+              
+              <div class="cost-checkbox">
+                <input type="checkbox" id="depreciation">
+                <label for="depreciation">Depreciation</label>
               </div>
             </div>
-            <div class="checkbox-container" style="margin-top: 8px;">
-              <div class="cost-checkbox" style="display: flex; width: 215px; white-space: nowrap;">
-                <input type="checkbox" id="player_impairment" style="flex: 0 0 18px;">
-                <label for="player_impairment" style="flex: 1; text-align: left; padding-left: 8px;">Player Impairment</label>
+          </div>
+          
+          <!-- Exceptional Items Section -->
+          <div style="min-width: 250px;">
+            <div class="group-title">Exceptional Items</div>
+            <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 15px;">
+              <div class="cost-checkbox">
+                <input type="checkbox" id="player_impairment">
+                <label for="player_impairment">Player Impairment</label>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-    
-    <div class="chart-wrapper">
-      <div class="panel-title">Cost Structure Evolution</div>
-      <div class="hover-instruction">Hover over data points for details</div>
-      <div id="mainChart" style="width: 100%; height: 500px;"></div>
+      
+      <div id="mainChart" style="width: 100%; height: 500px; position: relative;">
+        <!-- Hover instruction positioned like in revenue graphs -->
+        <div class="hover-instruction">
+          Hover over data points for details
+        </div>
+      </div>
       <div class="legend" id="chartLegend"></div>
     </div>
     
@@ -556,7 +546,7 @@
       player_impairment: "var(--player-impairment)"
     };
     
-    // Active dataset and selected cost categories for stacking
+    // Active dataset and selected cost categories for visualization
     let activeWagesData = costData;
     let selectedCategories = ['staff_costs', 'operating_expenses'];
     
@@ -573,23 +563,25 @@
       }
     }
     
-    // Render the stacked area chart with enhanced visuals
+    // Render the main chart with stacked bars
     function renderMainChart() {
       // Clear previous chart and legend
       d3.select("#mainChart").html("");
       d3.select("#chartLegend").html("");
+      
+      // Filter out categories with only zero values
+      const filteredCategories = selectedCategories.filter(category => {
+        return activeWagesData[category].some(value => value > 0);
+      });
       
       // Prepare data for stacking
       const dataForStack = financialYears.map((year, i) => {
         let obj = { financial_year: year };
         
         // Add each selected category
-        selectedCategories.forEach(category => {
+        filteredCategories.forEach(category => {
           obj[category] = activeWagesData[category][i];
         });
-        
-        // Calculate total for the year
-        obj.total = selectedCategories.reduce((sum, cat) => sum + activeWagesData[cat][i], 0);
         
         // Add league and position data
         obj.league = leagueData[i];
@@ -600,14 +592,14 @@
       
       // Create stack layout
       const stack = d3.stack()
-        .keys(selectedCategories)
+        .keys(filteredCategories)
         .order(d3.stackOrderNone)
         .offset(d3.stackOffsetNone);
-          
+      
       const series = stack(dataForStack);
       
       // Set up dimensions
-      const margin = {top: 40, right: 50, bottom: 70, left: 90};
+      const margin = {top: 40, right: 50, bottom: 80, left: 90};
       const chartContainer = document.getElementById('mainChart');
       const width = chartContainer.clientWidth - margin.left - margin.right;
       const height = chartContainer.clientHeight - margin.top - margin.bottom;
@@ -628,17 +620,18 @@
         .attr("rx", 8)
         .attr("ry", 8);
       
-      // Compute maximum y value from stacked data with some margin
-      const maxY = d3.max(series, s => d3.max(s, d => d[1]));
+      // Compute the maximum y value with some margin
+      const maxY = d3.max(series, s => d3.max(s, d => d[1])) * 1.1 || 1;
       
       // Set up scales
-      const x = d3.scaleLinear()
-        .domain([d3.min(financialYears), d3.max(financialYears) + 0.5])
+      const x = d3.scaleBand()
+        .domain(financialYears)
         .range([0, width])
-        .nice();
+        .paddingInner(0.2)
+        .paddingOuter(0.1);
       
       const y = d3.scaleLinear()
-        .domain([0, maxY * 1.1]) // Add 10% padding at the top
+        .domain([0, maxY])
         .range([height, 0])
         .nice();
       
@@ -657,32 +650,16 @@
         .style("stroke-opacity", "0.8")
         .style("stroke-dasharray", "2,3");
       
-      // Add vertical grid lines
-      svg.selectAll("line.vertical-grid")
-        .data(financialYears)
-        .enter()
-        .append("line")
-        .attr("class", "vertical-grid")
-        .attr("x1", d => x(d))
-        .attr("x2", d => x(d))
-        .attr("y1", 0)
-        .attr("y2", height)
-        .style("stroke", "var(--grid)")
-        .style("stroke-width", "1px")
-        .style("stroke-opacity", "0.8")
-        .style("stroke-dasharray", "2,3");
-      
       // Add X axis
       svg.append("g")
         .attr("class", "axis-x")
         .attr("transform", `translate(0, ${height})`)
         .call(d3.axisBottom(x)
-          .tickFormat(d3.format("d"))
-          .ticks(financialYears.length)
-          .tickValues(financialYears))
+          .tickFormat(d3.format("d")))
         .selectAll("text")
           .style("font-weight", "bold")
-          .style("font-size", "12px");
+          .style("font-size", "12px")
+          .style("text-anchor", "middle");
       
       // Add Y axis
       svg.append("g")
@@ -700,46 +677,107 @@
           .style("font-weight", "bold")
           .style("font-size", "12px");
       
-      // Create area generator
-      const area = d3.area()
-        .x(d => x(d.data.financial_year))
-        .y0(d => y(d[0]))
-        .y1(d => y(d[1]))
-        .curve(d3.curveCatmullRom.alpha(0.5));
+      // Create stacked bars
+      series.forEach(seriesData => {
+        svg.selectAll(`.rect-${seriesData.key}`)
+          .data(seriesData)
+          .enter()
+          .append("rect")
+          .attr("class", d => `cost-bar ${seriesData.key}-bar`)
+          .attr("x", d => x(d.data.financial_year))
+          .attr("y", d => y(d[1]))
+          .attr("height", d => y(d[0]) - y(d[1])) // Calculate height based on stacked position
+          .attr("width", x.bandwidth())
+          .attr("fill", colorMapping[seriesData.key])
+          .attr("rx", 3)
+          .attr("ry", 3)
+          .attr("opacity", 0.85)
+          .attr("stroke", () => {
+            const color = d3.color(colorMapping[seriesData.key]);
+            return d3.rgb(color).darker(0.3);
+          })
+          .attr("stroke-width", 1)
+          .on("mouseover", function(event, d) {
+            // Highlight the hovered bar
+            d3.select(this)
+              .attr("opacity", 1)
+              .attr("stroke-width", 2);
+              
+            // Calculate values for all segments in this stack
+            const year = d.data.financial_year;
+            const yearIdx = financialYears.indexOf(year);
+            
+            // Format tooltip content
+            let tooltipContent = `
+              <div class="tooltip-header">
+                <div class="tooltip-title">Financial Year: ${year}</div>
+                ${d.data.league && d.data.position ? `<div class="tooltip-subtitle">${d.data.position} in ${d.data.league}</div>` : ''}
+              </div>
+              <div class="tooltip-divider"></div>
+            `;
+            
+            // Add content for this category
+            const category = seriesData.key;
+            const value = d.data[category];
+            if (value > 0) {
+              tooltipContent += `
+                <div class="tooltip-item">
+                  <span>${displayLabels[category]}:</span>
+                  <span class="tooltip-item-value" style="color: ${colorMapping[category]};">£${formatCurrency(value)}</span>
+                </div>
+              `;
+            }
+            
+            // Calculate total for all selected categories for this year
+            const total = filteredCategories.reduce((sum, cat) => sum + d.data[cat], 0);
+            
+            // Add total to tooltip
+            tooltipContent += `
+              <div class="tooltip-total">
+                <span>Total:</span>
+                <span class="tooltip-total-value">£${formatCurrency(total)}</span>
+              </div>
+            `;
+            
+            // Position and show the tooltip
+            d3.select("#tooltip")
+              .style("opacity", 1)
+              .style("left", (event.pageX + 15) + "px")
+              .style("top", (event.pageY - 20) + "px")
+              .html(tooltipContent);
+          })
+          .on("mouseout", function() {
+            // Reset bar style
+            d3.select(this)
+              .attr("opacity", 0.85)
+              .attr("stroke-width", 1);
+              
+            // Hide tooltip
+            d3.select("#tooltip").style("opacity", 0);
+          });
+      });
       
-      // Create a group for the stacked areas
-      const layersGroup = svg.append("g")
-        .attr("class", "layers");
-          
-      // Render stacked areas
-      layersGroup.selectAll(".layer")
-        .data(series)
-        .enter()
-        .append("path")
-        .attr("class", d => `layer layer-${d.key}`)
-        .attr("d", area)
-        .attr("fill", d => colorMapping[d.key])
-        .attr("fill-opacity", 0.85)
-        .attr("stroke", d => {
-          // Create slightly darker stroke for definition
-          const color = d3.color(colorMapping[d.key]);
-          return d3.rgb(color).darker(0.5);
-        })
-        .attr("stroke-width", 1.5)
-        .attr("stroke-linejoin", "round");
-      
-      // Add vertical line guide (initially hidden)
-      const verticalGuide = svg.append("line")
-        .attr("class", "vertical-guide")
-        .attr("y1", 0)
-        .attr("y2", height)
-        .style("opacity", 0);
+      // Add year total labels at the top of each stack
+      dataForStack.forEach(d => {
+        const yearTotal = filteredCategories.reduce((sum, cat) => sum + d[cat], 0);
+        if (yearTotal > 0) {
+          svg.append("text")
+            .attr("class", "stack-total")
+            .attr("x", x(d.financial_year) + x.bandwidth() / 2)
+            .attr("y", y(yearTotal) - 10)
+            .attr("text-anchor", "middle")
+            .style("font-size", "11px")
+            .style("fill", "white")
+            .style("opacity", 0.8)
+            .text(`£${(yearTotal/1000000).toFixed(0)}M`);
+        }
+      });
       
       // Add axis labels
       svg.append("text")
         .attr("class", "axis-title")
         .attr("x", width / 2)
-        .attr("y", height + margin.bottom - 15)
+        .attr("y", height + margin.bottom - 10)
         .attr("text-anchor", "middle")
         .style("fill", "white")
         .style("font-size", "14px")
@@ -757,78 +795,6 @@
         .style("font-weight", "bold")
         .text("Costs (GBP)");
       
-      // Add overlay for tooltip and interaction
-      svg.append("rect")
-        .attr("class", "overlay")
-        .attr("width", width)
-        .attr("height", height)
-        .style("fill", "none")
-        .style("pointer-events", "all")
-        .on("mousemove", function(event) {
-          const mouseX = d3.pointer(event)[0];
-          const x0 = x.invert(mouseX);
-          
-          // Find the closest year
-          const i = d3.bisector(d => d.financial_year).left(dataForStack, x0);
-          let d0 = dataForStack[Math.max(0, i-1)];
-          let d1 = dataForStack[Math.min(dataForStack.length-1, i)];
-          let d = (x0 - d0.financial_year) < (d1.financial_year - x0) ? d0 : d1;
-          
-          // Show the vertical guide
-          verticalGuide
-            .attr("x1", x(d.financial_year))
-            .attr("x2", x(d.financial_year))
-            .style("opacity", 1);
-          
-          // Format tooltip content
-          let tooltipContent = `
-            <div class="tooltip-header">
-              <div class="tooltip-title">Financial Year: ${d.financial_year}</div>
-              ${d.league && d.position ? `<div class="tooltip-subtitle">${d.position} in ${d.league}</div>` : ''}
-            </div>
-            <div class="tooltip-divider"></div>
-          `;
-          
-          selectedCategories.forEach(cat => {
-            if (d[cat] > 0) {
-              tooltipContent += `
-                <div class="tooltip-item">
-                  <span>${displayLabels[cat]}:</span>
-                  <span class="tooltip-item-value" style="color: ${colorMapping[cat]};">£${formatCurrency(d[cat])}</span>
-                </div>
-              `;
-            }
-          });
-          
-          tooltipContent += `
-            <div class="tooltip-total">
-              <span>Total:</span>
-              <span class="tooltip-total-value">£${formatCurrency(d.total)}</span>
-            </div>
-          `;
-          
-          // Position and show the tooltip
-          d3.select("#tooltip")
-            .style("opacity", 1)
-            .style("left", (event.pageX + 15) + "px")
-            .style("top", (event.pageY - 20) + "px")
-            .html(tooltipContent);
-            
-          // Highlight the active layers
-          d3.selectAll(".layer").style("opacity", 0.5);
-          selectedCategories.forEach(cat => {
-            d3.select(`.layer-${cat}`).style("opacity", 1);
-          });
-        })
-        .on("mouseout", function() {
-          // Hide tooltip and guide
-          d3.select("#tooltip").style("opacity", 0);
-          verticalGuide.style("opacity", 0);
-          
-          // Reset layer opacity
-          d3.selectAll(".layer").style("opacity", 0.85);
-        });
-      
       // Create legend
       const legend = d3.select("#chartLegend");
       
@@ -841,11 +807,14 @@
         player_impairment: "Write-downs in player values when their recoverable value falls below their book value, often due to injuries or performance decline. This is a non-operating expense."
       };
       
-      // Add legend items for all categories
+      // Add legend items for ALL categories (not just filtered ones)
       costCategories.forEach(category => {
+        const isActive = filteredCategories.includes(category);
+        
         const legendItem = legend.append("div")
           .attr("class", "legend-item")
-          .attr("data-category", category);
+          .attr("data-category", category)
+          .style("opacity", isActive ? 1 : 0.5);
         
         legendItem.append("div")
           .attr("class", "legend-color")
@@ -855,9 +824,11 @@
           .attr("class", "legend-label")
           .text(displayLabels[category]);
           
-        // Add tooltip with definition
-        legendItem.append("div")
+        // Add tooltip with definition - ensure it has full opacity regardless of selection
+        const tooltip = legendItem.append("div")
           .attr("class", "legend-tooltip")
+          .style("background-color", "#111111") // Ensure solid background
+          .style("opacity", "0")
           .html(`
             <div class="legend-tooltip-title">${displayLabels[category]}</div>
             <div>${categoryDefinitions[category]}</div>
