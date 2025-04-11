@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Football Club Profitability Analysis</title>
+    <link href="https://use.typekit.net/xxs6huv.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #000000;
+            color: white;
+            font-family: 'aglet-sans', sans-serif;
+            padding: 20px;
+            margin: 0;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background-color: #000000;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid rgba(5, 212, 190, 0.3);
+        }
+        .main-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #05D4BE;
+            margin-bottom: 15px;
+        }
+        .subtitle {
+            font-size: 1.2rem;
+            color: #cccccc;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .league-section {
+            margin-bottom: 50px;
+        }
+        .league-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #05D4BE;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(5, 212, 190, 0.3);
+            display: inline-block;
+        }
+        .club-list {
+            list-style-type: none;
+            padding: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .club-card {
+            background-color: rgba(5, 212, 190, 0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(5, 212, 190, 0.2);
+            transition: all 0.3s ease;
+            padding: 20px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .club-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            border-color: #05D4BE;
+            background-color: rgba(5, 212, 190, 0.1);
+        }
+        .club-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-align: center;
+        }
+        .club-list a {
+            color: white;
+            text-decoration: none;
+            height: 100%;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #666;
+            font-size: 0.9rem;
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 15px;
+            }
+            .main-title {
+                font-size: 2rem;
+            }
+            .league-title {
+                font-size: 1.5rem;
+            }
+            .club-list {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 15px;
+            }
+        }
+        @media (max-width: 480px) {
+            .club-list {
+                grid-template-columns: 1fr;
+            }
+            .main-title {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="main-title">Football Club Profitability Analysis</div>
+            <div class="subtitle">
+                Explore the financial performance of football clubs across different leagues,
+                with in-depth analysis of various profitability metrics over time.
+            </div>
+        </div>
+        
+        
+        <div class="league-section">
+            <h2 class="league-title">Championship</h2>
+            <ul class="club-list">
+                
+            <li>
+                <a href="ipswich_town_profitability.html">
+                    <div class="club-card">
+                        <div class="club-name">Ipswich Town</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="leicester_city_profitability.html">
+                    <div class="club-card">
+                        <div class="club-name">Leicester City</div>
+                    </div>
+                </a>
+            </li>
+            
+            </ul>
+        </div>
+        
+        <div class="league-section">
+            <h2 class="league-title">Premier League</h2>
+            <ul class="club-list">
+                
+            <li>
+                <a href="afc_bournemouth_profitability.html">
+                    <div class="club-card">
+                        <div class="club-name">AFC Bournemouth</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="arsenal_profitability.html">
+                    <div class="club-card">
+                        <div class="club-name">Arsenal</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="aston_villa_profitability.html">
+                    <div class="club-card">
+                        <div class="club-name">Aston Villa</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="brentford_profitability.html">
+                    <div class="club-card">
+                        <div class="club-name">Brentford</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="brighton_and_hove_albion_profitability.html">
+                    <div class="club-card">
+                        <div class="club-name">Brighton and Hove Albion</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="burnley_profitability.html">
+                    <div class="club-card">
+                        <div class="club-name">Burnley</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="chelsea_profitability.html">
+                    <div class="club-card">
+                        <div class="club-name">Chelsea</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="crystal_palace_profitability.html">
+                    <div class="club-card">
+                        <div class="club-name">Crystal Palace</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="everton_profitability.html">
+                    <div class="club-card">
+                        <div class="club-name">Everton</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="fulham_profitability.html">
+                    <div class="club-card">
+                        <div class="club-name">Fulham</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="leeds_united_profitability.html">
+                    <div class="club-card">
+                        <div class="club-name">Leeds United</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="liverpool_profitability.html">
+                    <div class="club-card">
+                        <div class="club-name">Liverpool</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="luton_town_profitability.html">
+                    <div class="club-card">
+                        <div class="club-name">Luton Town</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="manchester_city_profitability.html">
+                    <div class="club-card">
+                        <div class="club-name">Manchester City</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="manchester_united_profitability.html">
+                    <div class="club-card">
+                        <div class="club-name">Manchester United</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="newcastle_united_profitability.html">
+                    <div class="club-card">
+                        <div class="club-name">Newcastle United</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="norwich_city_profitability.html">
+                    <div class="club-card">
+                        <div class="club-name">Norwich City</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="nottingham_forest_profitability.html">
+                    <div class="club-card">
+                        <div class="club-name">Nottingham Forest</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="sheffield_united_profitability.html">
+                    <div class="club-card">
+                        <div class="club-name">Sheffield United</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="southampton_profitability.html">
+                    <div class="club-card">
+                        <div class="club-name">Southampton</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="tottenham_hotspur_profitability.html">
+                    <div class="club-card">
+                        <div class="club-name">Tottenham Hotspur</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="watford_profitability.html">
+                    <div class="club-card">
+                        <div class="club-name">Watford</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="west_bromwich_albion_profitability.html">
+                    <div class="club-card">
+                        <div class="club-name">West Bromwich Albion</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="west_ham_united_profitability.html">
+                    <div class="club-card">
+                        <div class="club-name">West Ham United</div>
+                    </div>
+                </a>
+            </li>
+            
+            <li>
+                <a href="wolverhampton_wanderers_profitability.html">
+                    <div class="club-card">
+                        <div class="club-name">Wolverhampton Wanderers</div>
+                    </div>
+                </a>
+            </li>
+            
+            </ul>
+        </div>
+        
+        
+        <div class="footer">
+            <p>Data sourced from Companies House | Visualisation by Kinnaird Analytics</p>
+            <p>© 2025 Kinnaird Sports Intelligence</p>
+        </div>
+    </div>
+</body>
+</html>

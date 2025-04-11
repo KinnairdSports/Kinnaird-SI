@@ -3,7 +3,7 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>Club Profitability Analysis</title>
+    <title>Nottingham Forest - Profitability Analysis</title>
     <!-- Load Aglet Sans from Typekit -->
     <link href="https://use.typekit.net/xxs6huv.css" rel="stylesheet">
     <!-- Add Open Sans as fallback from Google Fonts -->
@@ -61,33 +61,105 @@
           padding: 30px 20px;
       }
       
-      .controls {
+      .header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 15px;
+          border-bottom: 1px solid rgba(5, 212, 190, 0.3);
+          padding-bottom: 10px;
+      }
+      
+      .club-info {
           display: flex;
           flex-direction: column;
-          gap: 15px;
-          margin-bottom: 30px;
-          padding: 20px;
-          background-color: var(--card-bg);
-          border-radius: 12px;
-          border: 1px solid rgba(5, 212, 190, 0.2);
-          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
       }
       
-      .control-group {
+      .profit-title {
+          font-size: 1.2rem;
+          color: #cccccc;
+          font-weight: normal;
+      }
+      
+      .team-performance {
+          font-size: 1rem;
+          color: #cccccc;
+          margin-top: 5px;
+      }
+      
+      .metrics-cards {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 20px;
+          flex-wrap: wrap;
+          gap: 15px;
+      }
+      
+      .metric-card {
+          background: linear-gradient(135deg, rgba(5, 212, 190, 0.2), rgba(95, 132, 251, 0.2));
+          border-radius: 8px;
+          padding: 15px;
+          flex: 1;
+          min-width: 180px;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+          border: 1px solid rgba(5, 212, 190, 0.3);
+          text-align: center;
+      }
+      
+      .metric-title { 
+          font-size: 1rem; 
+          color: #cccccc; 
+      }
+      
+      .metric-value { 
+          font-size: 2rem; 
+          font-weight: bold; 
+          margin: 10px 0; 
+          color: #05D4BE; 
+      }
+      
+      .metric-subtitle {
+          font-size: 0.9rem;
+          color: #cccccc;
+      }
+      
+      .metric-change {
+          font-size: 0.9rem;
+      }
+      
+      .positive-change {
+          color: #4CD964;
+      }
+      
+      .negative-change {
+          color: #FF3B30;
+      }
+      
+      .neutral {
+          color: #05D4BE;
+      }
+      
+      .metric-filter {
           display: flex;
           flex-wrap: wrap;
-          gap: 20px;
-          align-items: center;
-          margin-bottom: 20px;
+          gap: 10px;
+          margin-top: 15px;
+          margin-bottom: 15px;
+          background-color: rgba(0, 0, 0, 0.2);
           padding: 15px;
-          background-color: rgba(0, 0, 0, 0.1);
           border-radius: 8px;
+          border: 1px solid rgba(5, 212, 190, 0.2);
       }
       
-      .control-group {
-          display: flex;
-          align-items: center;
-          gap: 10px;
+      .metric-section {
+          margin-right: 25px;
+      }
+      
+      .section-label {
+          font-weight: bold;
+          color: var(--primary);
+          margin-bottom: 8px;
+          white-space: nowrap;
       }
       
       /* Horizontal checkbox layout */
@@ -95,8 +167,6 @@
           display: flex;
           flex-wrap: wrap;
           gap: 10px;
-          width: 100%;
-          margin-top: 5px;
       }
       
       .metric-checkbox {
@@ -169,24 +239,6 @@
           border-bottom: 1px solid rgba(5, 212, 190, 0.3);
           padding-bottom: 10px;
           font-weight: 600;
-      }
-      
-      .hover-instruction {
-          position: absolute;
-          top: 20px;
-          right: 20px;
-          background-color: rgba(0, 0, 0, 0.7);
-          color: var(--primary);
-          padding: 8px 12px;
-          border-radius: 6px;
-          font-size: 0.8rem;
-          opacity: 0.7;
-          border: 1px solid var(--primary-light);
-          transition: opacity 0.3s;
-      }
-      
-      .hover-instruction:hover {
-          opacity: 1;
       }
       
       #mainChart {
@@ -279,6 +331,7 @@
           background-color: rgba(0, 0, 0, 0.2);
           border-radius: 8px;
           border: 1px solid rgba(255, 255, 255, 0.1);
+          justify-content: center;
       }
       
       .legend-item {
@@ -291,6 +344,11 @@
           transition: all 0.2s;
           user-select: none;
           position: relative;
+          opacity: 1;
+      }
+      
+      .legend-item.inactive {
+          opacity: 0.5;
       }
       
       .legend-item:hover {
@@ -354,6 +412,40 @@
           padding-bottom: 3px;
       }
       
+      /* Analysis panel */
+      .panel-title {
+          font-size: 1.1rem;
+          margin-bottom: 10px;
+          color: #05D4BE;
+          border-bottom: 1px solid rgba(5, 212, 190, 0.3);
+          padding-bottom: 5px;
+      }
+      
+      .metrics-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 15px;
+          margin-bottom: 20px;
+      }
+      
+      .metric-row {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 8px;
+          font-size: 0.9rem;
+      }
+      
+      .metric-label {
+          color: #cccccc;
+      }
+      
+      .metric-row .metric-value {
+          font-size: inherit;
+          font-weight: bold;
+          color: white;
+          margin: 0;
+      }
+      
       /* Added responsive design */
       @media (max-width: 768px) {
           .container {
@@ -375,6 +467,15 @@
           
           .chart-title {
               font-size: 1.2rem;
+          }
+          
+          .metrics-grid {
+              grid-template-columns: 1fr;
+          }
+          
+          .metric-section {
+              margin-bottom: 10px;
+              margin-right: 0;
           }
       }
       
@@ -426,9 +527,39 @@
 </head>
 <body>
     <div class="container">
-        <div class="controls">
-            <div class="control-group" id="metricSelections">
-                <div style="display: flex; flex-wrap: wrap; justify-content: space-between; width: 100%;">
+        <div class="header">
+            <div class="club-info">
+                <div class="profit-title">Profitability Analysis</div>
+                <div class="team-performance">Nottingham Forest (2024)</div>
+            </div>
+        </div>
+        
+        <div class="metrics-cards">
+            <div class="metric-card">
+                <div class="metric-title">EBITDA</div>
+                <div class="metric-value">£-10.4M</div>
+                <div class="metric-subtitle">-128.3% vs Premier League avg</div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-title">EBIT</div>
+                <div class="metric-value">£-73.3M</div>
+                <div class="metric-subtitle">-25.6% vs Premier League avg</div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-title">Profit After Tax</div>
+                <div class="metric-value">£12.1M</div>
+                <div class="metric-subtitle">+356.8% vs Premier League avg</div>
+            </div>
+        </div>
+        
+        <div class="chart-wrapper">
+            <div class="chart-title">Profitability Metrics Over Time</div>
+            
+            <div class="metric-filter" id="metricSelections">
+                <div class="metric-section">
+                    <div class="section-label">Underlying Profitability</div>
                     <div class="checkbox-container">
                         <div class="metric-checkbox">
                             <input type="checkbox" id="ebitda" checked>
@@ -438,35 +569,64 @@
                             <input type="checkbox" id="ebit" checked>
                             <label for="ebit">EBIT</label>
                         </div>
-                        <div class="metric-checkbox">
-                            <input type="checkbox" id="operating_profit_loss">
-                            <label for="operating_profit_loss">Operating P/L</label>
-                        </div>
                     </div>
-                    
+                </div>
+                
+                <div class="metric-section">
+                    <div class="section-label">Statutory Profitability</div>
                     <div class="checkbox-container">
                         <div class="metric-checkbox">
-                            <input type="checkbox" id="profit_loss_before_interest_tax">
-                            <label for="profit_loss_before_interest_tax">P/L Before Int & Tax</label>
+                            <input type="checkbox" id="operating_profit_loss">
+                            <label for="operating_profit_loss">Operating Profit/Loss</label>
                         </div>
                         <div class="metric-checkbox">
                             <input type="checkbox" id="profit_loss_before_tax">
-                            <label for="profit_loss_before_tax">P/L Before Tax</label>
+                            <label for="profit_loss_before_tax">Profit/Loss Before Tax</label>
                         </div>
                         <div class="metric-checkbox">
                             <input type="checkbox" id="profit_loss_after_tax">
-                            <label for="profit_loss_after_tax">P/L After Tax</label>
+                            <label for="profit_loss_after_tax">Profit/Loss After Tax</label>
                         </div>
                     </div>
                 </div>
             </div>
+            
+            <div id="mainChart"></div>
+            <div class="legend" id="chartLegend"></div>
         </div>
         
         <div class="chart-wrapper">
-            <div class="chart-title">Profitability Metrics Over Time</div>
-            <div class="hover-instruction">Hover over data points for details</div>
-            <div id="mainChart"></div>
-            <div class="legend" id="chartLegend"></div>
+            <div class="panel-title">Profitability Analysis</div>
+            <div class="metrics-grid">
+                <div>
+                    <div class="metric-row">
+                        <span class="metric-label">Year-on-Year Change</span>
+                        <span class="metric-value"><span class="positive-change">+118.0%</span></span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">5 Year Profit Trend</span>
+                        <span class="metric-value">Improving (175.9%)</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Most Profitable Year</span>
+                        <span class="metric-value">2024 (£12.1M)</span>
+                    </div>
+                </div>
+                <div>
+                    <div class="metric-row">
+                        <span class="metric-label">Profit Margin</span>
+                        <span class="metric-value">6.4%</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">EBITDA Margin</span>
+                        <span class="metric-value">-5.5%</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Tax Efficiency</span>
+                        <span class="metric-value">100.0%</span>
+                    </div>
+                </div>
+            </div>
         </div>
         
         <div class="footer">
@@ -484,48 +644,47 @@
       const metricsData = {
           ebitda: [-24928000, -28733000, -41779000, -18174000, -10411000],
           ebit: [-31516000, -34419000, -49513000, -59558000, -73255000],
-          operating_profit_loss: [-15630000, -15108000, -45449000, -56944000, 27276000],
-          profit_loss_before_interest_tax: [-31883000.0, NaN, NaN, -59558000.0, -73255000.0],
-          profit_loss_before_tax: [-15947000, -15526000, -46217000, -67246000, 12099000],
-          profit_loss_after_tax: [-15947000, -15526000, -45610000, -67246000, 12099000]
+          operating_profit_loss: [-15630000.0, -15108000.0, -45449000.0, -56944000.0, 27276000.0],
+          profit_loss_before_interest_tax: [-31883000.0, NaN, NaN, -59558000.0, -73255000.0], // Kept for data integrity
+          profit_loss_before_tax: [-15947000.0, -15526000.0, -46217000.0, -67246000.0, 12099000.0],
+          profit_loss_after_tax: [-15947000.0, -15526000.0, -45610000.0, -67246000.0, 12099000.0]
       };
       
       const positionData = ["7th", "17th", "4th", "16th", "17th"];
       const leagueData = ["Championship", "Championship", "Championship", "Premier League", "Premier League"];
+      const revenueData = [25297000.0, 18408000.0, 29683000.0, 154758000.0, 189552000.0];
       
       // Metrics settings
       const metricsConfig = {
           ebitda: {
               label: "EBITDA",
               color: "var(--ebitda)",
-              description: "Earnings Before Interest, Tax, Depreciation, and Amortization - a measure of operational performance excluding non-cash expenses and financing costs."
+              description: "Earnings Before Interest, Tax, Depreciation, and Amortization - a measure of underlying operational performance excluding non-cash expenses and financing costs."
           },
           ebit: {
               label: "EBIT",
               color: "var(--ebit)",
-              description: "Earnings Before Interest and Tax - also known as operating profit, measuring profitability before financing and tax expenses."
+              description: "Earnings Before Interest and Tax - a measure of underlying profitability before financing and tax expenses."
           },
           operating_profit_loss: {
-              label: "Operating P/L",
+              label: "Operating Profit/Loss",
               color: "var(--operating)",
-              description: "Operating Profit/Loss - reflects earnings from core business operations before interest and taxes."
-          },
-          profit_loss_before_interest_tax: {
-              label: "P/L Before Int & Tax",
-              color: "var(--before-interest)",
-              description: "Profit/Loss Before Interest and Tax - measures profitability before financing costs and taxation."
+              description: "Operating Profit/Loss - reflects statutory earnings from core business operations before interest and taxes."
           },
           profit_loss_before_tax: {
-              label: "P/L Before Tax",
+              label: "Profit/Loss Before Tax",
               color: "var(--before-tax)",
-              description: "Profit/Loss Before Tax - shows earnings after interest expenses but before tax obligations."
+              description: "Profit/Loss Before Tax - shows statutory earnings after interest expenses but before tax obligations."
           },
           profit_loss_after_tax: {
-              label: "P/L After Tax",
+              label: "Profit/Loss After Tax",
               color: "var(--after-tax)",
-              description: "Profit/Loss After Tax - the club's final profit or loss figure after all expenses, including tax."
+              description: "Profit/Loss After Tax - the club's final statutory profit or loss figure after all expenses, including tax."
           }
       };
+      
+      // All available metrics for complete legend
+      const allMetrics = ['ebitda', 'ebit', 'operating_profit_loss', 'profit_loss_before_tax', 'profit_loss_after_tax'];
       
       // Active metrics selection
       let selectedMetrics = ['ebitda', 'ebit'];
@@ -563,6 +722,11 @@
               // Add league and position data
               yearData.position = positionData[i];
               yearData.league = leagueData[i];
+              
+              // Add revenue if available
+              if (revenueData && revenueData[i] !== undefined) {
+                  yearData.revenue = revenueData[i];
+              }
               
               return yearData;
           });
@@ -817,13 +981,24 @@
                   });
               });
           
-          // Create legend with tooltips
+          // Create complete legend with all metrics (active and inactive)
           const legend = d3.select("#chartLegend");
           
-          selectedMetrics.forEach(metric => {
+          allMetrics.forEach(metric => {
+              const isActive = selectedMetrics.includes(metric);
+              
               const legendItem = legend.append("div")
-                  .attr("class", "legend-item")
-                  .attr("data-metric", metric);
+                  .attr("class", `legend-item ${isActive ? '' : 'inactive'}`)
+                  .attr("data-metric", metric)
+                  .on("click", function() {
+                      // Toggle checkbox when legend item is clicked
+                      const checkbox = document.getElementById(metric);
+                      checkbox.checked = !checkbox.checked;
+                      
+                      // Trigger change event
+                      const event = new Event('change');
+                      checkbox.dispatchEvent(event);
+                  });
               
               legendItem.append("div")
                   .attr("class", "legend-color")
