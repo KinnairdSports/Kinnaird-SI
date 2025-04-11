@@ -1,0 +1,230 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Football Club Financial Flow Visualizations</title>
+  <link rel="stylesheet" href="https://use.typekit.net/xxs6huv.css">
+  <style>
+    body {
+      background-color: #000000;
+      color: white;
+      font-family: 'aglet-sans', sans-serif;
+      padding: 20px;
+      margin: 0;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #000000;
+    }
+    h1 {
+      color: #05D4BE;
+      text-align: center;
+      margin-bottom: 40px;
+      border-bottom: 1px solid rgba(5, 212, 190, 0.3);
+      padding-bottom: 20px;
+    }
+    h2 {
+      color: #05D4BE;
+      margin-top: 40px;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(5, 212, 190, 0.2);
+    }
+    .league-section {
+      margin-bottom: 30px;
+    }
+    ul {
+      list-style-type: none;
+      padding: 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 15px;
+    }
+    li {
+      background: linear-gradient(135deg, rgba(5, 212, 190, 0.2), rgba(95, 132, 251, 0.2));
+      border-radius: 8px;
+      padding: 15px;
+      text-align: center;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(5, 212, 190, 0.3);
+    }
+    li:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+      background: linear-gradient(135deg, rgba(5, 212, 190, 0.3), rgba(95, 132, 251, 0.3));
+    }
+    a {
+      color: white;
+      text-decoration: none;
+      font-size: 1.1rem;
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+    .nav-links {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    .nav-link {
+      color: #05D4BE;
+      text-decoration: none;
+      font-size: 1.1rem;
+      padding: 5px 15px;
+      border: 1px solid rgba(5, 212, 190, 0.3);
+      border-radius: 5px;
+      transition: all 0.3s ease;
+    }
+    .nav-link:hover, .nav-link.active {
+      background-color: rgba(5, 212, 190, 0.2);
+    }
+    .footer {
+      text-align: center;
+      margin-top: 50px;
+      font-size: 0.8rem;
+      color: #666;
+    }
+    .info-box {
+      background-color: rgba(5, 212, 190, 0.1);
+      border: 1px solid rgba(5, 212, 190, 0.3);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 30px;
+    }
+    .info-box h3 {
+      color: #05D4BE;
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+    .columns {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+    .column {
+      flex: 1;
+      padding: 0 15px;
+    }
+    .column h4 {
+      color: #05D4BE;
+      margin-bottom: 10px;
+    }
+    .column ul {
+      display: block;
+    }
+    .column li {
+      background: none;
+      padding: 5px 0;
+      text-align: left;
+      border: none;
+      transition: none;
+    }
+    .column li:hover {
+      transform: none;
+      box-shadow: none;
+      background: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Football Club Financial Flow Visualizations</h1>
+    
+    <div class="nav-links">
+      <a href="index.html" class="nav-link">Financial Snapshots</a>
+      <a href="profit_loss_index.html" class="nav-link">Profit & Loss</a>
+      <a href="#" class="nav-link" style="background-color: rgba(5, 212, 190, 0.2);">Financial Flow</a>
+    </div>
+    
+    <div class="info-box">
+      <h3>Understanding Financial Flows in Football Clubs</h3>
+      <p>These Sankey diagrams provide a visual representation of how money flows through football clubs, from revenue sources to costs and ultimately to profit or loss.</p>
+      
+      <div class="columns">
+        <div class="column">
+          <h4>Revenue Sources</h4>
+          <ul>
+            <li>Match Day Revenue</li>
+            <li>Broadcasting Revenue</li>
+            <li>Commercial Revenue</li>
+            <li>Player Trading</li>
+            <li>Other Income</li>
+          </ul>
+        </div>
+        <div class="column">
+          <h4>Cost Categories</h4>
+          <ul>
+            <li>Staff Costs</li>
+            <li>Other Operating Expenses</li>
+            <li>Amortisation</li>
+            <li>Depreciation</li>
+          </ul>
+        </div>
+        <div class="column">
+          <h4>Profit Metrics</h4>
+          <ul>
+            <li>EBITDA</li>
+            <li>Operating Profit</li>
+            <li>Profit Before Tax</li>
+            <li>Net Profit/Loss</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    
+    
+        <div class="league-section">
+            <h2>Championship</h2>
+            <ul>
+                <li><a href="sankey_diagrams/ipswich_town_2024.html">Ipswich Town (2024)</a></li>
+<li><a href="sankey_diagrams/leicester_city_2024.html">Leicester City (2024)</a></li>
+
+            </ul>
+        </div>
+        
+        <div class="league-section">
+            <h2>Premier League</h2>
+            <ul>
+                <li><a href="sankey_diagrams/afc_bournemouth_2024.html">AFC Bournemouth (2024)</a></li>
+<li><a href="sankey_diagrams/arsenal_2024.html">Arsenal (2024)</a></li>
+<li><a href="sankey_diagrams/aston_villa_2024.html">Aston Villa (2024)</a></li>
+<li><a href="sankey_diagrams/brentford_2024.html">Brentford (2024)</a></li>
+<li><a href="sankey_diagrams/brighton_and_hove_albion_2024.html">Brighton and Hove Albion (2024)</a></li>
+<li><a href="sankey_diagrams/burnley_2024.html">Burnley (2024)</a></li>
+<li><a href="sankey_diagrams/chelsea_2024.html">Chelsea (2024)</a></li>
+<li><a href="sankey_diagrams/crystal_palace_2024.html">Crystal Palace (2024)</a></li>
+<li><a href="sankey_diagrams/everton_2024.html">Everton (2024)</a></li>
+<li><a href="sankey_diagrams/fulham_2024.html">Fulham (2024)</a></li>
+<li><a href="sankey_diagrams/leeds_united_2023.html">Leeds United (2023)</a></li>
+<li><a href="sankey_diagrams/liverpool_2024.html">Liverpool (2024)</a></li>
+<li><a href="sankey_diagrams/luton_town_2024.html">Luton Town (2024)</a></li>
+<li><a href="sankey_diagrams/manchester_city_2024.html">Manchester City (2024)</a></li>
+<li><a href="sankey_diagrams/manchester_united_2024.html">Manchester United (2024)</a></li>
+<li><a href="sankey_diagrams/newcastle_united_2024.html">Newcastle United (2024)</a></li>
+<li><a href="sankey_diagrams/norwich_city_2022.html">Norwich City (2022)</a></li>
+<li><a href="sankey_diagrams/nottingham_forest_2024.html">Nottingham Forest (2024)</a></li>
+<li><a href="sankey_diagrams/sheffield_united_2024.html">Sheffield United (2024)</a></li>
+<li><a href="sankey_diagrams/southampton_2023.html">Southampton (2023)</a></li>
+<li><a href="sankey_diagrams/tottenham_hotspur_2024.html">Tottenham Hotspur (2024)</a></li>
+<li><a href="sankey_diagrams/watford_2022.html">Watford (2022)</a></li>
+<li><a href="sankey_diagrams/west_bromwich_albion_2021.html">West Bromwich Albion (2021)</a></li>
+<li><a href="sankey_diagrams/west_ham_united_2024.html">West Ham United (2024)</a></li>
+<li><a href="sankey_diagrams/wolverhampton_wanderers_2024.html">Wolverhampton Wanderers (2024)</a></li>
+
+            </ul>
+        </div>
+        
+    
+    <div class="footer">
+      Data last updated: 2025-04-11 11:07:10 | Source: Published Club Accounts & Premier League Financial Records
+    </div>
+  </div>
+</body>
+</html>
+    
