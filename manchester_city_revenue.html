@@ -49,6 +49,9 @@
       margin-bottom: 20px;
       flex-wrap: wrap;
       gap: 15px;
+      width: 100%;
+      padding: 0;
+      box-sizing: border-box;
     }
     .metric-card {
       background: linear-gradient(135deg, rgba(5, 212, 190, 0.2), rgba(95, 132, 251, 0.2));
@@ -86,17 +89,14 @@
     .neutral {
       color: #05D4BE;
     }
-    /* Original control styles with club snapshot theming */
+    /* Controls styled to match other templates */
     .controls {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      background-color: rgba(5, 212, 190, 0.05);
+      margin-bottom: 20px;
+      background-color: rgba(0, 0, 0, 0.2);
       border-radius: 8px;
       padding: 15px;
-      border: 1px solid rgba(5, 212, 190, 0.2);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-      margin-bottom: 20px;
+      width: 100%;
+      box-sizing: border-box;
     }
     select {
       padding: 10px 15px;
@@ -159,22 +159,23 @@
       gap: 15px;
       margin-bottom: 20px;
     }
-    /* Modified hover instruction styling with club snapshot theme */
     .hover-instruction {
-      position: relative;
-      text-align: right;
-      background-color: transparent;
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: rgba(0, 0, 0, 0.7);
       color: #05D4BE;
       padding: 8px 12px;
+      border-radius: 6px;
       font-size: 0.8rem;
       opacity: 0.7;
       transition: opacity 0.3s;
-      margin-bottom: 10px;
+      z-index: 10;
+      border: 1px solid rgba(5, 212, 190, 0.3);
     }
     .hover-instruction:hover {
       opacity: 1;
     }
-    /* Original tooltip styling with club snapshot color scheme */
     .tooltip {
       position: absolute;
       padding: 12px 15px;
@@ -191,6 +192,8 @@
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
       max-width: 300px;
       backdrop-filter: blur(4px);
+      max-height: 80vh;
+      overflow-y: auto;
     }
     .tooltip-header {
       margin-bottom: 5px;
@@ -232,7 +235,6 @@
     .tooltip-total-value {
       color: #9C68F5;
     }
-    /* Original legend styling with club snapshot theme */
     .legend {
       display: flex;
       flex-wrap: wrap;
@@ -306,7 +308,6 @@
       border-radius: 4px;
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
     }
-    /* Original chart styling */
     .vertical-guide {
       pointer-events: none;
       stroke: #05D4BE;
@@ -339,23 +340,148 @@
       --line: rgba(255, 255, 255, 0.3);
     }
     
+    /* RESPONSIVE DESIGN STYLES - Aligned with other templates */
+    @media (max-width: 992px) {
+      .container {
+        padding: 15px;
+      }
+      .metrics-cards {
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      /* Keep cards in row with adjusted width */
+      .metric-card {
+        flex: 1 0 calc(33.333% - 10px);
+        padding: 12px;
+      }
+      .metric-value {
+        font-size: 1.8rem;
+        margin: 8px 0;
+      }
+      #mainChart {
+        height: 450px !important;
+      }
+      .controls {
+        padding: 12px;
+      }
+    }
+    
     @media (max-width: 768px) {
       .container {
-        padding: 15px 10px;
+        padding: 10px 5px;
       }
-      .metrics-grid, .metrics-cards {
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      /* Convert to vertical stack on tablet and ensure same width as graph */
+      .metrics-cards {
+        display: block; /* Change to block to ensure full width */
+        width: 100%;
+        gap: 0;
+        padding: 0;
+      }
+      .metric-card {
+        width: 100%;
+        max-width: 100%;
+        flex: none;
+        margin: 0 0 10px 0; /* Add bottom margin only */
+        padding: 10px;
+        box-sizing: border-box; /* Ensure padding is included in width */
+      }
+      .metric-value {
+        font-size: 1.5rem;
+        margin: 6px 0;
+      }
+      .metric-subtitle {
+        font-size: 0.85rem;
+      }
+      .metrics-grid {
         grid-template-columns: 1fr;
       }
-      .metric-card { min-width: 100%; }
-      .controls {
-        flex-direction: column;
-        padding: 15px;
+      .panel-title {
+        font-size: 1rem;
+      }
+      #mainChart {
+        height: 400px !important;
       }
       .chart-wrapper {
         padding: 15px;
       }
+      .controls {
+        flex-direction: column;
+        padding: 10px;
+      }
+      select {
+        width: 100%;
+        margin-top: 5px;
+      }
+      .tooltip {
+        max-width: 260px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      body {
+        padding: 5px;
+      }
+      .container {
+        padding: 5px;
+      }
+      /* Ensure cards match graph width exactly on mobile */
+      .metrics-cards {
+        width: 100%;
+        padding: 0;
+      }
+      .metric-card {
+        width: 100%;
+        padding: 8px;
+        margin: 0 0 8px 0;
+        box-sizing: border-box;
+        max-width: 100%;
+      }
+      .metric-title {
+        font-size: 0.85rem;
+      }
+      .metric-value {
+        font-size: 1.3rem;
+        margin: 5px 0;
+      }
+      .metric-subtitle {
+        font-size: 0.75rem;
+      }
+      #mainChart {
+        height: 300px !important;
+      }
+      .chart-wrapper {
+        padding: 10px;
+        margin-bottom: 15px;
+      }
+      .legend {
+        padding: 10px 5px;
+        gap: 5px;
+      }
+      .legend-item {
+        padding: 4px 8px;
+        font-size: 0.8rem;
+      }
+      .tooltip {
+        max-width: 240px;
+        font-size: 12px;
+        padding: 8px 10px;
+      }
+      .tooltip-title {
+        font-size: 14px;
+      }
+      .footer {
+        margin-top: 20px;
+        font-size: 0.8rem;
+      }
       .panel-title {
-        font-size: 1.2rem;
+        font-size: 0.9rem;
+      }
+      .metric-row {
+        font-size: 0.8rem;
       }
     }
   </style>
@@ -372,38 +498,36 @@
       <div class="metric-card">
         <div class="metric-title">Matchday Income</div>
         <div class="metric-value">£75.6M</div>
-        <div class="metric-subtitle">+52.8% vs Premier League avg</div>
+        <div class="metric-subtitle">+59.6% vs Premier League avg</div>
       </div>
       
       <div class="metric-card">
         <div class="metric-title">Broadcasting Income</div>
         <div class="metric-value">£294.7M</div>
-        <div class="metric-subtitle">+74.4% vs Premier League avg</div>
+        <div class="metric-subtitle">+76.2% vs Premier League avg</div>
       </div>
       
       <div class="metric-card">
         <div class="metric-title">Commercial Income</div>
         <div class="metric-value">£344.7M</div>
-        <div class="metric-subtitle">+201.6% vs Premier League avg</div>
-      </div>
-    </div>
-    
-    <div class="controls">
-      <div style="display: flex; align-items: center; gap: 10px;">
-        <span>View: </span>
-        <select id="viewSelector">
-          <option value="stacked">Total Revenue (Stacked)</option>
-          <option value="matchday">Matchday Only</option>
-          <option value="broadcast">Broadcast Only</option>
-          <option value="commercial">Commercial Only</option>
-        </select>
+        <div class="metric-subtitle">+207.8% vs Premier League avg</div>
       </div>
     </div>
     
     <div class="chart-wrapper">
       <div class="panel-title">Revenue Breakdown Over Time</div>
-      <div id="mainChart" style="width: 100%; height: 500px;"></div>
-      <div class="hover-instruction">Hover over data points for details</div>
+      <div style="margin-bottom: 15px;">
+        <div style="display: flex; align-items: center; gap: 10px; width: 100%;">
+          <span>View: </span>
+          <select id="viewSelector">
+            <option value="stacked">Total Revenue (Stacked)</option>
+            <option value="matchday">Matchday Only</option>
+            <option value="broadcast">Broadcast Only</option>
+            <option value="commercial">Commercial Only</option>
+          </select>
+        </div>
+      </div>
+      <div id="mainChart" style="width: 100%; height: 500px; position: relative;"></div>
       <div class="legend">
         <div class="legend-item">
           <div class="legend-color" style="background-color: var(--matchday);"></div>
@@ -473,10 +597,10 @@
     const financialYears = [2020, 2021, 2022, 2023, 2024];
     
     // Revenue data
-    const matchdayData = [41694000, 732000, 54482000, 71914000, 75607000];
-    const broadcastData = [190324000, 297448000, 249060000, 299410000, 294731000];
-    const commercialData = [246341000, 271669000, 309472000, 341444000, 344681000];
-    const totalData = [478359000, 569849000, 613014000, 712768000, 715019000];
+    const matchdayData = [41694000.0, 732000.0, 54482000.0, 71914000.0, 75607000.0];
+    const broadcastData = [190324000.0, 297448000.0, 249060000.0, 299410000.0, 294731000.0];
+    const commercialData = [246341000.0, 271669000.0, 309472000.0, 341444000.0, 344681000.0];
+    const totalData = [478359000.0, 569849000.0, 613014000.0, 712768000.0, 715019000.0];
     const positionData = ["2nd", "1st", "1st", "1st", "1st"];
     const leagueData = ["Premier League", "Premier League", "Premier League", "Premier League", "Premier League"];
     
@@ -528,7 +652,7 @@
   
   // Set up scales
   const x = d3.scaleLinear()
-    .domain([d3.min(financialYears), d3.max(financialYears) + 0.5])
+    .domain([d3.min(financialYears), d3.max(financialYears)])
     .range([0, width]);
   
   // Determine y domain based on view mode
@@ -579,17 +703,6 @@
     .style("stroke-width", "1px")
     .style("stroke-opacity", "0.8")
     .style("stroke-dasharray", "2,3");
-  
-  // Style grid lines
-  svg.selectAll(".grid line")
-    .style("stroke", "var(--grid)")
-    .style("stroke-opacity", "0.8")
-    .style("stroke-dasharray", "3,3")
-    .style("stroke-width", "1px")
-    .style("shape-rendering", "crispEdges");
-  
-  svg.selectAll(".grid path")
-    .style("stroke-width", "0");
   
   // Add X axis
   svg.append("g")
@@ -825,11 +938,40 @@
         `;
       }
       
+      // Get container bounds for better tooltip positioning
+      const containerRect = document.querySelector('.container').getBoundingClientRect();
+      const tooltipWidth = window.innerWidth <= 480 ? 240 : 300;
+      const tooltipHeight = 150; // Approximate height, adjust as needed
+      
+      // Calculate initial position
+      let xPosition = event.pageX + 15;
+      let yPosition = event.pageY - 20;
+      
+      // Check right boundary
+      if (xPosition + tooltipWidth > containerRect.right) {
+          xPosition = event.pageX - tooltipWidth - 10;
+      }
+      
+      // Check left boundary
+      if (xPosition < containerRect.left) {
+          xPosition = containerRect.left + 10;
+      }
+      
+      // Check bottom boundary
+      if (yPosition + tooltipHeight > containerRect.bottom) {
+          yPosition = event.pageY - tooltipHeight - 10;
+      }
+      
+      // Check top boundary
+      if (yPosition < containerRect.top) {
+          yPosition = containerRect.top + 10;
+      }
+      
       // Position and show the tooltip
       d3.select("#tooltip")
         .style("opacity", 1)
-        .style("left", (event.pageX + 15) + "px")
-        .style("top", (event.pageY - 20) + "px")
+        .style("left", xPosition + "px")
+        .style("top", yPosition + "px")
         .html(tooltipContent);
     })
     .on("mouseout", function() {

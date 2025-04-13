@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Luton Town - Revenue Analysis</title>
+  <title>Derby County - Revenue Analysis</title>
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <link rel="stylesheet" href="https://use.typekit.net/xxs6huv.css">
   <style>
@@ -497,20 +497,20 @@
     <div class="metrics-cards">
       <div class="metric-card">
         <div class="metric-title">Matchday Income</div>
-        <div class="metric-value">£6.2M</div>
-        <div class="metric-subtitle">-86.9% vs Premier League avg</div>
+        <div class="metric-value">£13.2M</div>
+        <div class="metric-subtitle">No league average data</div>
       </div>
       
       <div class="metric-card">
         <div class="metric-title">Broadcasting Income</div>
-        <div class="metric-value">£116.6M</div>
-        <div class="metric-subtitle">-30.3% vs Premier League avg</div>
+        <div class="metric-value">£2.9M</div>
+        <div class="metric-subtitle">No league average data</div>
       </div>
       
       <div class="metric-card">
         <div class="metric-title">Commercial Income</div>
-        <div class="metric-value">£9.5M</div>
-        <div class="metric-subtitle">-91.5% vs Premier League avg</div>
+        <div class="metric-value">£3.3M</div>
+        <div class="metric-subtitle">No league average data</div>
       </div>
     </div>
     
@@ -562,7 +562,7 @@
         <div>
           <div class="metric-row">
             <span class="metric-label">Year-on-Year Change</span>
-            <span class="metric-value">618.1%</span>
+            <span class="metric-value">-5.1%</span>
           </div>
           <div class="metric-row">
             <span class="metric-label">5 Year Revenue Growth</span>
@@ -570,17 +570,17 @@
           </div>
           <div class="metric-row">
             <span class="metric-label">Highest Revenue Year</span>
-            <span class="metric-value">2024 (£132.3M)</span>
+            <span class="metric-value">2023 (£20.4M)</span>
           </div>
         </div>
         <div>
           <div class="metric-row">
             <span class="metric-label">Matchday Dependency</span>
-            <span class="metric-value">Low</span>
+            <span class="metric-value">High</span>
           </div>
           <div class="metric-row">
             <span class="metric-label">Broadcast Dependency</span>
-            <span class="metric-value">High</span>
+            <span class="metric-value">Low</span>
           </div>
           <div class="metric-row">
             <span class="metric-label">Commercial Dependency</span>
@@ -594,15 +594,15 @@
   
   <script>
     // Data for the chart
-    const financialYears = [2021, 2022, 2023, 2024];
+    const financialYears = [2023, 2024];
     
     // Revenue data
-    const matchdayData = [1112984.0, 4879966.0, 5065000.0, 6190409.0];
-    const broadcastData = [9629235.0, 10460618.0, 10123000.0, 116604276.0];
-    const commercialData = [1917847.0, 2317892.0, 3237000.0, 9527171.0];
-    const totalData = [12660066.0, 17658476.0, 18426000.0, 132321856.0];
-    const positionData = [null, null, null, "18th"];
-    const leagueData = [null, null, null, "Premier League"];
+    const matchdayData = [13678176.0, 13175459.0];
+    const broadcastData = [3791098.0, 2943664.0];
+    const commercialData = [3005718.0, 3280310.0];
+    const totalData = [20442892.0, 19399532.0];
+    const positionData = [null, null];
+    const leagueData = [null, null];
     
     // Active data sets
     let activeMatchdayData = matchdayData;
