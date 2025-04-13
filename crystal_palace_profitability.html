@@ -46,19 +46,19 @@
       }
       
       body {
-          font-family: 'aglet-sans', 'Open Sans', sans-serif;
-          background-color: var(--background);
-          color: var(--text);
+          background-color: #000000;
+          color: white;
+          font-family: 'aglet-sans', sans-serif;
+          padding: 20px;
           margin: 0;
-          padding: 0;
-          line-height: 1.5;
-          font-size: 16px;
+          min-height: 100vh;
       }
       
       .container {
           max-width: 1200px;
           margin: 0 auto;
-          padding: 30px 20px;
+          padding: 20px;
+          background-color: #000000;
       }
       
       .header {
@@ -94,6 +94,8 @@
           flex-wrap: wrap;
           gap: 15px;
           width: 100%;
+          padding: 0;
+          box-sizing: border-box;
       }
       
       .metric-card {
@@ -140,92 +142,70 @@
           color: #05D4BE;
       }
       
-      .metric-filter {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 10px;
-          margin-top: 15px;
-          margin-bottom: 15px;
-          background-color: rgba(0, 0, 0, 0.2);
-          padding: 15px;
-          border-radius: 8px;
-          border: 1px solid rgba(5, 212, 190, 0.2);
-      }
-      
-      .metric-section {
-          margin-right: 25px;
-      }
-      
-      .section-label {
-          font-weight: bold;
-          color: var(--primary);
-          margin-bottom: 8px;
-          white-space: nowrap;
-      }
-      
-      /* Horizontal checkbox layout */
-      .checkbox-container {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 10px;
-      }
-      
-      .metric-checkbox {
-          display: flex;
-          align-items: center;
-          padding: 6px 12px;
-          margin-right: 8px;
-          border-radius: 6px;
-          transition: all 0.2s;
-          border: 1px solid rgba(5, 212, 190, 0.2);
-          background-color: rgba(5, 212, 190, 0.05);
-      }
-      
-      .metric-checkbox:hover {
-          background-color: rgba(5, 212, 190, 0.15);
-          transform: translateY(-2px);
-          box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
-      }
-      
-      .metric-checkbox label {
-          cursor: pointer;
-          user-select: none;
-          font-weight: 500;
-          text-align: left;
-      }
-      
-      .metric-checkbox input[type="checkbox"] {
-          cursor: pointer;
-          appearance: none;
-          -webkit-appearance: none;
-          width: 18px;
-          height: 18px;
-          min-width: 18px;
-          border: 2px solid var(--primary);
-          border-radius: 4px;
-          outline: none;
-          transition: all 0.2s;
-          position: relative;
-          background-color: rgba(255, 255, 255, 0.05);
-          margin-right: 8px;
-      }
-      
-      .metric-checkbox input[type="checkbox"]:checked {
-          background-color: var(--primary);
-      }
-      
-      .metric-checkbox input[type="checkbox"]:checked + label {
-          color: var(--primary);
-      }
+      .group-title {
+      font-size: 1rem;
+      font-weight: bold;
+      color: #05D4BE;
+      margin-bottom: 8px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid rgba(5, 212, 190, 0.2);
+  }
+  
+  .cost-checkbox {
+      display: flex;
+      align-items: center;
+      padding: 6px 12px;
+      margin-right: 8px;
+      border-radius: 6px;
+      transition: all 0.2s;
+      border: 1px solid rgba(5, 212, 190, 0.2);
+      background-color: rgba(5, 212, 190, 0.05);
+  }
+  
+  .cost-checkbox:hover {
+      background-color: rgba(5, 212, 190, 0.15);
+      transform: translateY(-2px);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .cost-checkbox label {
+      cursor: pointer;
+      user-select: none;
+      font-weight: 500;
+      text-align: left;
+  }
+  
+  .cost-checkbox input[type="checkbox"] {
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      min-width: 18px;
+      border: 2px solid #05D4BE;
+      border-radius: 4px;
+      outline: none;
+      transition: all 0.2s;
+      position: relative;
+      background-color: rgba(255, 255, 255, 0.05);
+      margin-right: 8px;
+  }
+  
+  .cost-checkbox input[type="checkbox"]:checked {
+      background-color: #05D4BE;
+  }
+  
+  .cost-checkbox input[type="checkbox"]:checked + label {
+      color: #05D4BE;
+  }
       
       .chart-wrapper {
-          background-color: var(--card-bg);
-          border-radius: 12px;
-          padding: 25px;
-          box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-          border: 1px solid rgba(5, 212, 190, 0.3);
-          margin-bottom: 30px;
-          transition: transform 0.3s, box-shadow 0.3s;
+          background-color: rgba(5, 212, 190, 0.05);
+          border-radius: 8px;
+          padding: 15px;
+          border: 1px solid rgba(5, 212, 190, 0.2);
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+          margin-bottom: 20px;
           position: relative;
       }
       
@@ -233,20 +213,12 @@
           box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
       }
       
-      .chart-title {
-          font-size: 1.4rem;
-          margin-bottom: 15px;
-          color: var(--primary);
-          border-bottom: 1px solid rgba(5, 212, 190, 0.3);
-          padding-bottom: 10px;
-          font-weight: 600;
-      }
+      /* Renamed chart-title to panel-title to match the other template */
       
       #mainChart {
           width: 100%;
           height: 500px;
-          background-color: rgba(0, 0, 0, 0.05);
-          border-radius: 8px;
+          position: relative;
       }
       
       svg text {
@@ -447,7 +419,24 @@
           margin: 0;
       }
       
-      /* CSS for interactive vertical guide */
+      /* Added to match the cost structure template */
+.hover-instruction {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: rgba(0, 0, 0, 0.7);
+      color: #05D4BE;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      opacity: 0.7;
+      transition: opacity 0.3s;
+      z-index: 10;
+      border: 1px solid rgba(5, 212, 190, 0.3);
+}
+.hover-instruction:hover {
+      opacity: 1;
+}
       .vertical-guide {
           pointer-events: none;
           stroke: var(--primary);
@@ -473,24 +462,7 @@
           stroke-dasharray: 4,4;
       }
       
-      /* Add styling for the footer */
-      .footer {
-          text-align: center;
-          margin-top: 40px;
-          padding-top: 20px;
-          border-top: 1px solid rgba(255, 255, 255, 0.1);
-          color: var(--muted-text);
-          font-size: 0.9rem;
-      }
-      
-      .footer a {
-          color: var(--primary);
-          text-decoration: none;
-      }
-      
-      .footer a:hover {
-          text-decoration: underline;
-      }
+      /* Footer styles moved to inline style */
 
       /* RESPONSIVE DESIGN STYLES - Added from first code template */
       @media (max-width: 992px) {
@@ -513,9 +485,7 @@
         #mainChart {
           height: 450px !important;
         }
-        .chart-title {
-          font-size: 1.2rem;
-        }
+        /* Chart title styling removed as we're using panel-title */
         .metric-filter {
           padding: 12px;
         }
@@ -560,16 +530,14 @@
         #mainChart {
           height: 400px !important;
         }
-        .chart-title {
-          font-size: 1.1rem;
-        }
+        /* Chart title styling removed as we're using panel-title */
         .chart-wrapper {
           padding: 15px;
         }
-        .metric-checkbox {
+        .cost-checkbox {
           padding: 5px 10px;
         }
-        .section-label {
+        .group-title {
           font-size: 0.9rem;
         }
         .metric-section {
@@ -622,10 +590,7 @@
           padding: 10px;
           margin-bottom: 15px;
         }
-        .chart-title {
-          font-size: 1rem;
-          margin-bottom: 10px;
-        }
+        /* Chart title styling removed as we're using panel-title */
         .legend {
           padding: 10px 5px;
           gap: 5px;
@@ -634,10 +599,10 @@
           padding: 4px 8px;
           font-size: 0.8rem;
         }
-        .metric-checkbox label {
+        .cost-checkbox label {
           font-size: 0.8rem;
         }
-        .metric-checkbox input[type="checkbox"] {
+        .cost-checkbox input[type="checkbox"] {
           width: 16px;
           height: 16px;
           min-width: 16px;
@@ -675,60 +640,68 @@
             <div class="metric-card">
                 <div class="metric-title">EBITDA</div>
                 <div class="metric-value">£28.4M</div>
-                <div class="metric-subtitle">-22.7% vs Premier League avg</div>
+                <div class="metric-subtitle">£-8.4M vs Premier League avg</div>
             </div>
             
             <div class="metric-card">
                 <div class="metric-title">EBIT</div>
                 <div class="metric-value">£-22.8M</div>
-                <div class="metric-subtitle">+60.9% vs Premier League avg</div>
+                <div class="metric-subtitle">£+35.5M vs Premier League avg</div>
             </div>
             
             <div class="metric-card">
                 <div class="metric-title">Profit After Tax</div>
                 <div class="metric-value">£-35.6M</div>
-                <div class="metric-subtitle">-656.6% vs Premier League avg</div>
+                <div class="metric-subtitle">£-30.9M vs Premier League avg</div>
             </div>
         </div>
         
         <div class="chart-wrapper">
-            <div class="chart-title">Profitability Metrics Over Time</div>
+            <div class="panel-title">Profitability Metrics Over Time</div>
             
-            <div class="metric-filter" id="metricSelections">
-                <div class="metric-section">
-                    <div class="section-label">Underlying Profitability</div>
-                    <div class="checkbox-container">
-                        <div class="metric-checkbox">
-                            <input type="checkbox" id="ebitda" checked>
-                            <label for="ebitda">EBITDA</label>
-                        </div>
-                        <div class="metric-checkbox">
-                            <input type="checkbox" id="ebit" checked>
-                            <label for="ebit">EBIT</label>
-                        </div>
-                    </div>
+            <!-- Integrated controls with inline styles to match cost structure template exactly -->
+<div style="margin-bottom: 20px; background-color: rgba(0, 0, 0, 0.2); border-radius: 8px; padding: 15px;">
+    <div style="display: flex; flex-wrap: wrap; width: 100%; gap: 20px; justify-content: space-between;">
+        <!-- Underlying Profitability Section -->
+        <div style="min-width: min(100%, 250px); flex: 1;">
+            <div class="group-title">Underlying Profitability</div>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;">
+                <div class="cost-checkbox">
+                    <input type="checkbox" id="ebitda" checked>
+                    <label for="ebitda">EBITDA</label>
                 </div>
                 
-                <div class="metric-section">
-                    <div class="section-label">Statutory Profitability</div>
-                    <div class="checkbox-container">
-                        <div class="metric-checkbox">
-                            <input type="checkbox" id="operating_profit_loss">
-                            <label for="operating_profit_loss">Operating Profit/Loss</label>
-                        </div>
-                        <div class="metric-checkbox">
-                            <input type="checkbox" id="profit_loss_before_tax">
-                            <label for="profit_loss_before_tax">Profit/Loss Before Tax</label>
-                        </div>
-                        <div class="metric-checkbox">
-                            <input type="checkbox" id="profit_loss_after_tax">
-                            <label for="profit_loss_after_tax">Profit/Loss After Tax</label>
-                        </div>
-                    </div>
+                <div class="cost-checkbox">
+                    <input type="checkbox" id="ebit" checked>
+                    <label for="ebit">EBIT</label>
                 </div>
             </div>
+        </div>
+        
+        <!-- Statutory Profitability Section -->
+        <div style="min-width: min(100%, 250px); flex: 1;">
+            <div class="group-title">Statutory Profitability</div>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;">
+                <div class="cost-checkbox">
+                    <input type="checkbox" id="operating_profit_loss">
+                    <label for="operating_profit_loss">Operating Profit/Loss</label>
+                </div>
+                
+                <div class="cost-checkbox">
+                    <input type="checkbox" id="profit_loss_before_tax">
+                    <label for="profit_loss_before_tax">Profit/Loss Before Tax</label>
+                </div>
+                
+                <div class="cost-checkbox">
+                    <input type="checkbox" id="profit_loss_after_tax">
+                    <label for="profit_loss_after_tax">Profit/Loss After Tax</label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
             
-            <div id="mainChart"></div>
+            <div id="mainChart" style="width: 100%; height: 500px; position: relative;"></div>
             <div class="legend" id="chartLegend"></div>
         </div>
         
@@ -766,7 +739,7 @@
             </div>
         </div>
         
-        <div class="footer">
+        <div class="footer" style="text-align: center; margin-top: 30px; font-size: 0.8rem; color: #666;">
             <p>Data sourced from Companies House | Visualisation by Kinnaird Analytics</p>
         </div>
     </div>
@@ -1187,6 +1160,8 @@
       // Metric checkboxes with improved user feedback
       Object.keys(metricsConfig).forEach(metric => {
           const checkbox = document.getElementById(metric);
+          if (!checkbox) return; // Skip if checkbox doesn't exist
+          
           checkbox.addEventListener("change", function() {
               // Update selected metrics based on checkbox state
               if (this.checked) {
