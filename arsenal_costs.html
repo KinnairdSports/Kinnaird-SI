@@ -373,10 +373,17 @@
       .metrics-cards {
         flex-direction: row;
         flex-wrap: wrap;
+        gap: 10px;
       }
       .metric-card {
-        min-width: calc(50% - 15px);
-        margin-bottom: 15px;
+        min-width: calc(50% - 10px);
+        flex: 0 0 calc(50% - 10px);
+        margin-bottom: 10px;
+        padding: 12px;
+      }
+      .metric-value {
+        font-size: 1.8rem;
+        margin: 8px 0;
       }
       #mainChart {
         height: 450px !important;
@@ -393,10 +400,20 @@
       }
       .metrics-cards {
         flex-direction: column;
+        gap: 10px;
       }
       .metric-card {
         min-width: 100%;
+        flex: 0 0 100%;
         margin-bottom: 10px;
+        padding: 10px;
+      }
+      .metric-value {
+        font-size: 1.5rem;
+        margin: 6px 0;
+      }
+      .metric-subtitle {
+        font-size: 0.85rem;
       }
       .metrics-grid {
         grid-template-columns: 1fr;
@@ -426,14 +443,22 @@
       .container {
         padding: 5px;
       }
-      .metric-value {
-        font-size: 1.6rem;
+      .metrics-cards {
+        gap: 8px;
+      }
+      .metric-card {
+        padding: 8px;
+        margin-bottom: 8px;
       }
       .metric-title {
-        font-size: 0.9rem;
+        font-size: 0.85rem;
+      }
+      .metric-value {
+        font-size: 1.3rem;
+        margin: 5px 0;
       }
       .metric-subtitle {
-        font-size: 0.8rem;
+        font-size: 0.75rem;
       }
       #mainChart {
         height: 300px !important;
