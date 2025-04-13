@@ -138,6 +138,9 @@
       margin-bottom: 20px;
       flex-wrap: wrap;
       gap: 15px;
+      width: 100%;
+      padding: 0;
+      box-sizing: border-box;
     }
     .metric-card {
       background: linear-gradient(135deg, rgba(5, 212, 190, 0.2), rgba(95, 132, 251, 0.2));
@@ -203,14 +206,146 @@
       }
     }
     
-    @media (max-width: 768px) {
+    /* RESPONSIVE DESIGN STYLES - Aligned with other templates */
+    @media (max-width: 992px) {
       .container {
-        padding: 15px 10px;
+        padding: 15px;
       }
       .metrics-cards {
-        flex-direction: column;
+        flex-wrap: wrap;
+        gap: 10px;
       }
-      .metric-card { min-width: 100%; }
+      /* Keep cards in row with adjusted width */
+      .metric-card {
+        flex: 1 0 calc(33.333% - 10px);
+        padding: 12px;
+      }
+      .metric-value {
+        font-size: 1.8rem;
+        margin: 8px 0;
+      }
+      .chart-wrapper {
+        padding: 12px;
+      }
+      th, td {
+        padding: 8px;
+        font-size: 0.95rem;
+      }
+      th:first-child, td:first-child {
+        width: 200px;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .container {
+        padding: 10px 5px;
+      }
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      /* Convert to vertical stack on tablet and ensure same width as graph */
+      .metrics-cards {
+        display: block; /* Change to block to ensure full width */
+        width: 100%;
+        gap: 0;
+        padding: 0;
+      }
+      .metric-card {
+        width: 100%;
+        max-width: 100%;
+        flex: none;
+        margin: 0 0 10px 0; /* Add bottom margin only */
+        padding: 10px;
+        box-sizing: border-box; /* Ensure padding is included in width */
+      }
+      .metric-value {
+        font-size: 1.5rem;
+        margin: 6px 0;
+      }
+      .metric-subtitle {
+        font-size: 0.85rem;
+      }
+      .panel-title {
+        font-size: 1rem;
+      }
+      .chart-wrapper {
+        padding: 15px;
+        overflow-x: auto;
+      }
+      th, td {
+        padding: 8px 6px;
+        font-size: 0.9rem;
+      }
+      th:first-child, td:first-child {
+        width: 180px;
+        min-width: 180px;
+      }
+      table {
+        min-width: 650px; /* Ensure table has minimum width for scrolling */
+      }
+      .subcategory {
+        padding-left: 20px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      body {
+        padding: 5px;
+      }
+      .container {
+        padding: 5px;
+      }
+      /* Ensure cards match graph width exactly on mobile */
+      .metrics-cards {
+        width: 100%;
+        padding: 0;
+      }
+      .metric-card {
+        width: 100%;
+        padding: 8px;
+        margin: 0 0 8px 0;
+        box-sizing: border-box;
+        max-width: 100%;
+      }
+      .metric-title {
+        font-size: 0.85rem;
+      }
+      .metric-value {
+        font-size: 1.3rem;
+        margin: 5px 0;
+      }
+      .metric-subtitle {
+        font-size: 0.75rem;
+      }
+      .chart-wrapper {
+        padding: 10px;
+        margin-bottom: 15px;
+      }
+      .footer {
+        margin-top: 20px;
+        font-size: 0.8rem;
+      }
+      .panel-title {
+        font-size: 0.9rem;
+      }
+      th, td {
+        padding: 6px 4px;
+        font-size: 0.8rem;
+      }
+      th:first-child, td:first-child {
+        width: 150px;
+        min-width: 150px;
+      }
+      table {
+        min-width: 500px; /* Slightly smaller minimum width for very small screens */
+      }
+      .subcategory {
+        padding-left: 10px;
+      }
+      .revenue-title {
+        font-size: 1.1rem;
+      }
     }
   </style>
 </head>
@@ -222,9 +357,8 @@
       </div>
     </div>
     
-
-    
     <div class="chart-wrapper">
+      <div class="panel-title">Financial Statement</div>
       <div class="table-container">
         <table>
           <thead>
@@ -368,4 +502,3 @@
   </div>
 </body>
 </html>
-    
