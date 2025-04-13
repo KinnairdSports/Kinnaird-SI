@@ -60,6 +60,9 @@
       margin-bottom: 20px;
       flex-wrap: wrap;
       gap: 15px;
+      width: 100%;
+      padding: 0;
+      box-sizing: border-box;
     }
     .chart-wrapper {
       background-color: rgba(5, 212, 190, 0.05);
@@ -67,6 +70,7 @@
       padding: 15px;
       border: 1px solid rgba(5, 212, 190, 0.2);
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      position: relative;
     }
     .metric-card {
       background: linear-gradient(135deg, rgba(5, 212, 190, 0.2), rgba(95, 132, 251, 0.2));
@@ -178,11 +182,142 @@
     .axis-x text, .axis-y text { fill: white; font-size: 12px; font-family: 'aglet-sans', sans-serif; }
     .chart-title { fill: white; font-size: 18px; font-weight: bold; font-family: 'aglet-sans', sans-serif; text-anchor: middle; }
     
+    /* RESPONSIVE DESIGN STYLES - Aligned with other templates */
+    @media (max-width: 992px) {
+      .container {
+        padding: 15px;
+      }
+      .metrics-cards {
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      /* Keep cards in row with adjusted width */
+      .metric-card {
+        flex: 1 0 calc(33.333% - 10px);
+        padding: 12px;
+      }
+      .metric-value {
+        font-size: 0.9rem;
+      }
+      .metric-card .metric-value {
+        font-size: 1.8rem;
+        margin: 8px 0;
+      }
+      .chart-wrapper {
+        padding: 12px;
+      }
+      .panel-title {
+        font-size: 1rem;
+      }
+    }
+    
     @media (max-width: 768px) {
+      .container {
+        padding: 10px 5px;
+      }
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      /* Convert to vertical stack on tablet and ensure same width as graph */
+      .metrics-cards {
+        display: block; /* Change to block to ensure full width */
+        width: 100%;
+        gap: 0;
+        padding: 0;
+      }
+      .metric-card {
+        width: 100%;
+        max-width: 100%;
+        flex: none;
+        margin: 0 0 10px 0; /* Add bottom margin only */
+        padding: 10px;
+        box-sizing: border-box; /* Ensure padding is included in width */
+      }
+      .metric-card .metric-value {
+        font-size: 1.5rem;
+        margin: 6px 0;
+      }
+      .metric-subtitle {
+        font-size: 0.85rem;
+      }
+      .panel-title {
+        font-size: 1rem;
+      }
+      .chart-wrapper {
+        padding: 15px;
+      }
       .metrics-grid, .chart-container {
         grid-template-columns: 1fr;
       }
-      .metric-card { min-width: 100%; }
+      .metric-row {
+        font-size: 0.85rem;
+      }
+      #revenueChart {
+        height: 220px !important;
+        margin-top: 15px;
+      }
+      #revenueTrendChart, #wagesTrendChart, #profitTrendChart {
+        height: 180px !important;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      body {
+        padding: 5px;
+      }
+      .container {
+        padding: 5px;
+      }
+      /* Ensure cards match graph width exactly on mobile */
+      .metrics-cards {
+        width: 100%;
+        padding: 0;
+      }
+      .metric-card {
+        width: 100%;
+        padding: 8px;
+        margin: 0 0 8px 0;
+        box-sizing: border-box;
+        max-width: 100%;
+      }
+      .metric-title {
+        font-size: 0.85rem;
+      }
+      .metric-card .metric-value {
+        font-size: 1.3rem;
+        margin: 5px 0;
+      }
+      .metric-subtitle {
+        font-size: 0.75rem;
+      }
+      .chart-wrapper {
+        padding: 10px;
+        margin-bottom: 15px;
+      }
+      .footer {
+        margin-top: 20px;
+        font-size: 0.8rem;
+      }
+      .panel-title {
+        font-size: 0.9rem;
+      }
+      .metric-row {
+        font-size: 0.8rem;
+        margin-bottom: 6px;
+      }
+      .financial-year {
+        font-size: 1.1rem;
+      }
+      .team-performance {
+        font-size: 0.9rem;
+      }
+      #revenueChart {
+        height: 180px !important;
+      }
+      #revenueTrendChart, #wagesTrendChart, #profitTrendChart {
+        height: 160px !important;
+      }
     }
   </style>
 </head>
@@ -313,15 +448,15 @@
         <div class="panel-title">League Comparison</div>
         <div class="metric-row">
           <span class="metric-label">Revenue vs. Avg</span>
-          <span class="metric-value">33% below average</span>
+          <span class="metric-value">32% below average</span>
         </div>
         <div class="metric-row">
           <span class="metric-label">Wages vs. Avg</span>
-          <span class="metric-value">31% below average</span>
+          <span class="metric-value">30% below average</span>
         </div>
         <div class="metric-row">
           <span class="metric-label">Amortisation vs. Avg</span>
-          <span class="metric-value">58% below average</span>
+          <span class="metric-value">56% below average</span>
         </div>
         <div class="metric-row">
           <span class="metric-label">Net Debt vs. Avg</span>
@@ -352,7 +487,7 @@
     </div>
     
     <div class="footer">
-      Data last updated: 2025-04-10 13:39:49 | Source: Published Club Accounts & Premier League Financial Records
+      Data last updated: 2025-04-13 14:06:41 | Source: Published Club Accounts & Premier League Financial Records
       <div><small>Double-click on chart area to view data details</small></div>
     </div>
   </div>
@@ -367,7 +502,7 @@
     const historicalData = [{"financial_year": 2020, "total_income": 123508000, "staff_costs": 103178000, "operating_profit_loss": -63941000, "net_debt": null, "year_display": "2020"}, {"financial_year": 2021, "total_income": 139119000, "staff_costs": 108884000, "operating_profit_loss": -50371000, "net_debt": null, "year_display": "2021"}, {"financial_year": 2022, "total_income": 167961000, "staff_costs": 115264000, "operating_profit_loss": 22191000, "net_debt": null, "year_display": "2022"}, {"financial_year": 2023, "total_income": 204450000, "staff_costs": 127563000, "operating_profit_loss": 130714000, "net_debt": null, "year_display": "2023"}, {"financial_year": 2024, "total_income": 222549000, "staff_costs": 146221000, "operating_profit_loss": 73276000, "net_debt": null, "year_display": "2024"}];
     
     // League averages
-    const leagueAverages = {"avg_income": 332805038.4444444, "avg_wages": 212449482.1111111, "avg_amortisation": 92677550.66666667, "avg_debt": null, "avg_wages_ratio": 63.925000000000004};
+    const leagueAverages = {"avg_income": 326596720.6315789, "avg_wages": 208088088.31578946, "avg_amortisation": 89821205.89473684, "avg_debt": null, "avg_wages_ratio": 63.925000000000004};
     
     // Format helpers
     function formatCurrency(value) {
@@ -635,6 +770,23 @@
     document.addEventListener('DOMContentLoaded', function() {
       createRevenueChart();
       createTrendCharts();
+      
+      // Handle window resize event for responsive charts
+      let resizeTimer;
+      window.addEventListener('resize', function() {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(function() {
+          // Clear existing charts
+          document.getElementById('revenueChart').innerHTML = '';
+          document.getElementById('revenueTrendChart').innerHTML = '';
+          document.getElementById('wagesTrendChart').innerHTML = '';
+          document.getElementById('profitTrendChart').innerHTML = '';
+          
+          // Redraw charts
+          createRevenueChart();
+          createTrendCharts();
+        }, 250);
+      });
       
       // Add event listener for debug data on double-click
       document.addEventListener('dblclick', function() {
