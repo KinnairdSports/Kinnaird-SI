@@ -1,487 +1,1129 @@
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <title>Club Costs Analysis</title>
-    <!-- Load Aglet Sans from Typekit -->
-    <link href="https://use.typekit.net/xxs6huv.css" rel="stylesheet">
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-    <style>
-      :root {
-        --background: #11242B;
-        --text: #FFFFFF;
-        --muted-text: #CCCCCC;
-        --primary: #05D4BE;
-        --secondary: #5F84FB;
-        --accent: #FF9500;
-        --grid: rgba(128, 128, 128, 0.2);
-        --line: rgba(255, 255, 255, 0.3);
-        --tooltip-bg: #1D3B48;
-      }
-      
-      body {
-          font-family: 'aglet-sans', sans-serif !important;
-          background-color: var(--background);
-          color: var(--text);
-          margin: 0;
-          padding: 0;
-      }
-      
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Bristol City - Cost Structure Analysis</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <link rel="stylesheet" href="https://use.typekit.net/xxs6huv.css">
+  <style>
+    body {
+      background-color: #000000;
+      color: white;
+      font-family: 'aglet-sans', sans-serif;
+      padding: 10px;
+      margin: 0;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #000000;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      border-bottom: 1px solid rgba(5, 212, 190, 0.3);
+      padding-bottom: 10px;
+    }
+    .club-info {
+      display: flex;
+      flex-direction: column;
+    }
+    .cost-title {
+      font-size: 1.2rem;
+      color: #cccccc;
+      font-weight: normal;
+    }
+    .team-performance {
+      font-size: 1rem;
+      color: #cccccc;
+      margin-top: 5px;
+    }
+    .metrics-cards {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    .metric-card {
+      background: linear-gradient(135deg, rgba(5, 212, 190, 0.2), rgba(95, 132, 251, 0.2));
+      border-radius: 8px;
+      padding: 15px;
+      flex: 1;
+      min-width: 180px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(5, 212, 190, 0.3);
+      text-align: center;
+    }
+    .metric-title { 
+      font-size: 1rem; 
+      color: #cccccc; 
+    }
+    .metric-value { 
+      font-size: 2rem; 
+      font-weight: bold; 
+      margin: 10px 0; 
+      color: #05D4BE; 
+    }
+    .metric-subtitle {
+      font-size: 0.9rem;
+      color: #cccccc;
+    }
+    .metric-change {
+      font-size: 0.9rem;
+    }
+    .positive-change {
+      color: #4CD964;
+    }
+    .negative-change {
+      color: #FF3B30;
+    }
+    .neutral {
+      color: #05D4BE;
+    }
+    .control-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      align-items: center;
+      margin-bottom: 20px;
+      padding: 15px;
+      background-color: rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      width: 100%;
+    }
+    .group-title {
+      font-size: 1rem;
+      font-weight: bold;
+      color: #05D4BE;
+      margin-bottom: 8px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid rgba(5, 212, 190, 0.2);
+    }
+    .cost-checkbox {
+      display: flex;
+      align-items: center;
+      padding: 6px 12px;
+      margin-right: 8px;
+      border-radius: 6px;
+      transition: all 0.2s;
+      border: 1px solid rgba(5, 212, 190, 0.2);
+      background-color: rgba(5, 212, 190, 0.05);
+    }
+    .cost-checkbox:hover {
+      background-color: rgba(5, 212, 190, 0.15);
+      transform: translateY(-2px);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+    }
+    .cost-checkbox label {
+      cursor: pointer;
+      user-select: none;
+      font-weight: 500;
+      text-align: left;
+    }
+    .cost-checkbox input[type="checkbox"] {
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      min-width: 18px;
+      border: 2px solid #05D4BE;
+      border-radius: 4px;
+      outline: none;
+      transition: all 0.2s;
+      position: relative;
+      background-color: rgba(255, 255, 255, 0.05);
+      margin-right: 8px;
+    }
+    .cost-checkbox input[type="checkbox"]:checked {
+      background-color: #05D4BE;
+    }
+    .cost-checkbox input[type="checkbox"]:checked + label {
+      color: #05D4BE;
+    }
+    .chart-wrapper {
+      background-color: rgba(5, 212, 190, 0.05);
+      border-radius: 8px;
+      padding: 15px;
+      border: 1px solid rgba(5, 212, 190, 0.2);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      margin-bottom: 20px;
+      position: relative;
+    }
+    .panel-title {
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+      color: #05D4BE;
+      border-bottom: 1px solid rgba(5, 212, 190, 0.3);
+      padding-bottom: 5px;
+    }
+    .metric-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+    }
+    .metric-label {
+      color: #cccccc;
+    }
+    .metric-row .metric-value {
+      font-size: inherit;
+      font-weight: bold;
+      color: white;
+      margin: 0;
+    }
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    .hover-instruction {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: rgba(0, 0, 0, 0.7);
+      color: #05D4BE;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      opacity: 0.7;
+      transition: opacity 0.3s;
+      z-index: 10;
+      border: 1px solid rgba(5, 212, 190, 0.3);
+    }
+    .hover-instruction:hover {
+      opacity: 1;
+    }
+    .tooltip {
+      position: absolute;
+      padding: 12px 15px;
+      background: #111111;
+      color: #FFFFFF;
+      border: 1px solid #05D4BE;
+      border-radius: 8px;
+      pointer-events: none;
+      font-family: 'aglet-sans', sans-serif;
+      font-size: 14px;
+      opacity: 0;
+      transition: all 0.3s;
+      z-index: 10;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      max-width: 300px;
+      backdrop-filter: blur(4px);
+    }
+    .tooltip-header {
+      margin-bottom: 5px;
+    }
+    .tooltip-title {
+      font-weight: bold;
+      color: #05D4BE;
+      margin-bottom: 4px;
+      font-size: 16px;
+    }
+    .tooltip-subtitle {
+      color: #cccccc;
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+    .tooltip-divider {
+      height: 1px;
+      background-color: rgba(255, 255, 255, 0.2);
+      margin: 8px 0;
+      width: 100%;
+    }
+    .tooltip-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+    .tooltip-item-value {
+      font-weight: bold;
+      margin-left: 15px;
+    }
+    .tooltip-total {
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+    }
+    .tooltip-total-value {
+      color: #9C68F5;
+    }
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 20px;
+      padding: 15px;
+      background-color: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      justify-content: center;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: help;
+      padding: 6px 12px;
+      border-radius: 6px;
+      transition: all 0.2s;
+      user-select: none;
+      position: relative;
+    }
+    .legend-item:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      transform: translateY(-2px);
+    }
+    .legend-tooltip-always-visible {
+      background-color: #111111;
+      border: 1px solid #05D4BE;
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      min-width: 200px;
+      max-width: 250px;
+      z-index: 10000;
+      color: white;
+      padding: 10px 12px;
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      visibility: hidden;
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+      opacity: 1;
+    }
+    
+    .legend-tooltip-always-visible::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -8px;
+      border-width: 8px;
+      border-style: solid;
+      border-color: #05D4BE transparent transparent transparent;
+    }
+    
+    .legend-item:hover .legend-tooltip-always-visible {
+      visibility: visible;
+    }
+    .legend-tooltip-title {
+      font-weight: bold;
+      color: #05D4BE;
+      margin-bottom: 5px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      padding-bottom: 3px;
+    }
+    .legend-color {
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    }
+    .vertical-guide {
+      pointer-events: none;
+      stroke: #05D4BE;
+      stroke-width: 1.5;
+      stroke-dasharray: 5,3;
+    }
+    .guide-circle {
+      pointer-events: none;
+      fill: #05D4BE;
+      stroke: white;
+      stroke-width: 1.5;
+    }
+    .cost-bar {
+      transition: opacity 0.3s, stroke-width 0.2s;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 30px;
+      font-size: 0.8rem;
+      color: #666;
+    }
+    
+    /* Color variables for the cost categories - Colorblind-friendly palette with better differentiation */
+    :root {
+      --staff-costs: #05D4BE;        /* Original teal - kept as requested */
+      --operating-expenses: #4D7AFF;  /* Original blue - kept as requested */
+      --player-amortisation: #2166AC; /* Darker blue - good contrast with other colors */
+      --depreciation: #7D95B6;        /* Lighter blue-gray - more distinct from impairment */
+      --player-impairment: #243447;   /* Much darker navy - clear contrast from depreciation */
+      --total: #9C68F5;               /* Original purple for totals */
+      --grid: rgba(255, 255, 255, 0.25);
+      --line: rgba(255, 255, 255, 0.3);
+    }
+    
+    /* Enhanced responsive styles for different screen sizes */
+    @media (max-width: 992px) {
       .container {
-          max-width: 1200px;
-          margin: 0 auto;
-          padding: 20px;
+        padding: 15px;
       }
-      
+      .metrics-cards {
+        flex-direction: row;
+        flex-wrap: wrap;
+      }
+      .metric-card {
+        min-width: calc(50% - 15px);
+        margin-bottom: 15px;
+      }
+      #mainChart {
+        height: 450px !important;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .container {
+        padding: 10px 5px;
+      }
       .header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding-bottom: 15px;
-          margin-bottom: 25px;
-          border-bottom: 1px solid var(--primary);
+        flex-direction: column;
+        align-items: flex-start;
       }
-      
-      .club-info {
-          display: flex;
-          flex-direction: column;
+      .metrics-cards {
+        flex-direction: column;
       }
-      
-      .financial-details {
-          font-size: 1rem;
-          color: var(--muted-text);
-          margin-top: 5px;
+      .metric-card {
+        min-width: 100%;
+        margin-bottom: 10px;
       }
-      
-      .controls {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 20px;
-          align-items: center;
-          margin-bottom: 20px;
-          padding: 15px;
-          background-color: rgba(0, 0, 0, 0.1);
-          border-radius: 8px;
+      .metrics-grid {
+        grid-template-columns: 1fr;
       }
-      
-      .control-group {
-          display: flex;
-          align-items: center;
-          gap: 10px;
+      .panel-title {
+        font-size: 1rem;
       }
-      
-      .toggle-switch {
-          position: relative;
-          display: inline-block;
-          width: 48px;
-          height: 24px;
+      #mainChart {
+        height: 400px !important;
       }
-      
-      .toggle-switch input {
-          opacity: 0;
-          width: 0;
-          height: 0;
-      }
-      
-      .slider {
-          position: absolute;
-          cursor: pointer;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background-color: rgba(255, 255, 255, 0.3);
-          transition: .4s;
-          border-radius: 24px;
-      }
-      
-      .slider:before {
-          position: absolute;
-          content: "";
-          height: 16px;
-          width: 16px;
-          left: 4px;
-          bottom: 4px;
-          background-color: white;
-          transition: .4s;
-          border-radius: 50%;
-      }
-      
-      input:checked + .slider {
-          background-color: var(--primary);
-      }
-      
-      input:checked + .slider:before {
-          transform: translateX(24px);
-      }
-      
-      .chart-wrapper {
-          background-color: rgba(255, 255, 255, 0.05);
-          border-radius: 8px;
-          padding: 20px;
-          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-          border: 1px solid rgba(5, 212, 190, 0.3);
-          margin-bottom: 20px;
-      }
-      
-      .chart-title {
-          font-size: 1.2rem;
-          margin-bottom: 15px;
-          color: var(--primary);
-          border-bottom: 1px solid rgba(5, 212, 190, 0.3);
-          padding-bottom: 5px;
-      }
-      
-      svg text {
-          font-family: 'aglet-sans', sans-serif !important;
-          fill: var(--text);
-      }
-      
-      .axis-x path, .axis-y path {
-          stroke: var(--line);
-      }
-      
-      .axis-x .tick line, .axis-y .tick line {
-          stroke: var(--grid);
-      }
-      
-      .axis-x text, .axis-y text {
-          fill: var(--text);
-          font-size: 12px;
-      }
-      
-      .tooltip {
-          position: absolute;
-          padding: 10px;
-          background: var(--tooltip-bg);
-          color: var(--text);
-          border: 1px solid var(--primary);
-          border-radius: 5px;
-          pointer-events: none;
-          font-family: 'aglet-sans', sans-serif;
-          font-size: 14px;
-          opacity: 0;
-          transition: opacity 0.3s;
-          z-index: 10;
-          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-      }
-      
       .cost-checkbox {
-          margin-right: 10px;
-          display: flex;
-          align-items: center;
-          gap: 5px;
+        padding: 5px 10px;
       }
-      
+      .group-title {
+        font-size: 0.9rem;
+      }
+      .hover-instruction {
+        font-size: 0.7rem;
+        padding: 5px 8px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      body {
+        padding: 5px;
+      }
+      .container {
+        padding: 5px;
+      }
+      .metric-value {
+        font-size: 1.6rem;
+      }
+      .metric-title {
+        font-size: 0.9rem;
+      }
+      .metric-subtitle {
+        font-size: 0.8rem;
+      }
+      #mainChart {
+        height: 300px !important;
+      }
       .legend {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 15px;
-          margin-top: 15px;
+        padding: 10px 5px;
+        gap: 5px;
       }
-      
       .legend-item {
-          display: flex;
-          align-items: center;
-          gap: 5px;
-          cursor: pointer;
+        padding: 4px 8px;
+        font-size: 0.8rem;
       }
-      
-      .legend-color {
-          width: 15px;
-          height: 15px;
-          border-radius: 3px;
+      .cost-checkbox label {
+        font-size: 0.8rem;
       }
-    </style>
+      .cost-checkbox input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+        min-width: 16px;
+      }
+      .tooltip {
+        max-width: 240px;
+        font-size: 12px;
+        padding: 8px 10px;
+      }
+      .tooltip-title {
+        font-size: 14px;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <div class="club-info">
-                <div class="financial-details">Costs Analysis | 2015 - 2024</div>
-            </div>
-        </div>
-        
-        <div class="controls">
-            <div class="control-group">
-                <label class="toggle-switch">
-                    <input type="checkbox" id="inflationToggle">
-                    <span class="slider"></span>
-                </label>
-                <span>Adjust for Inflation</span>
-            </div>
-            
-            <div class="control-group" id="costSelections">
-                <div class="cost-checkbox">
-                    <input type="checkbox" id="staff_costs" checked>
-                    <label for="staff_costs">Staff Costs</label>
-                </div>
-                <div class="cost-checkbox">
-                    <input type="checkbox" id="operating_expenses" checked>
-                    <label for="operating_expenses">Operating Expenses</label>
-                </div>
-                <div class="cost-checkbox">
-                    <input type="checkbox" id="player_amortisation">
-                    <label for="player_amortisation">Player Amortisation</label>
-                </div>
-                <div class="cost-checkbox">
-                    <input type="checkbox" id="depreciation">
-                    <label for="depreciation">Depreciation</label>
-                </div>
-                <div class="cost-checkbox">
-                    <input type="checkbox" id="player_impairment">
-                    <label for="player_impairment">Player Impairment</label>
-                </div>
-                <div class="cost-checkbox">
-                    <input type="checkbox" id="exceptional_items">
-                    <label for="exceptional_items">Exceptional Items</label>
-                </div>
-            </div>
-        </div>
-        
-        <div class="chart-wrapper">
-            <div class="chart-title">Costs Over Time</div>
-            <div id="mainChart" style="width: 100%; height: 500px;"></div>
-            <div class="legend" id="chartLegend"></div>
-        </div>
+  <div class="container">
+    <div class="header">
+      <div class="club-info">
+        <div class="cost-title">Cost Structure</div>
+      </div>
     </div>
     
-    <div id="tooltip" class="tooltip"></div>
+    <div class="metrics-cards">
+      <div class="metric-card">
+        <div class="metric-title">Staff Costs</div>
+        <div class="metric-value">£24.8M</div>
+        <div class="metric-subtitle">No league average data</div>
+      </div>
+      
+      <div class="metric-card">
+        <div class="metric-title">Other Operating Expenses</div>
+        <div class="metric-value">£0.0M</div>
+        <div class="metric-subtitle">No league average data</div>
+      </div>
+      
+      <div class="metric-card">
+        <div class="metric-title">Amortisation</div>
+        <div class="metric-value">£3.2M</div>
+        <div class="metric-subtitle">No league average data</div>
+      </div>
+    </div>
     
-    <script>
-      // Data for the chart
-      const financialYears = [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024];
-      const costData = {"staff_costs": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "operating_expenses": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "player_amortisation": [1518485.0, 1984642.0, 5627706.0, 6789450.0, 7753115.0, 11116495.0, 11587331.0, 7438301.0, 6834873.0, 3208956.0], "depreciation": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "player_impairment": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "exceptional_items": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]};
-      const adjustedCostData = {"staff_costs": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "operating_expenses": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "player_amortisation": [2277727.5, 2877730.9, 7878788.399999999, 9165757.5, 10079049.5, 13895618.75, 13904797.2, 8554046.149999999, 7518360.300000001, 3208956.0], "depreciation": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "player_impairment": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "exceptional_items": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]};
-      const positionData = [null, null, null, null, null, null, null, null, null, null];
-      const leagueData = [null, null, null, null, null, null, null, null, null, null];
+    <div class="chart-wrapper">
+      <div class="panel-title">Cost Structure Evolution</div>
       
-      // Cost categories
-      const costCategories = [
-        'staff_costs', 
-        'operating_expenses', 
-        'player_amortisation', 
-        'depreciation', 
-        'player_impairment', 
-        'exceptional_items'
-      ];
-      
-      // Color palette
-      const colorPalette = [
-        '#05D4BE',  // Staff Costs (primary)
-        '#5F84FB',  // Operating Expenses (secondary)
-        '#FF9500',  // Player Amortisation (accent)
-        '#4CD964',  // Depreciation (positive)
-        '#FF3B30',  // Player Impairment (negative)
-        '#8E44AD'   // Exceptional Items (purple)
-      ];
-      
-      // Active dataset and selected cost categories for stacking
-      let activeWagesData = costData;
-      let selectedCategories = ['staff_costs', 'operating_expenses'];
-      
-      // Render the stacked area chart
-      function renderMainChart() {
-          // Clear previous chart and legend
-          d3.select("#mainChart").html("");
-          d3.select("#chartLegend").html("");
-          
-          // Prepare data for stacking
-          const dataForStack = financialYears.map((year, i) => {
-              let obj = { financial_year: year };
-              selectedCategories.forEach(category => {
-                  obj[category] = activeWagesData[category][i];
-              });
-              return obj;
-          });
-          
-          // Create stack layout
-          const stack = d3.stack()
-              .keys(selectedCategories)
-              .order(d3.stackOrderNone)
-              .offset(d3.stackOffsetNone);
-          const series = stack(dataForStack);
-          
-          // Compute maximum y value from stacked data
-          const maxY = d3.max(series, s => d3.max(s, d => d[1]));
-          
-          // Set up dimensions
-          const margin = {top: 30, right: 40, bottom: 60, left: 70};
-          const width = document.getElementById('mainChart').clientWidth - margin.left - margin.right;
-          const height = document.getElementById('mainChart').clientHeight - margin.top - margin.bottom;
-          
-          // Create SVG container
-          const svg = d3.select("#mainChart")
-              .append("svg")
-              .attr("width", width + margin.left + margin.right)
-              .attr("height", height + margin.top + margin.bottom)
-              .append("g")
-              .attr("transform", `translate(${margin.left}, ${margin.top})`);
-          
-          // Set up scales
-          const x = d3.scaleLinear()
-              .domain([d3.min(financialYears), d3.max(financialYears)])
-              .range([0, width]);
-          
-          const y = d3.scaleLinear()
-              .domain([0, maxY * 1.1])
-              .range([height, 0]);
-          
-          // Add grid lines
-          svg.append("g")
-              .attr("class", "grid")
-              .attr("transform", `translate(0, ${height})`)
-              .call(d3.axisBottom(x)
-                  .tickFormat("")
-                  .tickSize(-height)
-                  .tickValues(financialYears));
-          
-          svg.append("g")
-              .attr("class", "grid")
-              .call(d3.axisLeft(y)
-                  .tickFormat("")
-                  .tickSize(-width));
-          
-          svg.selectAll(".grid line")
-              .style("stroke", "var(--grid)")
-              .style("stroke-opacity", "0.7")
-              .style("shape-rendering", "crispEdges");
-          
-          svg.selectAll(".grid path")
-              .style("stroke-width", "0");
-          
-          // Add X axis
-          svg.append("g")
-              .attr("class", "axis-x")
-              .attr("transform", `translate(0, ${height})`)
-              .call(d3.axisBottom(x)
-                  .tickFormat(d3.format("d"))
-                  .ticks(financialYears.length)
-                  .tickValues(financialYears));
-          
-          // Add Y axis
-          svg.append("g")
-              .attr("class", "axis-y")
-              .call(d3.axisLeft(y)
-                  .tickFormat(d => `£${(d/1000000).toFixed(0)}M`));
-          
-          // Create area generator
-          const area = d3.area()
-              .x(d => x(d.data.financial_year))
-              .y0(d => y(d[0]))
-              .y1(d => y(d[1]))
-              .curve(d3.curveMonotoneX);
-          
-          // Render stacked areas
-          svg.selectAll(".layer")
-              .data(series)
-              .enter()
-              .append("path")
-              .attr("class", "layer")
-              .attr("d", area)
-              .attr("fill", d => {
-                  const idx = selectedCategories.indexOf(d.key);
-                  return colorPalette[idx];
-              })
-              .style("stroke", "white")
-              .style("stroke-width", 0.5);
-          
-          // Add overlay for tooltip
-          svg.append("rect")
-              .attr("class", "overlay")
-              .attr("width", width)
-              .attr("height", height)
-              .style("fill", "none")
-              .style("pointer-events", "all")
-              .on("mousemove", function(event) {
-                  const mouseX = d3.pointer(event)[0];
-                  const x0 = x.invert(mouseX);
-                  const bisect = d3.bisector(d => d.financial_year).left;
-                  const index = bisect(dataForStack, x0);
-                  const d0 = dataForStack[index - 1] || dataForStack[0];
-                  const d1 = dataForStack[index] || dataForStack[dataForStack.length - 1];
-                  const dNearest = (x0 - d0.financial_year) < (d1.financial_year - x0) ? d0 : d1;
-                  let content = `<strong>Financial Year: ${dNearest.financial_year}</strong><br>`;
-                  selectedCategories.forEach(cat => {
-                      content += `${cat.replace('_', ' ').replace(/\w/g, l => l.toUpperCase())}: £${(dNearest[cat]/1000000).toFixed(1)}M<br>`;
-                  });
-                  d3.select("#tooltip")
-                      .style("opacity", 1)
-                      .style("left", (event.pageX + 10) + "px")
-                      .style("top", (event.pageY - 15) + "px")
-                      .html(content);
-              })
-              .on("mouseout", function() {
-                  d3.select("#tooltip").style("opacity", 0);
-              });
-          
-          // Add Legend
-          const legend = d3.select("#chartLegend");
-          selectedCategories.forEach((category, index) => {
-              const legendItem = legend.append("div")
-                  .attr("class", "legend-item")
-                  .on("click", function() {
-                      // Toggle category visibility
-                      const checkbox = document.getElementById(category);
-                      checkbox.checked = !checkbox.checked;
-                      checkbox.dispatchEvent(new Event('change'));
-                  });
+      <!-- Improved controls section with better mobile layout -->
+      <div style="margin-bottom: 20px; background-color: rgba(0, 0, 0, 0.2); border-radius: 8px; padding: 15px;">
+        <div style="display: flex; flex-wrap: wrap; width: 100%; gap: 20px; justify-content: space-between;">
+          <!-- Operating Expenses Section -->
+          <div style="min-width: min(100%, 250px); flex: 1;">
+            <div class="group-title">Operating Expenses</div>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;">
+              <div class="cost-checkbox">
+                <input type="checkbox" id="staff_costs" checked>
+                <label for="staff_costs">Staff Costs</label>
+              </div>
               
-              legendItem.append("div")
-                  .attr("class", "legend-color")
-                  .style("background-color", colorPalette[selectedCategories.indexOf(category)]);
+              <div class="cost-checkbox">
+                <input type="checkbox" id="operating_expenses" checked>
+                <label for="operating_expenses">Other OpEx</label>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Non-Cash Expenses Section -->
+          <div style="min-width: min(100%, 250px); flex: 1;">
+            <div class="group-title">Non-Cash Expenses</div>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;">
+              <div class="cost-checkbox">
+                <input type="checkbox" id="player_amortisation">
+                <label for="player_amortisation">Amortisation</label>
+              </div>
               
-              legendItem.append("span")
-                  .text(category.replace('_', ' ').replace(/\w/g, l => l.toUpperCase()));
-          });
+              <div class="cost-checkbox">
+                <input type="checkbox" id="depreciation">
+                <label for="depreciation">Depreciation</label>
+              </div>
+            </div>
+          </div>
           
-          // Add axis labels
-          svg.append("text")
-              .attr("class", "axis-title")
-              .attr("x", width / 2)
-              .attr("y", height + margin.bottom - 10)
-              .attr("text-anchor", "middle")
-              .style("fill", "var(--text)")
-              .style("font-size", "14px")
-              .text("Financial Year");
-          
-          svg.append("text")
-              .attr("class", "axis-title")
-              .attr("transform", "rotate(-90)")
-              .attr("x", -height / 2)
-              .attr("y", -margin.left + 20)
-              .attr("text-anchor", "middle")
-              .style("fill", "var(--text)")
-              .style("font-size", "14px")
-              .text("Costs (GBP)");
+          <!-- Exceptional Items Section -->
+          <div style="min-width: min(100%, 250px); flex: 1;">
+            <div class="group-title">Exceptional Items</div>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;">
+              <div class="cost-checkbox">
+                <input type="checkbox" id="player_impairment">
+                <label for="player_impairment">Player Impairment</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div id="mainChart" style="width: 100%; height: 500px; position: relative;">
+        <!-- Hover instruction positioned like in revenue graphs -->
+        <div class="hover-instruction">
+          Hover over data points for details
+        </div>
+      </div>
+      <div class="legend" id="chartLegend"></div>
+    </div>
+    
+    <div class="chart-wrapper">
+      <div class="panel-title">Cost Structure Analysis</div>
+      <div class="metrics-grid">
+        <div>
+          <div class="metric-row">
+            <span class="metric-label">Year-on-Year Change</span>
+            <span class="metric-value"><span class="positive-change">-57.8%</span></span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">5 Year Wage Growth</span>
+            <span class="metric-value">-27.4%</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Highest Cost Year</span>
+            <span class="metric-value">2023 (£68.9M)</span>
+          </div>
+        </div>
+        <div>
+          <div class="metric-row">
+            <span class="metric-label">Operating Cost %</span>
+            <span class="metric-value">85.4%</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Non-Operating Cost %</span>
+            <span class="metric-value">14.6%</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Staff Costs to Revenue Ratio</span>
+            <span class="metric-value">0.0%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+  <div id="tooltip" class="tooltip"></div>
+  
+  <script>
+    // Data for the chart
+    const financialYears = [2020, 2021, 2022, 2023, 2024];
+    
+    // Cost data
+    const costData = {"staff_costs": [34196193.75, 36301920.0, 27379132.15, 28938748.3, 24822941.0], "operating_expenses": [0.0, 0.0, 0.0, 31165268.200000003, 0.0], "player_amortisation": [13895618.75, 13904797.2, 8554046.149999999, 7518360.300000001, 3208956.0], "depreciation": [335420.0, 569749.2, 1103957.45, 1103082.2000000002, 958341.0], "player_impairment": [0.0, 894296.4, 1155897.2, 154000.0, 87905.0]};
+    const positionData = [null, null, null, null, null];
+    const leagueData = [null, null, null, null, null];
+    
+    // Cost categories
+    const costCategories = [
+      'staff_costs', 
+      'operating_expenses', 
+      'player_amortisation', 
+      'depreciation', 
+      'player_impairment'
+    ];
+    
+    // Mapping for display labels
+    const displayLabels = {
+      staff_costs: "Staff Costs",
+      operating_expenses: "Other OpEx",
+      player_amortisation: "Amortisation",
+      depreciation: "Depreciation",
+      player_impairment: "Player Impairment"
+    };
+    
+    // Color mapping
+    const colorMapping = {
+      staff_costs: "var(--staff-costs)",
+      operating_expenses: "var(--operating-expenses)",
+      player_amortisation: "var(--player-amortisation)",
+      depreciation: "var(--depreciation)",
+      player_impairment: "var(--player-impairment)"
+    };
+    
+    // Active dataset and selected cost categories for visualization
+    let activeWagesData = costData;
+    let selectedCategories = ['staff_costs', 'operating_expenses'];
+    
+    // Helper function to format currency values
+    function formatCurrency(value) {
+      if (value >= 1000000000) {
+        return `${(value/1000000000).toFixed(2)}B`;
+      } else if (value >= 1000000) {
+        return `${(value/1000000).toFixed(1)}M`;
+      } else if (value >= 1000) {
+        return `${(value/1000).toFixed(1)}K`;
+      } else {
+        return value.toFixed(0);
+      }
+    }
+    
+    // Enhanced render function with responsive adjustments
+    function renderMainChart() {
+      // Clear previous chart and legend
+      d3.select("#mainChart").html("");
+      d3.select("#chartLegend").html("");
+      
+      // Filter out categories with only zero values
+      const filteredCategories = selectedCategories.filter(category => {
+        return activeWagesData[category].some(value => value > 0);
+      });
+      
+      // Prepare data for stacking
+      const dataForStack = financialYears.map((year, i) => {
+        let obj = { financial_year: year };
+        
+        // Add each selected category
+        filteredCategories.forEach(category => {
+          obj[category] = activeWagesData[category][i];
+        });
+        
+        // Add league and position data
+        obj.league = leagueData[i];
+        obj.position = positionData[i];
+        
+        return obj;
+      });
+      
+      // Create stack layout
+      const stack = d3.stack()
+        .keys(filteredCategories)
+        .order(d3.stackOrderNone)
+        .offset(d3.stackOffsetNone);
+      
+      const series = stack(dataForStack);
+      
+      // Set up dimensions with responsive sizing
+      const chartContainer = document.getElementById('mainChart');
+      let margin, fontSize, barPadding, labelFontSize;
+      
+      // Adjust dimensions based on screen width
+      if (window.innerWidth <= 480) {
+        margin = {top: 30, right: 30, bottom: 60, left: 60};
+        fontSize = "10px";
+        barPadding = 0.1;
+        labelFontSize = "9px";
+      } else if (window.innerWidth <= 768) {
+        margin = {top: 35, right: 40, bottom: 70, left: 70};
+        fontSize = "11px";
+        barPadding = 0.15;
+        labelFontSize = "10px";
+      } else {
+        margin = {top: 40, right: 50, bottom: 80, left: 90};
+        fontSize = "12px";
+        barPadding = 0.2;
+        labelFontSize = "11px";
       }
       
-      // Inflation toggle
-      document.getElementById("inflationToggle").addEventListener("change", function() {
-          activeWagesData = this.checked ? adjustedCostData : costData;
-          renderMainChart();
-      });
+      const width = chartContainer.clientWidth - margin.left - margin.right;
+      const height = chartContainer.clientHeight - margin.top - margin.bottom;
       
-      // Cost category checkboxes
-      costCategories.forEach(category => {
-          const checkbox = document.getElementById(category);
-          checkbox.addEventListener("change", function() {
-              // Update selected categories based on checkbox state
-              selectedCategories = costCategories.filter(cat => document.getElementById(cat).checked);
-              // Re-render chart if at least one category is selected
-              if (selectedCategories.length > 0) {
-                  renderMainChart();
+      // Create SVG container
+      const svg = d3.select("#mainChart")
+        .append("svg")
+        .attr("width", chartContainer.clientWidth)
+        .attr("height", chartContainer.clientHeight)
+        .append("g")
+        .attr("transform", `translate(${margin.left}, ${margin.top})`);
+      
+      // Add chart background for better visibility
+      svg.append("rect")
+        .attr("width", width)
+        .attr("height", height)
+        .attr("fill", "rgba(0, 0, 0, 0.5)")
+        .attr("rx", 8)
+        .attr("ry", 8);
+      
+      // Compute the maximum y value with some margin
+      const maxY = d3.max(series, s => d3.max(s, d => d[1])) * 1.1 || 1;
+      
+      // Set up scales
+      const x = d3.scaleBand()
+        .domain(financialYears)
+        .range([0, width])
+        .paddingInner(barPadding)
+        .paddingOuter(barPadding / 2);
+      
+      const y = d3.scaleLinear()
+        .domain([0, maxY])
+        .range([height, 0])
+        .nice();
+      
+      // Add horizontal grid lines
+      svg.selectAll("line.horizontal-grid")
+        .data(y.ticks(window.innerWidth <= 480 ? 5 : 10))
+        .enter()
+        .append("line")
+        .attr("class", "horizontal-grid")
+        .attr("x1", 0)
+        .attr("x2", width)
+        .attr("y1", d => y(d))
+        .attr("y2", d => y(d))
+        .style("stroke", "var(--grid)")
+        .style("stroke-width", "1px")
+        .style("stroke-opacity", "0.8")
+        .style("stroke-dasharray", "2,3");
+      
+      // Add X axis with responsive formatting
+      const xAxis = svg.append("g")
+        .attr("class", "axis-x")
+        .attr("transform", `translate(0, ${height})`)
+        .call(d3.axisBottom(x)
+          .tickFormat(d => {
+            // For smaller screens, show shorter year format
+            if (window.innerWidth <= 480 && financialYears.length > 5) {
+              return "'" + (d % 100).toString().padStart(2, '0');
+            }
+            return d3.format("d")(d);
+          }));
+      
+      xAxis.selectAll("text")
+        .style("font-weight", "bold")
+        .style("font-size", fontSize)
+        .style("text-anchor", "middle");
+      
+      // For very small screens with many years, rotate the labels
+      if (window.innerWidth <= 480 && financialYears.length > 5) {
+        xAxis.selectAll("text")
+          .style("text-anchor", "end")
+          .attr("dx", "-.8em")
+          .attr("dy", ".15em")
+          .attr("transform", "rotate(-45)");
+      }
+      
+      // Add Y axis with responsive tick count and format
+      const yAxis = svg.append("g")
+        .attr("class", "axis-y")
+        .call(d3.axisLeft(y)
+          .tickFormat(d => {
+            if (window.innerWidth <= 480) {
+              // Simpler format for mobile
+              if (d >= 1000000000) {
+                return `£${(d/1000000000).toFixed(0)}B`;
               } else {
-                  // Prevent unchecking all if no categories selected
-                  this.checked = true;
+                return `£${(d/1000000).toFixed(0)}M`;
               }
+            } else {
+              if (d >= 1000000000) {
+                return `£${(d/1000000000).toFixed(1)}B`;
+              } else {
+                return `£${(d/1000000).toFixed(0)}M`;
+              }
+            }
+          })
+          .ticks(window.innerWidth <= 480 ? 5 : 10));
+      
+      yAxis.selectAll("text")
+        .style("font-weight", "bold")
+        .style("font-size", fontSize);
+      
+      // Create stacked bars
+      series.forEach(seriesData => {
+        svg.selectAll(`.rect-${seriesData.key}`)
+          .data(seriesData)
+          .enter()
+          .append("rect")
+          .attr("class", d => `cost-bar ${seriesData.key}-bar`)
+          .attr("x", d => x(d.data.financial_year))
+          .attr("y", d => y(d[1]))
+          .attr("height", d => y(d[0]) - y(d[1])) // Calculate height based on stacked position
+          .attr("width", x.bandwidth())
+          .attr("fill", colorMapping[seriesData.key])
+          .attr("rx", 3)
+          .attr("ry", 3)
+          .attr("opacity", 0.85)
+          .attr("stroke", () => {
+            const color = d3.color(colorMapping[seriesData.key]);
+            return d3.rgb(color).darker(0.3);
+          })
+          .attr("stroke-width", 1)
+          .on("mouseover", function(event, d) {
+            // Enhanced tooltip positioning for mobile
+            const tooltipWidth = window.innerWidth <= 480 ? 240 : 300;
+            
+            // Highlight the hovered bar
+            d3.select(this)
+              .attr("opacity", 1)
+              .attr("stroke-width", 2);
+              
+            // Calculate values for all segments in this stack
+            const year = d.data.financial_year;
+            const yearIdx = financialYears.indexOf(year);
+            
+            // Format tooltip content
+            let tooltipContent = `
+              <div class="tooltip-header">
+                <div class="tooltip-title">Financial Year: ${year}</div>
+                ${d.data.league && d.data.position ? `<div class="tooltip-subtitle">${d.data.position} in ${d.data.league}</div>` : ''}
+              </div>
+              <div class="tooltip-divider"></div>
+            `;
+            
+            // Add content for this category
+            const category = seriesData.key;
+            const value = d.data[category];
+            if (value > 0) {
+              tooltipContent += `
+                <div class="tooltip-item">
+                  <span>${displayLabels[category]}:</span>
+                  <span class="tooltip-item-value" style="color: ${colorMapping[category]};">£${formatCurrency(value)}</span>
+                </div>
+              `;
+            }
+            
+            // Calculate total for all selected categories for this year
+            const total = filteredCategories.reduce((sum, cat) => sum + d.data[cat], 0);
+            
+            // Add total to tooltip
+            tooltipContent += `
+              <div class="tooltip-total">
+                <span>Total:</span>
+                <span class="tooltip-total-value">£${formatCurrency(total)}</span>
+              </div>
+            `;
+            
+            // Position and show the tooltip with responsive positioning
+            const tooltip = d3.select("#tooltip");
+            
+            // Smart positioning to keep tooltip within viewport
+            let xPosition = event.pageX + 15;
+            let yPosition = event.pageY - 20;
+            
+            // Check if tooltip would go beyond right edge
+            if (xPosition + tooltipWidth > window.innerWidth) {
+              xPosition = event.pageX - tooltipWidth - 10;
+            }
+            
+            tooltip
+              .style("opacity", 1)
+              .style("left", xPosition + "px")
+              .style("top", yPosition + "px")
+              .style("max-width", tooltipWidth + "px")
+              .html(tooltipContent);
+          })
+          .on("mouseout", function() {
+            // Reset bar style
+            d3.select(this)
+              .attr("opacity", 0.85)
+              .attr("stroke-width", 1);
+              
+            // Hide tooltip
+            d3.select("#tooltip").style("opacity", 0);
           });
       });
       
-      // Initialize chart on load and handle window resize
-      document.addEventListener("DOMContentLoaded", renderMainChart);
-      window.addEventListener("resize", renderMainChart);
-    </script>
+      // Add year total labels at the top of each stack with responsive adjustments
+      dataForStack.forEach(d => {
+        const yearTotal = filteredCategories.reduce((sum, cat) => sum + d[cat], 0);
+        if (yearTotal > 0) {
+          // Only show total labels if there's enough space
+          if (window.innerWidth > 480 || financialYears.length <= 5) {
+            svg.append("text")
+              .attr("class", "stack-total")
+              .attr("x", x(d.financial_year) + x.bandwidth() / 2)
+              .attr("y", y(yearTotal) - 10)
+              .attr("text-anchor", "middle")
+              .style("font-size", labelFontSize)
+              .style("fill", "white")
+              .style("opacity", 0.8)
+              .text(`£${(yearTotal/1000000).toFixed(0)}M`);
+          }
+        }
+      });
+      
+      // Add axis labels with responsive sizes
+      if (window.innerWidth > 480) {
+        // Only show axis titles on larger screens
+        svg.append("text")
+          .attr("class", "axis-title")
+          .attr("x", width / 2)
+          .attr("y", height + (window.innerWidth <= 768 ? 40 : margin.bottom - 10))
+          .attr("text-anchor", "middle")
+          .style("fill", "white")
+          .style("font-size", window.innerWidth <= 768 ? "12px" : "14px")
+          .style("font-weight", "bold")
+          .text("Financial Year");
+        
+        svg.append("text")
+          .attr("class", "axis-title")
+          .attr("transform", "rotate(-90)")
+          .attr("x", -height / 2)
+          .attr("y", -margin.left + (window.innerWidth <= 768 ? 15 : 20))
+          .attr("text-anchor", "middle")
+          .style("fill", "white")
+          .style("font-size", window.innerWidth <= 768 ? "12px" : "14px")
+          .style("font-weight", "bold")
+          .text("Costs (GBP)");
+      }
+      
+      // Create legend with responsive styling
+      const legend = d3.select("#chartLegend");
+      
+      // Category descriptions for tooltips
+      const categoryDefinitions = {
+        staff_costs: "The total compensation paid to players, coaches, and all club staff including wages, salaries, bonuses, and pension contributions. This is a core operating expense.",
+        operating_expenses: "Day-to-day costs like stadium maintenance, match day operations, travel, training facilities, and administrative expenses excluding staff wages. These are essential for the club's regular operations.",
+        player_amortisation: "The systematic allocation of costs over the useful life of intangible assets, primarily player transfer fees but also including goodwill, software, and other intangibles. This is a non-cash accounting expense.",
+        depreciation: "The systematic allocation of costs for physical assets like stadiums and facilities over their useful life. This is a non-cash accounting expense.",
+        player_impairment: "Write-downs in player values when their recoverable value falls below their book value, often due to injuries or performance decline. This is a non-operating expense."
+      };
+      
+      // Simplified legend for very small screens
+      if (window.innerWidth <= 480) {
+        // Only show active categories in legend for small screens
+        filteredCategories.forEach(category => {
+          const legendItem = legend.append("div")
+            .attr("class", "legend-item")
+            .attr("data-category", category);
+          
+          legendItem.append("div")
+            .attr("class", "legend-color")
+            .style("background-color", colorMapping[category]);
+          
+          legendItem.append("span")
+            .attr("class", "legend-label")
+            .text(displayLabels[category]);
+        });
+      } else {
+        // Full legend with tooltips for larger screens
+        costCategories.forEach(category => {
+          const isActive = filteredCategories.includes(category);
+          
+          const legendItem = legend.append("div")
+            .attr("class", "legend-item")
+            .attr("data-category", category)
+            .style("opacity", isActive ? 1 : 0.5);
+          
+          legendItem.append("div")
+            .attr("class", "legend-color")
+            .style("background-color", colorMapping[category]);
+          
+          legendItem.append("span")
+            .attr("class", "legend-label")
+            .text(displayLabels[category]);
+            
+          // Add tooltip with definition
+          const tooltip = legendItem.append("div")
+            .attr("class", "legend-tooltip-always-visible")
+            .html(`
+              <div class="legend-tooltip-title">${displayLabels[category]}</div>
+              <div>${categoryDefinitions[category]}</div>
+            `);
+        });
+      }
+    }
+    
+    // Cost category checkboxes
+    costCategories.forEach(category => {
+      const checkbox = document.getElementById(category);
+      checkbox.addEventListener("change", function() {
+        // Update selected categories based on checkbox state
+        selectedCategories = costCategories.filter(cat => document.getElementById(cat).checked);
+        
+        // Handle empty selection - prevent unchecking all
+        if (selectedCategories.length === 0) {
+          this.checked = true;
+          selectedCategories = [category];
+          
+          // Visual feedback
+          const checkboxLabel = this.nextElementSibling;
+          checkboxLabel.style.color = "#05D4BE";
+          setTimeout(() => {
+            checkboxLabel.style.color = "";
+          }, 1000);
+        }
+        
+        // Re-render chart
+        renderMainChart();
+      });
+    });
+    
+    // Improved resize handler with debouncing for better performance
+    let resizeTimer;
+    function handleResize() {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        // Update chart dimensions based on new screen size
+        renderMainChart();
+        
+        // Update UI elements for better mobile experience
+        if (window.innerWidth <= 480) {
+          // Simplify UI for very small screens
+          document.querySelectorAll('.hover-instruction').forEach(el => {
+            el.style.display = 'none';
+          });
+          
+          // Adjust checkboxes layout
+          document.querySelectorAll('.cost-checkbox').forEach(el => {
+            el.style.padding = '4px 8px';
+          });
+        } else {
+          // Restore UI for larger screens
+          document.querySelectorAll('.hover-instruction').forEach(el => {
+            el.style.display = 'block';
+          });
+          
+          document.querySelectorAll('.cost-checkbox').forEach(el => {
+            el.style.padding = '6px 12px';
+          });
+        }
+      }, 250);
+    }
+    
+    // Add touch event handling for better mobile experience
+    function initTouchEvents() {
+      // Handle dynamic elements - we'll set up a mutation observer
+      const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+          if (mutation.addedNodes && mutation.addedNodes.length > 0) {
+            // Check for newly added cost bars
+            mutation.addedNodes.forEach(function(node) {
+              if (node.classList && node.classList.contains('cost-bar')) {
+                addTouchListenersToBar(node);
+              }
+            });
+          }
+        });
+      });
+      
+      // Start observing the chart container
+      observer.observe(document.getElementById('mainChart'), { 
+        childList: true, 
+        subtree: true 
+      });
+      
+      // Function to add touch listeners to a bar
+      function addTouchListenersToBar(bar) {
+        bar.addEventListener('touchstart', function(e) {
+          // Prevent default to avoid scrolling
+          e.preventDefault();
+          
+          // Trigger the mouseover event
+          const mouseoverEvent = new MouseEvent('mouseover', {
+            bubbles: true,
+            cancelable: true,
+            view: window,
+            clientX: e.touches[0].clientX,
+            clientY: e.touches[0].clientY,
+            screenX: e.touches[0].screenX,
+            screenY: e.touches[0].screenY,
+            pageX: e.touches[0].pageX,
+            pageY: e.touches[0].pageY
+          });
+          this.dispatchEvent(mouseoverEvent);
+        });
+        
+        bar.addEventListener('touchend', function() {
+          // Trigger the mouseout event
+          const mouseoutEvent = new MouseEvent('mouseout', {
+            bubbles: true,
+            cancelable: true,
+            view: window
+          });
+          this.dispatchEvent(mouseoutEvent);
+        });
+      }
+    }
+    
+    // Initialize when window is loaded
+    window.onload = function() {
+      renderMainChart();
+      initTouchEvents();
+      
+      // Initial UI adjustments for mobile
+      if (window.innerWidth <= 480) {
+        document.querySelectorAll('.hover-instruction').forEach(el => {
+          el.style.display = 'none';
+        });
+      }
+    };
+    
+    // Add event listeners
+    window.addEventListener("resize", handleResize);
+  </script>
 </body>
 </html>
