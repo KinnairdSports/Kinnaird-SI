@@ -93,6 +93,7 @@
           margin-bottom: 20px;
           flex-wrap: wrap;
           gap: 15px;
+          width: 100%;
       }
       
       .metric-card {
@@ -446,39 +447,6 @@
           margin: 0;
       }
       
-      /* Added responsive design */
-      @media (max-width: 768px) {
-          .container {
-              padding: 15px 10px;
-          }
-          
-          .financial-details {
-              font-size: 1rem;
-          }
-          
-          .controls {
-              flex-direction: column;
-              padding: 15px;
-          }
-          
-          .chart-wrapper {
-              padding: 15px;
-          }
-          
-          .chart-title {
-              font-size: 1.2rem;
-          }
-          
-          .metrics-grid {
-              grid-template-columns: 1fr;
-          }
-          
-          .metric-section {
-              margin-bottom: 10px;
-              margin-right: 0;
-          }
-      }
-      
       /* CSS for interactive vertical guide */
       .vertical-guide {
           pointer-events: none;
@@ -523,6 +491,176 @@
       .footer a:hover {
           text-decoration: underline;
       }
+
+      /* RESPONSIVE DESIGN STYLES - Added from first code template */
+      @media (max-width: 992px) {
+        .container {
+          padding: 15px;
+        }
+        .metrics-cards {
+          flex-wrap: wrap;
+          gap: 10px;
+        }
+        /* Keep cards in row with adjusted width */
+        .metric-card {
+          flex: 1 0 calc(33.333% - 10px);
+          padding: 12px;
+        }
+        .metric-value {
+          font-size: 1.8rem;
+          margin: 8px 0;
+        }
+        #mainChart {
+          height: 450px !important;
+        }
+        .chart-title {
+          font-size: 1.2rem;
+        }
+        .metric-filter {
+          padding: 12px;
+        }
+      }
+      
+      @media (max-width: 768px) {
+        .container {
+          padding: 10px 5px;
+        }
+        .header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+        /* Convert to vertical stack on tablet and ensure same width as graph */
+        .metrics-cards {
+          display: block; /* Change to block to ensure full width */
+          width: 100%;
+          gap: 0;
+          padding: 0;
+        }
+        .metric-card {
+          width: 100%;
+          max-width: 100%;
+          flex: none;
+          margin: 0 0 10px 0; /* Add bottom margin only */
+          padding: 10px;
+          box-sizing: border-box; /* Ensure padding is included in width */
+        }
+        .metric-value {
+          font-size: 1.5rem;
+          margin: 6px 0;
+        }
+        .metric-subtitle {
+          font-size: 0.85rem;
+        }
+        .metrics-grid {
+          grid-template-columns: 1fr;
+        }
+        .panel-title {
+          font-size: 1rem;
+        }
+        #mainChart {
+          height: 400px !important;
+        }
+        .chart-title {
+          font-size: 1.1rem;
+        }
+        .chart-wrapper {
+          padding: 15px;
+        }
+        .metric-checkbox {
+          padding: 5px 10px;
+        }
+        .section-label {
+          font-size: 0.9rem;
+        }
+        .metric-section {
+          margin-bottom: 10px;
+          margin-right: 0;
+          width: 100%;
+        }
+        .metric-filter {
+          padding: 10px;
+          flex-direction: column;
+        }
+        .tooltip {
+          max-width: 260px;
+        }
+      }
+      
+      @media (max-width: 480px) {
+        body {
+          padding: 5px;
+        }
+        .container {
+          padding: 5px;
+        }
+        /* Ensure cards match graph width exactly on mobile */
+        .metrics-cards {
+          width: 100%;
+          padding: 0;
+        }
+        .metric-card {
+          width: 100%;
+          padding: 8px;
+          margin: 0 0 8px 0;
+          box-sizing: border-box;
+          max-width: 100%;
+        }
+        .metric-title {
+          font-size: 0.85rem;
+        }
+        .metric-value {
+          font-size: 1.3rem;
+          margin: 5px 0;
+        }
+        .metric-subtitle {
+          font-size: 0.75rem;
+        }
+        #mainChart {
+          height: 300px !important;
+        }
+        .chart-wrapper {
+          padding: 10px;
+          margin-bottom: 15px;
+        }
+        .chart-title {
+          font-size: 1rem;
+          margin-bottom: 10px;
+        }
+        .legend {
+          padding: 10px 5px;
+          gap: 5px;
+        }
+        .legend-item {
+          padding: 4px 8px;
+          font-size: 0.8rem;
+        }
+        .metric-checkbox label {
+          font-size: 0.8rem;
+        }
+        .metric-checkbox input[type="checkbox"] {
+          width: 16px;
+          height: 16px;
+          min-width: 16px;
+        }
+        .tooltip {
+          max-width: 240px;
+          font-size: 12px;
+          padding: 8px 10px;
+        }
+        .tooltip-title {
+          font-size: 14px;
+        }
+        .footer {
+          margin-top: 20px;
+          font-size: 0.8rem;
+        }
+        .panel-title {
+          font-size: 0.9rem;
+        }
+        .metric-row {
+          font-size: 0.8rem;
+        }
+      }
     </style>
 </head>
 <body>
@@ -530,7 +668,6 @@
         <div class="header">
             <div class="club-info">
                 <div class="profit-title">Profitability Analysis</div>
-                <div class="team-performance">Wolverhampton Wanderers (2024)</div>
             </div>
         </div>
         
@@ -642,8 +779,8 @@
       
       // Profitability metrics data
       const metricsData = {
-          ebitda: [10039000, 37592000, 12751000, -15042000, -2971000],
-          ebit: [-44786000, -27563000, -51262000, -97440000, -70294000],
+          ebitda: [10039000.0, 37592000.0, 12751000.0, -15042000.0, -2971000.0],
+          ebit: [-44786000.0, -27563000.0, -51262000.0, -97440000.0, -70294000.0],
           operating_profit_loss: [-35266000.0, 150257000.0, -40503000.0, -56785000.0, -8687000.0],
           profit_loss_before_interest_tax: [-35266000.0, 23748000.0, -40503000.0, -56785000.0, -8687000.0], // Kept for data integrity
           profit_loss_before_tax: [-39957000.0, 144885000.0, -46100000.0, -67186000.0, -14325000.0],
@@ -954,11 +1091,40 @@
                       }
                   });
                   
-                  // Position and show tooltip
+                  // Get container bounds for better tooltip positioning
+                  const containerRect = document.querySelector('.container').getBoundingClientRect();
+                  const tooltipWidth = window.innerWidth <= 480 ? 240 : 300;
+                  const tooltipHeight = 150; // Approximate height, adjust as needed
+                  
+                  // Calculate initial position
+                  let xPosition = event.clientX + 15;
+                  let yPosition = event.clientY - 20;
+                  
+                  // Check right boundary
+                  if (xPosition + tooltipWidth > containerRect.right) {
+                      xPosition = event.clientX - tooltipWidth - 10;
+                  }
+                  
+                  // Check left boundary
+                  if (xPosition < containerRect.left) {
+                      xPosition = containerRect.left + 10;
+                  }
+                  
+                  // Check bottom boundary
+                  if (yPosition + tooltipHeight > containerRect.bottom) {
+                      yPosition = event.clientY - tooltipHeight - 10;
+                  }
+                  
+                  // Check top boundary
+                  if (yPosition < containerRect.top) {
+                      yPosition = containerRect.top + 10;
+                  }
+                  
+                  // Position and show tooltip with improved positioning
                   d3.select("#tooltip")
                       .style("opacity", 1)
-                      .style("left", (event.pageX + 15) + "px")
-                      .style("top", (event.pageY - 20) + "px")
+                      .style("left", xPosition + "px")
+                      .style("top", yPosition + "px")
                       .html(tooltipContent);
                   
                   // Highlight data points
