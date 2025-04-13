@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cardiff - Cost Structure Analysis</title>
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <link rel="stylesheet" href="https://use.typekit.net/xxs6huv.css">
@@ -11,7 +11,7 @@
       background-color: #000000;
       color: white;
       font-family: 'aglet-sans', sans-serif;
-      padding: 10px;
+      padding: 20px;
       margin: 0;
       min-height: 100vh;
     }
@@ -49,7 +49,7 @@
       margin-bottom: 20px;
       flex-wrap: wrap;
       gap: 15px;
-      width: 100%; /* Make sure metric cards container is full width */
+      width: 100%;
     }
     .metric-card {
       background: linear-gradient(135deg, rgba(5, 212, 190, 0.2), rgba(95, 132, 251, 0.2));
@@ -218,6 +218,8 @@
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
       max-width: 300px;
       backdrop-filter: blur(4px);
+      max-height: 80vh;
+      overflow-y: auto;
     }
     .tooltip-header {
       margin-bottom: 5px;
@@ -366,20 +368,17 @@
       --line: rgba(255, 255, 255, 0.3);
     }
     
-    /* Enhanced responsive styles for different screen sizes */
     @media (max-width: 992px) {
       .container {
         padding: 15px;
       }
       .metrics-cards {
-        flex-direction: row;
         flex-wrap: wrap;
         gap: 10px;
       }
+      /* Keep cards in row with adjusted width */
       .metric-card {
-        min-width: calc(50% - 10px);
-        flex: 0 0 calc(50% - 10px);
-        margin-bottom: 10px;
+        flex: 1 0 calc(33.333% - 10px);
         padding: 12px;
       }
       .metric-value {
@@ -399,15 +398,20 @@
         flex-direction: column;
         align-items: flex-start;
       }
+      /* Convert to vertical stack on tablet and ensure same width as graph */
       .metrics-cards {
-        flex-direction: column;
-        gap: 10px;
+        display: block; /* Change to block to ensure full width */
+        width: 100%;
+        gap: 0;
+        padding: 0;
       }
       .metric-card {
-        min-width: 100%;
-        flex: 0 0 100%;
-        margin-bottom: 10px;
+        width: 100%;
+        max-width: 100%;
+        flex: none;
+        margin: 0 0 10px 0; /* Add bottom margin only */
         padding: 10px;
+        box-sizing: border-box; /* Ensure padding is included in width */
       }
       .metric-value {
         font-size: 1.5rem;
@@ -444,12 +448,17 @@
       .container {
         padding: 5px;
       }
+      /* Ensure cards match graph width exactly on mobile */
       .metrics-cards {
-        gap: 8px;
+        width: 100%;
+        padding: 0;
       }
       .metric-card {
+        width: 100%;
         padding: 8px;
-        margin-bottom: 8px;
+        margin: 0 0 8px 0;
+        box-sizing: border-box;
+        max-width: 100%;
       }
       .metric-title {
         font-size: 0.85rem;
@@ -522,7 +531,7 @@
     <div class="chart-wrapper">
       <div class="panel-title">Cost Structure Evolution</div>
       
-      <!-- Improved controls section with better mobile layout -->
+      <!-- Integrated controls inside chart wrapper -->
       <div style="margin-bottom: 20px; background-color: rgba(0, 0, 0, 0.2); border-radius: 8px; padding: 15px;">
         <div style="display: flex; flex-wrap: wrap; width: 100%; gap: 20px; justify-content: space-between;">
           <!-- Operating Expenses Section -->
@@ -668,7 +677,7 @@
       }
     }
     
-    // Enhanced render function with responsive adjustments
+    // Render the main chart with stacked bars
     function renderMainChart() {
       // Clear previous chart and legend
       d3.select("#mainChart").html("");
@@ -703,28 +712,9 @@
       
       const series = stack(dataForStack);
       
-      // Set up dimensions with responsive sizing
+      // Set up dimensions
+      const margin = {top: 40, right: 50, bottom: 80, left: 90};
       const chartContainer = document.getElementById('mainChart');
-      let margin, fontSize, barPadding, labelFontSize;
-      
-      // Adjust dimensions based on screen width
-      if (window.innerWidth <= 480) {
-        margin = {top: 30, right: 30, bottom: 60, left: 60};
-        fontSize = "10px";
-        barPadding = 0.1;
-        labelFontSize = "9px";
-      } else if (window.innerWidth <= 768) {
-        margin = {top: 35, right: 40, bottom: 70, left: 70};
-        fontSize = "11px";
-        barPadding = 0.15;
-        labelFontSize = "10px";
-      } else {
-        margin = {top: 40, right: 50, bottom: 80, left: 90};
-        fontSize = "12px";
-        barPadding = 0.2;
-        labelFontSize = "11px";
-      }
-      
       const width = chartContainer.clientWidth - margin.left - margin.right;
       const height = chartContainer.clientHeight - margin.top - margin.bottom;
       
@@ -751,8 +741,8 @@
       const x = d3.scaleBand()
         .domain(financialYears)
         .range([0, width])
-        .paddingInner(barPadding)
-        .paddingOuter(barPadding / 2);
+        .paddingInner(0.2)
+        .paddingOuter(0.1);
       
       const y = d3.scaleLinear()
         .domain([0, maxY])
@@ -761,7 +751,7 @@
       
       // Add horizontal grid lines
       svg.selectAll("line.horizontal-grid")
-        .data(y.ticks(window.innerWidth <= 480 ? 5 : 10))
+        .data(y.ticks(10))
         .enter()
         .append("line")
         .attr("class", "horizontal-grid")
@@ -774,58 +764,32 @@
         .style("stroke-opacity", "0.8")
         .style("stroke-dasharray", "2,3");
       
-      // Add X axis with responsive formatting
-      const xAxis = svg.append("g")
+      // Add X axis
+      svg.append("g")
         .attr("class", "axis-x")
         .attr("transform", `translate(0, ${height})`)
         .call(d3.axisBottom(x)
-          .tickFormat(d => {
-            // For smaller screens, show shorter year format
-            if (window.innerWidth <= 480 && financialYears.length > 5) {
-              return "'" + (d % 100).toString().padStart(2, '0');
-            }
-            return d3.format("d")(d);
-          }));
+          .tickFormat(d3.format("d")))
+        .selectAll("text")
+          .style("font-weight", "bold")
+          .style("font-size", "12px")
+          .style("text-anchor", "middle");
       
-      xAxis.selectAll("text")
-        .style("font-weight", "bold")
-        .style("font-size", fontSize)
-        .style("text-anchor", "middle");
-      
-      // For very small screens with many years, rotate the labels
-      if (window.innerWidth <= 480 && financialYears.length > 5) {
-        xAxis.selectAll("text")
-          .style("text-anchor", "end")
-          .attr("dx", "-.8em")
-          .attr("dy", ".15em")
-          .attr("transform", "rotate(-45)");
-      }
-      
-      // Add Y axis with responsive tick count and format
-      const yAxis = svg.append("g")
+      // Add Y axis
+      svg.append("g")
         .attr("class", "axis-y")
         .call(d3.axisLeft(y)
           .tickFormat(d => {
-            if (window.innerWidth <= 480) {
-              // Simpler format for mobile
-              if (d >= 1000000000) {
-                return `£${(d/1000000000).toFixed(0)}B`;
-              } else {
-                return `£${(d/1000000).toFixed(0)}M`;
-              }
+            if (d >= 1000000000) {
+              return `£${(d/1000000000).toFixed(1)}B`;
             } else {
-              if (d >= 1000000000) {
-                return `£${(d/1000000000).toFixed(1)}B`;
-              } else {
-                return `£${(d/1000000).toFixed(0)}M`;
-              }
+              return `£${(d/1000000).toFixed(0)}M`;
             }
           })
-          .ticks(window.innerWidth <= 480 ? 5 : 10));
-      
-      yAxis.selectAll("text")
-        .style("font-weight", "bold")
-        .style("font-size", fontSize);
+          .ticks(10))
+        .selectAll("text")
+          .style("font-weight", "bold")
+          .style("font-size", "12px");
       
       // Create stacked bars
       series.forEach(seriesData => {
@@ -848,9 +812,6 @@
           })
           .attr("stroke-width", 1)
           .on("mouseover", function(event, d) {
-            // Enhanced tooltip positioning for mobile
-            const tooltipWidth = window.innerWidth <= 480 ? 240 : 300;
-            
             // Highlight the hovered bar
             d3.select(this)
               .attr("opacity", 1)
@@ -892,23 +853,40 @@
               </div>
             `;
             
-            // Position and show the tooltip with responsive positioning
-            const tooltip = d3.select("#tooltip");
+            // Get container bounds
+            const containerRect = document.querySelector('.container').getBoundingClientRect();
+            const tooltipWidth = window.innerWidth <= 480 ? 240 : 300;
+            const tooltipHeight = 150; // Approximate height, adjust as needed
             
-            // Smart positioning to keep tooltip within viewport
-            let xPosition = event.pageX + 15;
-            let yPosition = event.pageY - 20;
+            // Calculate initial position
+            let xPosition = event.clientX + 15;
+            let yPosition = event.clientY - 20;
             
-            // Check if tooltip would go beyond right edge
-            if (xPosition + tooltipWidth > window.innerWidth) {
-              xPosition = event.pageX - tooltipWidth - 10;
+            // Check right boundary
+            if (xPosition + tooltipWidth > containerRect.right) {
+              xPosition = event.clientX - tooltipWidth - 10;
             }
             
-            tooltip
+            // Check left boundary
+            if (xPosition < containerRect.left) {
+              xPosition = containerRect.left + 10;
+            }
+            
+            // Check bottom boundary
+            if (yPosition + tooltipHeight > containerRect.bottom) {
+              yPosition = event.clientY - tooltipHeight - 10;
+            }
+            
+            // Check top boundary
+            if (yPosition < containerRect.top) {
+              yPosition = containerRect.top + 10;
+            }
+            
+            // Position and show the tooltip
+            d3.select("#tooltip")
               .style("opacity", 1)
               .style("left", xPosition + "px")
               .style("top", yPosition + "px")
-              .style("max-width", tooltipWidth + "px")
               .html(tooltipContent);
           })
           .on("mouseout", function() {
@@ -922,51 +900,45 @@
           });
       });
       
-      // Add year total labels at the top of each stack with responsive adjustments
+      // Add year total labels at the top of each stack
       dataForStack.forEach(d => {
         const yearTotal = filteredCategories.reduce((sum, cat) => sum + d[cat], 0);
         if (yearTotal > 0) {
-          // Only show total labels if there's enough space
-          if (window.innerWidth > 480 || financialYears.length <= 5) {
-            svg.append("text")
-              .attr("class", "stack-total")
-              .attr("x", x(d.financial_year) + x.bandwidth() / 2)
-              .attr("y", y(yearTotal) - 10)
-              .attr("text-anchor", "middle")
-              .style("font-size", labelFontSize)
-              .style("fill", "white")
-              .style("opacity", 0.8)
-              .text(`£${(yearTotal/1000000).toFixed(0)}M`);
-          }
+          svg.append("text")
+            .attr("class", "stack-total")
+            .attr("x", x(d.financial_year) + x.bandwidth() / 2)
+            .attr("y", y(yearTotal) - 10)
+            .attr("text-anchor", "middle")
+            .style("font-size", "11px")
+            .style("fill", "white")
+            .style("opacity", 0.8)
+            .text(`£${(yearTotal/1000000).toFixed(0)}M`);
         }
       });
       
-      // Add axis labels with responsive sizes
-      if (window.innerWidth > 480) {
-        // Only show axis titles on larger screens
-        svg.append("text")
-          .attr("class", "axis-title")
-          .attr("x", width / 2)
-          .attr("y", height + (window.innerWidth <= 768 ? 40 : margin.bottom - 10))
-          .attr("text-anchor", "middle")
-          .style("fill", "white")
-          .style("font-size", window.innerWidth <= 768 ? "12px" : "14px")
-          .style("font-weight", "bold")
-          .text("Financial Year");
-        
-        svg.append("text")
-          .attr("class", "axis-title")
-          .attr("transform", "rotate(-90)")
-          .attr("x", -height / 2)
-          .attr("y", -margin.left + (window.innerWidth <= 768 ? 15 : 20))
-          .attr("text-anchor", "middle")
-          .style("fill", "white")
-          .style("font-size", window.innerWidth <= 768 ? "12px" : "14px")
-          .style("font-weight", "bold")
-          .text("Costs (GBP)");
-      }
+      // Add axis labels
+      svg.append("text")
+        .attr("class", "axis-title")
+        .attr("x", width / 2)
+        .attr("y", height + margin.bottom - 10)
+        .attr("text-anchor", "middle")
+        .style("fill", "white")
+        .style("font-size", "14px")
+        .style("font-weight", "bold")
+        .text("Financial Year");
       
-      // Create legend with responsive styling
+      svg.append("text")
+        .attr("class", "axis-title")
+        .attr("transform", "rotate(-90)")
+        .attr("x", -height / 2)
+        .attr("y", -margin.left + 20)
+        .attr("text-anchor", "middle")
+        .style("fill", "white")
+        .style("font-size", "14px")
+        .style("font-weight", "bold")
+        .text("Costs (GBP)");
+      
+      // Create legend
       const legend = d3.select("#chartLegend");
       
       // Category descriptions for tooltips
@@ -978,49 +950,31 @@
         player_impairment: "Write-downs in player values when their recoverable value falls below their book value, often due to injuries or performance decline. This is a non-operating expense."
       };
       
-      // Simplified legend for very small screens
-      if (window.innerWidth <= 480) {
-        // Only show active categories in legend for small screens
-        filteredCategories.forEach(category => {
-          const legendItem = legend.append("div")
-            .attr("class", "legend-item")
-            .attr("data-category", category);
+      // Add legend items for ALL categories (not just filtered ones)
+      costCategories.forEach(category => {
+        const isActive = filteredCategories.includes(category);
+        
+        const legendItem = legend.append("div")
+          .attr("class", "legend-item")
+          .attr("data-category", category)
+          .style("opacity", isActive ? 1 : 0.5);
+        
+        legendItem.append("div")
+          .attr("class", "legend-color")
+          .style("background-color", colorMapping[category]);
+        
+        legendItem.append("span")
+          .attr("class", "legend-label")
+          .text(displayLabels[category]);
           
-          legendItem.append("div")
-            .attr("class", "legend-color")
-            .style("background-color", colorMapping[category]);
-          
-          legendItem.append("span")
-            .attr("class", "legend-label")
-            .text(displayLabels[category]);
-        });
-      } else {
-        // Full legend with tooltips for larger screens
-        costCategories.forEach(category => {
-          const isActive = filteredCategories.includes(category);
-          
-          const legendItem = legend.append("div")
-            .attr("class", "legend-item")
-            .attr("data-category", category)
-            .style("opacity", isActive ? 1 : 0.5);
-          
-          legendItem.append("div")
-            .attr("class", "legend-color")
-            .style("background-color", colorMapping[category]);
-          
-          legendItem.append("span")
-            .attr("class", "legend-label")
-            .text(displayLabels[category]);
-            
-          // Add tooltip with definition
-          const tooltip = legendItem.append("div")
-            .attr("class", "legend-tooltip-always-visible")
-            .html(`
-              <div class="legend-tooltip-title">${displayLabels[category]}</div>
-              <div>${categoryDefinitions[category]}</div>
-            `);
-        });
-      }
+        // Add tooltip with definition - using completely separate class for visibility
+        const tooltip = legendItem.append("div")
+          .attr("class", "legend-tooltip-always-visible")
+          .html(`
+            <div class="legend-tooltip-title">${displayLabels[category]}</div>
+            <div>${categoryDefinitions[category]}</div>
+          `);
+      });
     }
     
     // Cost category checkboxes
@@ -1048,107 +1002,18 @@
       });
     });
     
-    // Improved resize handler with debouncing for better performance
+    // Initialize chart on load and handle window resize
     let resizeTimer;
     function handleResize() {
       clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(() => {
-        // Update chart dimensions based on new screen size
-        renderMainChart();
-        
-        // Update UI elements for better mobile experience
-        if (window.innerWidth <= 480) {
-          // Simplify UI for very small screens
-          document.querySelectorAll('.hover-instruction').forEach(el => {
-            el.style.display = 'none';
-          });
-          
-          // Adjust checkboxes layout
-          document.querySelectorAll('.cost-checkbox').forEach(el => {
-            el.style.padding = '4px 8px';
-          });
-        } else {
-          // Restore UI for larger screens
-          document.querySelectorAll('.hover-instruction').forEach(el => {
-            el.style.display = 'block';
-          });
-          
-          document.querySelectorAll('.cost-checkbox').forEach(el => {
-            el.style.padding = '6px 12px';
-          });
-        }
-      }, 250);
-    }
-    
-    // Add touch event handling for better mobile experience
-    function initTouchEvents() {
-      // Handle dynamic elements - we'll set up a mutation observer
-      const observer = new MutationObserver(function(mutations) {
-        mutations.forEach(function(mutation) {
-          if (mutation.addedNodes && mutation.addedNodes.length > 0) {
-            // Check for newly added cost bars
-            mutation.addedNodes.forEach(function(node) {
-              if (node.classList && node.classList.contains('cost-bar')) {
-                addTouchListenersToBar(node);
-              }
-            });
-          }
-        });
-      });
-      
-      // Start observing the chart container
-      observer.observe(document.getElementById('mainChart'), { 
-        childList: true, 
-        subtree: true 
-      });
-      
-      // Function to add touch listeners to a bar
-      function addTouchListenersToBar(bar) {
-        bar.addEventListener('touchstart', function(e) {
-          // Prevent default to avoid scrolling
-          e.preventDefault();
-          
-          // Trigger the mouseover event
-          const mouseoverEvent = new MouseEvent('mouseover', {
-            bubbles: true,
-            cancelable: true,
-            view: window,
-            clientX: e.touches[0].clientX,
-            clientY: e.touches[0].clientY,
-            screenX: e.touches[0].screenX,
-            screenY: e.touches[0].screenY,
-            pageX: e.touches[0].pageX,
-            pageY: e.touches[0].pageY
-          });
-          this.dispatchEvent(mouseoverEvent);
-        });
-        
-        bar.addEventListener('touchend', function() {
-          // Trigger the mouseout event
-          const mouseoutEvent = new MouseEvent('mouseout', {
-            bubbles: true,
-            cancelable: true,
-            view: window
-          });
-          this.dispatchEvent(mouseoutEvent);
-        });
-      }
+      resizeTimer = setTimeout(renderMainChart, 250);
     }
     
     // Initialize when window is loaded
     window.onload = function() {
       renderMainChart();
-      initTouchEvents();
-      
-      // Initial UI adjustments for mobile
-      if (window.innerWidth <= 480) {
-        document.querySelectorAll('.hover-instruction').forEach(el => {
-          el.style.display = 'none';
-        });
-      }
     };
     
-    // Add event listeners
     window.addEventListener("resize", handleResize);
   </script>
 </body>
