@@ -59,6 +59,7 @@
       padding: 10px;
       border: 1px solid rgba(5, 212, 190, 0.2);
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
     }
     .metrics-cards {
       display: flex;
@@ -108,6 +109,52 @@
       z-index: 10;
     }
     
+    /* Horizontal scrolling styles - conditionally applied */
+    .chart-scroll-container {
+      width: 100%;
+      position: relative;
+      overflow-y: hidden; /* Prevent vertical scrolling */
+      /* Horizontal scrolling is controlled via JavaScript */
+    }
+    
+    /* Custom scrollbar styling for better visibility */
+    .chart-scroll-container::-webkit-scrollbar {
+      height: 8px;
+      background-color: rgba(5, 212, 190, 0.05);
+      border-radius: 4px;
+    }
+    
+    .chart-scroll-container::-webkit-scrollbar-thumb {
+      background-color: rgba(5, 212, 190, 0.3);
+      border-radius: 4px;
+    }
+    
+    .chart-scroll-container::-webkit-scrollbar-thumb:hover {
+      background-color: rgba(5, 212, 190, 0.5);
+    }
+    
+    /* Scroll hint animation */
+    @keyframes scrollHint {
+      0% { transform: translateX(0); opacity: 0.7; }
+      50% { transform: translateX(10px); opacity: 1; }
+      100% { transform: translateX(0); opacity: 0.7; }
+    }
+    
+    .scroll-hint {
+      position: absolute;
+      right: 15px;
+      bottom: 30px;
+      background-color: rgba(5, 212, 190, 0.3);
+      color: white;
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      pointer-events: none;
+      display: none;
+      animation: scrollHint 1.5s infinite ease-in-out;
+      z-index: 5;
+    }
+    
     #debugInfo { 
       background-color: rgba(5, 212, 190, 0.1); 
       padding: 10px; 
@@ -138,9 +185,183 @@
       overflow: hidden;
     }
     
+    /* RESPONSIVE DESIGN STYLES - Aligned with other templates */
+    @media (max-width: 992px) {
+      .container {
+        padding: 15px;
+      }
+      .metrics-cards {
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .metric-card {
+        flex: 1 0 calc(33.333% - 10px);
+        padding: 12px;
+      }
+      .metric-value {
+        font-size: 1.8rem;
+        margin: 8px 0;
+      }
+      #barChart, #trendChart {
+        height: 450px !important;
+      }
+      .chart-wrapper {
+        padding: 10px;
+      }
+      .chart-title {
+        font-size: 16px;
+      }
+      
+      /* Enable horizontal scrolling on tablets */
+      .chart-scroll-container {
+        overflow-x: auto;
+      }
+      
+      /* Show scroll hint on tablets */
+      .scroll-hint {
+        display: block;
+      }
+    }
+    
     @media (max-width: 768px) {
-      .controls-container { flex-direction: column; align-items: center; }
-      .metric-card { min-width: 100%; }
+      body {
+        padding: 10px;
+      }
+      .container {
+        padding: 10px 5px;
+      }
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      /* Convert to vertical stack on tablet and ensure same width as graph */
+      .controls-container { 
+        flex-direction: column; 
+        align-items: center;
+        gap: 10px;
+      }
+      .control-group {
+        width: 100%;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 12px;
+      }
+      select {
+        width: 100%;
+        margin-top: 5px;
+      }
+      
+      /* Force metrics cards to full width for consistency */
+      .metrics-cards {
+        display: block;
+        width: 100%;
+        gap: 0;
+        padding: 0;
+      }
+      .metric-card {
+        width: 100%;
+        max-width: 100%;
+        flex: none;
+        margin: 0 0 10px 0;
+        padding: 10px;
+        box-sizing: border-box;
+      }
+      .metric-value {
+        font-size: 1.5rem;
+        margin: 6px 0;
+      }
+      .metric-subtitle {
+        font-size: 0.85rem;
+      }
+      #barChart, #trendChart {
+        height: 400px !important;
+      }
+      .chart-wrapper {
+        padding: 10px;
+      }
+      .chart-title {
+        font-size: 14px;
+      }
+      .average-label, .zero-label {
+        font-size: 10px;
+      }
+      .bar-value {
+        font-size: 8px;
+      }
+      .tooltip {
+        max-width: 260px;
+        font-size: 12px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      body {
+        padding: 5px;
+      }
+      .container {
+        padding: 5px;
+      }
+      /* Ensure cards match graph width exactly on mobile */
+      .metrics-cards {
+        width: 100%;
+        padding: 0;
+      }
+      .metric-card {
+        width: 100%;
+        padding: 8px;
+        margin: 0 0 8px 0;
+        box-sizing: border-box;
+        max-width: 100%;
+      }
+      .metric-title {
+        font-size: 0.85rem;
+      }
+      .metric-value {
+        font-size: 1.3rem;
+        margin: 5px 0;
+      }
+      .metric-subtitle {
+        font-size: 0.75rem;
+      }
+      .control-group {
+        padding: 8px;
+      }
+      label {
+        font-size: 0.9rem;
+      }
+      select {
+        font-size: 0.9rem;
+        padding: 6px 10px;
+      }
+      #barChart, #trendChart {
+        height: 300px !important;
+      }
+      .chart-wrapper {
+        padding: 8px;
+        margin-bottom: 10px;
+      }
+      .team-badge {
+        width: 20px;
+        height: 20px;
+      }
+      .axis-x text, .axis-y text {
+        font-size: 9px;
+      }
+      .tooltip {
+        max-width: 220px;
+        font-size: 11px;
+        padding: 8px;
+      }
+      
+      /* Enhanced scroll hint on small screens */
+      .scroll-hint {
+        display: block;
+        bottom: 20px;
+        font-size: 10px;
+        right: 10px;
+      }
     }
   </style>
 </head>
@@ -194,7 +415,11 @@
     
     <div class="charts-container">
       <div class="chart-wrapper">
-        <div id="barChart" style="width: 100%; height: 500px;"></div>
+        <!-- Add a scrollable container for the bar chart -->
+        <div class="chart-scroll-container">
+          <div id="barChart" style="width: 100%; height: 500px;"></div>
+          <div class="scroll-hint">Scroll to see more</div>
+        </div>
       </div>
       
       <div class="chart-wrapper">
@@ -549,7 +774,50 @@
       var width = chartContainer.clientWidth;
       var height = chartContainer.clientHeight;
       var margin = {top: 60, right: 40, bottom: 170, left: 80};
-      var innerWidth = width - margin.left - margin.right;
+      
+      // Adjust margins for mobile and tablet
+      if (window.innerWidth <= 480) {
+        margin = {top: 40, right: 20, bottom: 140, left: 60};
+      } else if (window.innerWidth <= 768) {
+        margin = {top: 50, right: 30, bottom: 150, left: 70};
+      }
+      
+      // Minimum width per bar (in pixels) - adjusted based on screen size
+      var minBarWidth;
+      
+      // Use larger minimum widths for better readability
+      if (window.innerWidth <= 480) {
+        minBarWidth = 65; // Mobile
+      } else if (window.innerWidth <= 992) {
+        minBarWidth = 55; // Tablet
+      } else {
+        minBarWidth = 45; // Desktop
+      }
+      
+      // Calculate required width based on number of teams and minimum bar width
+      var requiredWidth = (filtered.length * minBarWidth) + margin.left + margin.right;
+      
+      // Determine if scrolling is needed
+      var scrollingNeeded = requiredWidth > width;
+      
+      // Calculate inner width
+      var innerWidth;
+      
+      // For screens up to 992px (tablet landscape), ensure minimum bar width even if scrolling is needed
+      if (window.innerWidth <= 992) {
+        innerWidth = requiredWidth - margin.left - margin.right;
+        document.querySelector('.chart-scroll-container').style.overflowX = scrollingNeeded ? 'auto' : 'hidden';
+      } else {
+        // For desktop - try to fit content if possible, otherwise allow scrolling
+        if (scrollingNeeded && filtered.length > 12) { // If more than 12 teams and width requirements exceed container
+          innerWidth = requiredWidth - margin.left - margin.right;
+          document.querySelector('.chart-scroll-container').style.overflowX = 'auto';
+        } else {
+          innerWidth = width - margin.left - margin.right;
+          document.querySelector('.chart-scroll-container').style.overflowX = 'hidden';
+        }
+      }
+      
       var innerHeight = height - margin.top - margin.bottom;
       
       // Get data ready for chart
@@ -560,11 +828,14 @@
       var avgKey = 'avg_' + selectedMetric;
       var average = actualDataItems.length > 0 ? actualDataItems[0][avgKey] : 0;
       
-      // Create SVG container
+      // Create SVG container with viewBox for responsiveness
+      // Set the actual width to the calculated required width
       var svg = d3.select("#barChart")
         .append("svg")
-        .attr("width", width)
-        .attr("height", height);
+        .attr("width", requiredWidth)
+        .attr("height", height)
+        .attr("viewBox", "0 0 " + requiredWidth + " " + height)
+        .attr("preserveAspectRatio", "xMinYMid meet"); // Changed from xMidYMid to xMinYMid for left alignment
       
       // Create main group with margin
       var g = svg.append("g")
@@ -746,10 +1017,24 @@
                             'YoY Change: ' + changeText;
             }
           }
-                              
+          
+          // Get container bounds for better tooltip positioning
+          const containerRect = document.querySelector('.chart-scroll-container').getBoundingClientRect();
+          const tooltipWidth = window.innerWidth <= 480 ? 220 : 300;
+          
+          // Calculate position with boundary checking
+          let xPosition = event.pageX + 15;
+          let yPosition = event.pageY - 20;
+          
+          // Check right boundary
+          if (xPosition + tooltipWidth > containerRect.right) {
+              xPosition = event.pageX - tooltipWidth - 10;
+          }
+          
+          // Position and show the tooltip with improved positioning
           var tooltip = d3.select("#tooltip")
-            .style("left", (event.pageX + 10) + "px")
-            .style("top", (event.pageY - 20) + "px")
+            .style("left", xPosition + "px")
+            .style("top", yPosition + "px")
             .style("opacity", 1);
             
           tooltip.html(tooltipContent);
@@ -763,6 +1048,11 @@
           d3.select("#tooltip")
             .style("opacity", 0);
         });
+      
+      // Adjust font size based on screen width
+      var barValueFontSize = window.innerWidth <= 480 ? "7px" : 
+                            window.innerWidth <= 768 ? "8px" : "10px";
+      var awaitingFontSize = window.innerWidth <= 480 ? "6px" : "8px";
       
       // Add bar value labels
       g.selectAll(".bar-value")
@@ -790,7 +1080,7 @@
         })
         .attr("text-anchor", "middle")
         .style("font-size", function(d) {
-          return d.awaitingAccounts ? "8px" : "10px"; // Smaller font for awaiting accounts
+          return d.awaitingAccounts ? awaitingFontSize : barValueFontSize;
         })
         .text(function(d) { 
           if (d.awaitingAccounts) { 
@@ -809,14 +1099,18 @@
         .attr("x", function(d) { return xScale(d.team) + xScale.bandwidth() / 2; })
         .attr("y", function(d) { return innerHeight - 35; })
         .attr("text-anchor", "middle")
-        .style("font-size", "8px")
+        .style("font-size", awaitingFontSize)
         .text("Accounts");
       
-      // Add Y axis
+      // Add Y axis with fewer ticks on smaller screens
+      var yAxisTicks = window.innerWidth <= 480 ? 5 : 
+                      window.innerWidth <= 768 ? 7 : 10;
+                      
       g.append("g")
         .attr("class", "axis-y")
         .call(d3.axisLeft(yScale)
-          .tickFormat(function(d) { return "£" + (d / 1000000).toFixed(0) + "M"; }));
+          .tickFormat(function(d) { return "£" + (d / 1000000).toFixed(0) + "M"; })
+          .ticks(yAxisTicks));
       
       // Add Y axis label
       g.append("text")
@@ -825,13 +1119,13 @@
         .attr("x", -(innerHeight / 2))
         .attr("text-anchor", "middle")
         .style("fill", "white")
-        .style("font-size", "14px")
+        .style("font-size", window.innerWidth <= 480 ? "12px" : "14px")
         .text(selectedMetric === 'profit' ? 'Profit/Loss After Tax' : selectedMetric.charAt(0).toUpperCase() + selectedMetric.slice(1));
       
       // Add title
       svg.append("text")
         .attr("class", "chart-title")
-        .attr("x", width / 2)
+        .attr("x", requiredWidth / 2)
         .attr("y", 30)
         .text((selectedMetric === 'profit' ? 'Profit/Loss After Tax' : selectedMetric.charAt(0).toUpperCase() + selectedMetric.slice(1)) + " for Premier League Clubs (" + selectedYear + ")");
       
@@ -842,16 +1136,19 @@
         .attr("transform", "translate(0," + innerHeight + ")")
         .call(d3.axisBottom(xScale).tickSize(0).tickFormat(""));
       
+      // Badge size based on screen width
+      var badgeSize = window.innerWidth <= 480 ? 20 : 30;
+      
       // Add team badges
       g.selectAll(".team-badge")
         .data(filtered)
         .enter()
         .append("svg:image")
         .attr("class", "team-badge")
-        .attr("x", function(d) { return xScale(d.team) + xScale.bandwidth()/2 - 15; })  // Center the badge
+        .attr("x", function(d) { return xScale(d.team) + xScale.bandwidth()/2 - badgeSize/2; })  // Center the badge
         .attr("y", innerHeight + 10)  // Position below axis
-        .attr("width", 30)
-        .attr("height", 30)
+        .attr("width", badgeSize)
+        .attr("height", badgeSize)
         .attr("xlink:href", function(d) {
           // Get the badge URL for this team
           return teamBadges[d.team] || "https://kinnairdsports.com/wp-content/uploads/2025/03/Premier_League-Logo.png"; // Default badge if not found
@@ -892,6 +1189,9 @@
         
         // Add average label if we have one
         if (averageLineLabel) {
+          // Adjust font size for mobile
+          var avgLabelSize = window.innerWidth <= 480 ? "9px" : "12px";
+          
           g.append("text")
             .attr("class", "average-label")
             .attr("x", innerWidth - 5)
@@ -900,8 +1200,32 @@
             .text(averageLineLabel)
             .attr("fill", "white")
             .attr("padding", "4px")
+            .attr("font-size", avgLabelSize)
             .attr("background", "rgba(0,0,0,0.5)");
         }
+      }
+      
+      // Show/hide scroll hint based on content width
+      var scrollContainer = document.querySelector('.chart-scroll-container');
+      var scrollHint = document.querySelector('.scroll-hint');
+      
+      // Check if horizontal scrolling is needed
+      if (requiredWidth > scrollContainer.clientWidth) {
+        // Ensure overflow-x is set to auto
+        scrollContainer.style.overflowX = 'auto';
+        
+        // Show the scroll hint
+        scrollHint.style.display = 'block';
+        
+        // Add a timeout to hide the scroll hint after a few seconds
+        setTimeout(function() {
+          scrollHint.style.opacity = '0';
+          setTimeout(function() {
+            scrollHint.style.display = 'none';
+          }, 1000);
+        }, 5000);
+      } else {
+        scrollHint.style.display = 'none';
       }
     }
     
@@ -970,14 +1294,24 @@
       var width = chartContainer.clientWidth;
       var height = chartContainer.clientHeight;
       var margin = {top: 50, right: 40, bottom: 60, left: 80};
+      
+      // Adjust margins for mobile and tablet
+      if (window.innerWidth <= 480) {
+        margin = {top: 40, right: 20, bottom: 40, left: 60};
+      } else if (window.innerWidth <= 768) {
+        margin = {top: 45, right: 30, bottom: 50, left: 70};
+      }
+      
       var innerWidth = width - margin.left - margin.right;
       var innerHeight = height - margin.top - margin.bottom;
       
-      // Create SVG container
+      // Create SVG container with viewBox for responsiveness
       var svg = d3.select("#trendChart")
         .append("svg")
         .attr("width", width)
-        .attr("height", height);
+        .attr("height", height)
+        .attr("viewBox", "0 0 " + width + " " + height)
+        .attr("preserveAspectRatio", "xMidYMid meet");
       
       // Create main group with margin
       var g = svg.append("g")
@@ -1039,11 +1373,15 @@
         .attr("transform", "translate(0," + innerHeight + ")")
         .call(d3.axisBottom(xScale));
       
-      // Add Y axis
+      // Add Y axis with fewer ticks on smaller screens
+      var yAxisTicks = window.innerWidth <= 480 ? 5 : 
+                      window.innerWidth <= 768 ? 7 : 10;
+                      
       g.append("g")
         .attr("class", "axis-y")
         .call(d3.axisLeft(yScale)
-          .tickFormat(function(d) { return "£" + (d / 1000000).toFixed(0) + "M"; }));
+          .tickFormat(function(d) { return "£" + (d / 1000000).toFixed(0) + "M"; })
+          .ticks(yAxisTicks));
       
       // Add Y axis label
       g.append("text")
@@ -1052,14 +1390,18 @@
         .attr("x", -(innerHeight / 2))
         .attr("text-anchor", "middle")
         .style("fill", "white")
-        .style("font-size", "14px")
+        .style("font-size", window.innerWidth <= 480 ? "12px" : "14px")
         .text(selectedMetric === 'profit' ? 'Profit/Loss After Tax' : selectedMetric.charAt(0).toUpperCase() + selectedMetric.slice(1));
       
-      // Add title - CHANGE 1: Update the title to reflect 2020-2024
+      // Add title with responsive font size
+      var titleFontSize = window.innerWidth <= 480 ? "14px" : 
+                         window.innerWidth <= 768 ? "16px" : "18px";
+      
       svg.append("text")
         .attr("class", "chart-title")
         .attr("x", width / 2)
         .attr("y", 20)
+        .attr("font-size", titleFontSize)
         .text((selectedMetric === 'profit' ? 'Profit/Loss After Tax' : selectedMetric.charAt(0).toUpperCase() + selectedMetric.slice(1)) + " Trends (2020-2024)");
       
       // Add zero line for profit
@@ -1118,6 +1460,9 @@
           .attr("d", minLine);
       }
       
+      // Adjust point size for mobile
+      var pointRadius = window.innerWidth <= 480 ? 4 : 6;
+      
       // Add points for total
       g.selectAll(".total-point")
         .data(yearlyData)
@@ -1126,14 +1471,14 @@
         .attr("class", "total-point")
         .attr("cx", function(d) { return xScale(d.year) + xScale.bandwidth() / 2; })
         .attr("cy", function(d) { return yScale(d.total); })
-        .attr("r", 6)
+        .attr("r", pointRadius)
         .attr("fill", totalColor)
         .attr("stroke", "white")
         .attr("stroke-width", 1)
         .on("mouseover", function(event, d) {
           // Highlight point
           d3.select(this)
-            .attr("r", 8)
+            .attr("r", pointRadius + 2)
             .attr("stroke-width", 2);
           
           // Show tooltip
@@ -1151,57 +1496,7 @@
         .on("mouseout", function() {
           // Restore point style
           d3.select(this)
-            .attr("r", 6)
-            .attr("stroke-width", 1);
-          
-          // Hide tooltip
-          d3.select("#tooltip")
-            .style("opacity", 0);
-        });
-      
-      // Add points for max
-      g.selectAll(".max-point")
-        .data(yearlyData)
-        .enter()
-        .append("circle")
-        .attr("class", "max-point")
-        .attr("cx", function(d) { return xScale(d.year) + xScale.bandwidth() / 2; })
-        .attr("cy", function(d) { return yScale(d.max); })
-        .attr("r", 6)
-        .attr("fill", maxColor)
-        .attr("stroke", "white")
-        .attr("stroke-width", 1)
-        .on("mouseover", function(event, d) {
-          // Highlight point
-          d3.select(this)
-            .attr("r", 8)
-            .attr("stroke-width", 2);
-          
-          // Show tooltip
-          var tooltipContent = 'Year: ' + d.year + '<br>';
-          
-          if (selectedMetric === 'profit') {
-            tooltipContent += 'Highest Profit: ' + formatCurrency(d.max) + 
-                           '<br>Club: ' + d.maxClub;
-          } else if (selectedMetric === 'wages' || selectedMetric === 'amortisation') {
-            tooltipContent += 'Highest ' + selectedMetric + ': ' + formatCurrency(d.max) + 
-                           '<br>Club: ' + d.maxClub;
-          } else {
-            tooltipContent += 'Highest ' + selectedMetric + ': ' + formatCurrency(d.max) + 
-                           '<br>Club: ' + d.maxClub;
-          }
-                             
-          var tooltip = d3.select("#tooltip")
-            .style("left", (event.pageX + 10) + "px")
-            .style("top", (event.pageY - 20) + "px")
-            .style("opacity", 1);
-            
-          tooltip.html(tooltipContent);
-        })
-        .on("mouseout", function() {
-          // Restore point style
-          d3.select(this)
-            .attr("r", 6)
+            .attr("r", pointRadius)
             .attr("stroke-width", 1);
           
           // Hide tooltip
@@ -1218,14 +1513,14 @@
           .attr("class", "min-point")
           .attr("cx", function(d) { return xScale(d.year) + xScale.bandwidth() / 2; })
           .attr("cy", function(d) { return yScale(d.min); })
-          .attr("r", 6)
+          .attr("r", pointRadius)
           .attr("fill", minColor)
           .attr("stroke", "white")
           .attr("stroke-width", 1)
           .on("mouseover", function(event, d) {
             // Highlight point
             d3.select(this)
-              .attr("r", 8)
+              .attr("r", pointRadius + 2)
               .attr("stroke-width", 2);
             
             // Show tooltip
@@ -1252,7 +1547,7 @@
           .on("mouseout", function() {
             // Restore point style
             d3.select(this)
-              .attr("r", 6)
+              .attr("r", pointRadius)
               .attr("stroke-width", 1);
             
             // Hide tooltip
@@ -1260,6 +1555,56 @@
               .style("opacity", 0);
           });
       }
+      
+      // Add points for max
+      g.selectAll(".max-point")
+        .data(yearlyData)
+        .enter()
+        .append("circle")
+        .attr("class", "max-point")
+        .attr("cx", function(d) { return xScale(d.year) + xScale.bandwidth() / 2; })
+        .attr("cy", function(d) { return yScale(d.max); })
+        .attr("r", pointRadius)
+        .attr("fill", maxColor)
+        .attr("stroke", "white")
+        .attr("stroke-width", 1)
+        .on("mouseover", function(event, d) {
+          // Highlight point
+          d3.select(this)
+            .attr("r", pointRadius + 2)
+            .attr("stroke-width", 2);
+          
+          // Show tooltip
+          var tooltipContent = 'Year: ' + d.year + '<br>';
+          
+          if (selectedMetric === 'profit') {
+            tooltipContent += 'Highest Profit: ' + formatCurrency(d.max) + 
+                           '<br>Club: ' + d.maxClub;
+          } else if (selectedMetric === 'wages' || selectedMetric === 'amortisation') {
+            tooltipContent += 'Highest ' + selectedMetric + ': ' + formatCurrency(d.max) + 
+                           '<br>Club: ' + d.maxClub;
+          } else {
+            tooltipContent += 'Highest ' + selectedMetric + ': ' + formatCurrency(d.max) + 
+                           '<br>Club: ' + d.maxClub;
+          }
+                             
+          var tooltip = d3.select("#tooltip")
+            .style("left", (event.pageX + 10) + "px")
+            .style("top", (event.pageY - 20) + "px")
+            .style("opacity", 1);
+            
+          tooltip.html(tooltipContent);
+        })
+        .on("mouseout", function() {
+          // Restore point style
+          d3.select(this)
+            .attr("r", pointRadius)
+            .attr("stroke-width", 1);
+          
+          // Hide tooltip
+          d3.select("#tooltip")
+            .style("opacity", 0);
+        });
       
       // Add legend
       var legend = svg.append("g")
@@ -1340,9 +1685,49 @@
     document.getElementById('barChart').addEventListener('dblclick', showDebugInfo);
     document.getElementById('trendChart').addEventListener('dblclick', showDebugInfo);
     
+    // Function to check if scrolling is needed and show/hide the scroll hint
+    // Function to check if scrolling is needed and show/hide the scroll hint
+    function updateScrollHint() {
+      var scrollContainer = document.querySelector('.chart-scroll-container');
+      var scrollHint = document.querySelector('.scroll-hint');
+      
+      // Check if horizontal scrolling is actually needed
+      if (scrollContainer.scrollWidth > scrollContainer.clientWidth) {
+        // Ensure overflow-x is set to auto to enable scrolling
+        scrollContainer.style.overflowX = 'auto';
+        
+        // Show scroll hint
+        scrollHint.style.display = 'block';
+        scrollHint.style.opacity = '1';
+        
+        // Hide hint after 4 seconds
+        setTimeout(function() {
+          scrollHint.style.opacity = '0';
+          setTimeout(function() {
+            scrollHint.style.display = 'none';
+          }, 1000);
+        }, 4000);
+      } else {
+        scrollHint.style.display = 'none';
+      }
+    }
+    
+    // Add window resize listener to update scroll hint
+    window.addEventListener('resize', function() {
+      // Re-render charts on window resize
+      updateBarChart();
+      updateTrendChart();
+      
+      // Update scroll hint visibility after a short delay to let charts render
+      setTimeout(updateScrollHint, 300);
+    });
+    
     // Initial render
     updateBarChart();
     updateTrendChart();
+    
+    // Update scroll hint after initial render
+    setTimeout(updateScrollHint, 300);
   </script>
 </body>
 </html>
